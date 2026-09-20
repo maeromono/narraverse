@@ -8,16 +8,14 @@ use ratatui::{
     widgets::Paragraph,
 };
 
-use crate::apcore::{apversemain::render_header, menu::{self, ApVerseMainMenu, render_menu_sidebar}};
+use crate::apcore::apversemain::render_header;
 
 pub struct ApVerse {
     pub state: ApVerseState,
-    pub main_menu: ApVerseMainMenu,
 }
 
 #[derive(PartialEq, Eq)]
 pub enum ApVerseState {
-    Main,
     Editor,
     Quit,
 }
@@ -57,7 +55,6 @@ impl ApVerse {
             Layout::horizontal([Constraint::Length(20), Constraint::Fill(1)]).split(main_layout[1]);
         render_header(self, frame, main_layout[0]);
         match self.state {
-            ApVerseState::Main => render_menu_sidebar(self, frame, main_layout1[0]),
             _ => todo!()
         }
     }
@@ -66,7 +63,6 @@ impl ApVerse {
         match key.code {
             KeyCode::Char('q') => self.state = ApVerseState::Quit,
             _ => match self.state {
-                ApVerseState::Main => menu::handle_keys(self, key),
                 _ => {}
             }
         }
@@ -76,8 +72,7 @@ impl ApVerse {
 impl Default for ApVerse {
     fn default() -> Self {
         Self {
-            state: ApVerseState::Main,
-            main_menu: ApVerseMainMenu::default()
+            state: ApVerseState::Editor,
         }
     }
 }
