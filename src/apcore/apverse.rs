@@ -8,10 +8,11 @@ use ratatui::{
     widgets::Paragraph,
 };
 
-use crate::apcore::apversemain::render_header;
+use crate::apcore::{apversemain::render_header, menu::{self, ApVerseMainMenu, render_menu_sidebar}};
 
 pub struct ApVerse {
     pub state: ApVerseState,
+    pub main_menu: ApVerseMainMenu,
 }
 
 #[derive(PartialEq, Eq)]
@@ -36,9 +37,9 @@ impl ApVerse {
 
     fn render(&mut self, frame: &mut Frame) {
         let area = frame.area();
-        if area.width < 70 || area.height < 30 {
+        if area.width < 100 || area.height < 30 {
             let ttst = Paragraph::new(format!(
-                "Terminal too small\nRequired 70x30\nCurrent {}x{}",
+                "Terminal too small\nRequired 100x30\nCurrent {}x{}",
                 area.width, area.height
             ))
             .red()
@@ -52,13 +53,22 @@ impl ApVerse {
             Constraint::Length(1),
         ])
         .split(area);
+        let main_layout1 =
+            Layout::horizontal([Constraint::Length(20), Constraint::Fill(1)]).split(main_layout[1]);
         render_header(self, frame, main_layout[0]);
+        match self.state {
+            ApVerseState::Main => render_menu_sidebar(self, frame, main_layout1[0]),
+            _ => todo!()
+        }
     }
 
     fn handle_keys(&mut self, key: &KeyEvent) {
         match key.code {
             KeyCode::Char('q') => self.state = ApVerseState::Quit,
-            _ => {}
+            _ => match self.state {
+                ApVerseState::Main => menu::handle_keys(self, key),
+                _ => {}
+            }
         }
     }
 }
@@ -67,6 +77,7 @@ impl Default for ApVerse {
     fn default() -> Self {
         Self {
             state: ApVerseState::Main,
+            main_menu: ApVerseMainMenu::default()
         }
     }
 }
