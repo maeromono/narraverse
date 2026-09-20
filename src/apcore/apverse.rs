@@ -37,9 +37,9 @@ impl ApVerse {
 
     fn render(&mut self, frame: &mut Frame) {
         let area = frame.area();
-        if area.width < 100 || area.height < 30 {
+        if area.width < 50 || area.height < 25 {
             let ttst = Paragraph::new(format!(
-                "Terminal too small\nRequired 100x30\nCurrent {}x{}",
+                "Terminal too small\nRequired 50x25\nCurrent {}x{}",
                 area.width, area.height
             ))
             .red()
@@ -52,7 +52,7 @@ impl ApVerse {
             Constraint::Fill(1),
             Constraint::Length(1),
         ])
-        .split(area);
+        .split(area.centered_horizontally(Constraint::Max(100)));
         let main_layout1 =
             Layout::horizontal([Constraint::Length(20), Constraint::Fill(1)]).split(main_layout[1]);
         render_header(self, frame, main_layout[0]);

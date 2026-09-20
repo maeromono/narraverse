@@ -21,7 +21,7 @@ impl Default for ApVerseMainMenu {
 }
 
 pub fn render_menu_sidebar(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
-    let menu = vec!["New world...", "Settings", "Quit"];
+    let menu = vec!["New verse...", "Settings", "Quit"];
     let menu_list = List::new(menu)
         .block(Block::bordered())
         .highlight_style(Style::default().reversed());
