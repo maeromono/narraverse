@@ -65,6 +65,8 @@ impl ApVerse {
 
 impl Default for ApVerse {
     fn default() -> Self {
-        Self { state: ApVerseState::Main }
+        Self {
+            state: ApVerseState::Main,
+        }
     }
 }
