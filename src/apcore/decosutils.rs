@@ -1,7 +1,7 @@
-use ratatui::{layout::{Constraint, Rect}, widgets::{Block, Padding}};
+use ratatui::{layout::{Constraint, Rect}, widgets::Block};
 
 pub fn bordered_block(title: &str) -> Block<'_> {
-    Block::bordered().title(title).padding(Padding::proportional(1))
+    Block::bordered().title(title)
 }
 
 pub fn center_area(area: Rect) -> Rect {
