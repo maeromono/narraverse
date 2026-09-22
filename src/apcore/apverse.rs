@@ -5,23 +5,28 @@ use ratatui::{
     crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind},
     layout::{Constraint, Layout},
     style::Stylize,
-    widgets::Paragraph,
+    widgets::{ListState, Paragraph},
 };
 
-use crate::{apcore::apversemain::render_header, editor::worldpick::{self, render_worldpick}};
+use crate::{
+    apcore::{apversemain::render_header, verses::Verse},
+    editor::worldpick::{self, render_worldpick},
+};
 
 pub struct ApVerse {
     pub state: ApVerseState,
+    pub verses: Vec<Verse>,
+    pub verse_pick_liststate: ListState,
 }
 
 #[derive(PartialEq, Eq)]
 pub enum ApVerseState {
-    WorldPick,
+    VersePick,
     NarrativePick,
     NarrativeEdit,
     EntityPick,
     EntityEdit,
-    WorldDelete,
+    VerseDelete,
     Quit,
 }
 
@@ -58,8 +63,8 @@ impl ApVerse {
         .split(area.centered_horizontally(Constraint::Max(100)));
         render_header(self, frame, main_layout[0]);
         match self.state {
-            ApVerseState::WorldPick => render_worldpick(self, frame, main_layout[1]),
-            _ => todo!()
+            ApVerseState::VersePick => render_worldpick(self, frame, main_layout[1]),
+            _ => todo!(),
         }
     }
 
@@ -67,9 +72,9 @@ impl ApVerse {
         match key.code {
             KeyCode::Char('q') => self.state = ApVerseState::Quit,
             _ => match self.state {
-                ApVerseState::WorldPick => worldpick::handle_keys(self, key),
+                ApVerseState::VersePick => worldpick::handle_keys(self, key),
                 _ => {}
-            }
+            },
         }
     }
 }
@@ -77,7 +82,20 @@ impl ApVerse {
 impl Default for ApVerse {
     fn default() -> Self {
         Self {
-            state: ApVerseState::WorldPick,
+            state: ApVerseState::VersePick,
+            verses: vec![Verse {
+                name: String::from("Loremverse"),
+                narrative: String::from(
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque malesuada ante vel risus hendrerit ultrices.",
+                ),
+            },
+            Verse {
+                name: String::from("Loremverse II"),
+                narrative: String::from(
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque malesuada ante vel risus hendrerit ultrices.",
+                ),
+            }],
+            verse_pick_liststate: ListState::default().with_selected(Some(0))
         }
     }
 }
