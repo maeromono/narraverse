@@ -10,11 +10,11 @@ use crate::apcore::apverse::{ApVerse, ApVerseState};
 
 pub fn render_worldpick(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
     let mut verse_list: Vec<String> = vec![];
-    if av.verses.len() == 0 {
+    if av.verses.verses.len() == 0 {
         frame.render_widget(Paragraph::new("No verses").red().bold(), area);
         return;
     }
-    for verse in &av.verses {
+    for verse in &av.verses.verses {
         verse_list.push(format!("Verse: {}", verse.name));
     }
     let list = List::new(verse_list).highlight_style(Modifier::REVERSED);

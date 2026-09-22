@@ -9,13 +9,13 @@ use ratatui::{
 };
 
 use crate::{
-    apcore::{apversemain::render_header, verses::Verse},
+    apcore::{apversemain::render_header, verses::{ApVerseVerses, Verse}},
     editor::worldpick::{self, render_worldpick},
 };
 
 pub struct ApVerse {
     pub state: ApVerseState,
-    pub verses: Vec<Verse>,
+    pub verses: ApVerseVerses,
     pub verse_pick_liststate: ListState,
 }
 
@@ -83,18 +83,7 @@ impl Default for ApVerse {
     fn default() -> Self {
         Self {
             state: ApVerseState::VersePick,
-            verses: vec![Verse {
-                name: String::from("Loremverse"),
-                narrative: String::from(
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque malesuada ante vel risus hendrerit ultrices.",
-                ),
-            },
-            Verse {
-                name: String::from("Loremverse II"),
-                narrative: String::from(
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque malesuada ante vel risus hendrerit ultrices.",
-                ),
-            }],
+            verses: ApVerseVerses::default(),
             verse_pick_liststate: ListState::default().with_selected(Some(0))
         }
     }

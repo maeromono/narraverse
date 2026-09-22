@@ -5,7 +5,23 @@ pub struct ApVerseVerses {
 
 impl Default for ApVerseVerses {
     fn default() -> Self {
-        Self { verses: vec![], verse_index: 0 }
+        Self {
+            verses: vec![
+                Verse {
+                    name: String::from("Loremverse"),
+                    narrative: String::from(
+                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque malesuada ante vel risus hendrerit ultrices.",
+                    ),
+                },
+                Verse {
+                    name: String::from("Loremverse II"),
+                    narrative: String::from(
+                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque malesuada ante vel risus hendrerit ultrices.",
+                    ),
+                },
+            ],
+            verse_index: 0,
+        }
     }
 }
 
