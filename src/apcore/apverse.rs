@@ -10,7 +10,7 @@ use ratatui::{
 
 use crate::{
     apcore::{apversemain::render_header, verses::{ApVerseVerses, Verse}},
-    editor::worldpick::{self, render_worldpick},
+    editor::{narrativeedit::{self, render_narrative_editor}, worldpick::{self, render_worldpick}},
 };
 
 pub struct ApVerse {
@@ -22,6 +22,7 @@ pub struct ApVerse {
 #[derive(PartialEq, Eq)]
 pub enum ApVerseState {
     VersePick,
+    VerseAreaPick,
     NarrativePick,
     NarrativeEdit,
     EntityPick,
@@ -64,6 +65,7 @@ impl ApVerse {
         render_header(self, frame, main_layout[0]);
         match self.state {
             ApVerseState::VersePick => render_worldpick(self, frame, main_layout[1]),
+            ApVerseState::NarrativeEdit => render_narrative_editor(self, frame, main_layout[1]),
             _ => todo!(),
         }
     }
@@ -73,6 +75,7 @@ impl ApVerse {
             KeyCode::Char('q') => self.state = ApVerseState::Quit,
             _ => match self.state {
                 ApVerseState::VersePick => worldpick::handle_keys(self, key),
+                ApVerseState::NarrativeEdit => narrativeedit::handle_keys(self, key),
                 _ => {}
             },
         }
