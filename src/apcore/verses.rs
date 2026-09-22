@@ -16,7 +16,7 @@ impl Default for ApVerseVerses {
                 Verse {
                     name: String::from("Loremverse II"),
                     narrative: String::from(
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque malesuada ante vel risus hendrerit ultrices.",
+                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque malesuada ante vel risus hendrerit ultrices. but better. or worse. depending if it's from a passionate writer or from a soulless corpo or an incel",
                     ),
                 },
             ],
