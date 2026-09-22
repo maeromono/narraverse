@@ -6,7 +6,7 @@ use ratatui::{
     widgets::{Block, List, Padding, Paragraph},
 };
 
-use crate::apcore::apverse::{ApVerse, ApVerseState};
+use crate::apcore::{apverse::{ApVerse, ApVerseState}, decosutils::{bordered_block, center_area}};
 
 pub fn render_worldpick(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
     let mut verse_list: Vec<String> = vec![];
@@ -19,8 +19,8 @@ pub fn render_worldpick(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
     }
     let list = List::new(verse_list).highlight_style(Modifier::REVERSED);
     frame.render_stateful_widget(
-        list.block(Block::bordered().title("Pick a 'Verse:").padding(Padding::proportional(1))),
-        area.centered(Constraint::Max(75), Constraint::Percentage(30)),
+        list.block(bordered_block("Pick a 'Verse:")),
+        center_area(area),
         &mut av.verse_pick_liststate,
     );
 }
