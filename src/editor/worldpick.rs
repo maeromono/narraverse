@@ -3,7 +3,7 @@ use ratatui::{
     Frame,
     layout::{Constraint, Rect},
     style::{Modifier, Stylize},
-    widgets::{List, Paragraph},
+    widgets::{Block, List, Padding, Paragraph},
 };
 
 use crate::apcore::apverse::{ApVerse, ApVerseState};
@@ -19,7 +19,7 @@ pub fn render_worldpick(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
     }
     let list = List::new(verse_list).highlight_style(Modifier::REVERSED);
     frame.render_stateful_widget(
-        list,
+        list.block(Block::bordered().title("Pick a 'Verse:").padding(Padding::proportional(1))),
         area.centered(Constraint::Max(75), Constraint::Percentage(30)),
         &mut av.verse_pick_liststate,
     );
