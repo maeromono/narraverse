@@ -8,7 +8,7 @@ use ratatui::{
     widgets::Paragraph,
 };
 
-use crate::apcore::apversemain::render_header;
+use crate::{apcore::apversemain::render_header, editor::worldpick::{self, render_worldpick}};
 
 pub struct ApVerse {
     pub state: ApVerseState,
@@ -16,7 +16,12 @@ pub struct ApVerse {
 
 #[derive(PartialEq, Eq)]
 pub enum ApVerseState {
-    Editor,
+    WorldPick,
+    NarrativePick,
+    NarrativeEdit,
+    EntityPick,
+    EntityEdit,
+    WorldDelete,
     Quit,
 }
 
@@ -51,10 +56,9 @@ impl ApVerse {
             Constraint::Length(1),
         ])
         .split(area.centered_horizontally(Constraint::Max(100)));
-        let main_layout1 =
-            Layout::horizontal([Constraint::Length(20), Constraint::Fill(1)]).split(main_layout[1]);
         render_header(self, frame, main_layout[0]);
         match self.state {
+            ApVerseState::WorldPick => render_worldpick(self, frame, main_layout[1]),
             _ => todo!()
         }
     }
@@ -63,6 +67,7 @@ impl ApVerse {
         match key.code {
             KeyCode::Char('q') => self.state = ApVerseState::Quit,
             _ => match self.state {
+                ApVerseState::WorldPick => worldpick::handle_keys(self, key),
                 _ => {}
             }
         }
@@ -72,7 +77,7 @@ impl ApVerse {
 impl Default for ApVerse {
     fn default() -> Self {
         Self {
-            state: ApVerseState::Editor,
+            state: ApVerseState::WorldPick,
         }
     }
 }

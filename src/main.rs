@@ -1,4 +1,5 @@
 mod apcore;
+mod editor;
 
 use std::process::exit;
 
