@@ -18,6 +18,7 @@ pub struct ApVerse {
     pub verses: ApVerseVerses,
     pub verse_pick_liststate: ListState,
     pub verse_area_pick_liststate: ListState,
+    pub cached_verse_name: String,
 }
 
 #[derive(PartialEq, Eq)]
@@ -63,13 +64,13 @@ impl ApVerse {
             Constraint::Length(1),
         ])
         .split(area.centered_horizontally(Constraint::Max(100)));
-        render_header(self, frame, main_layout[0]);
         match self.state {
             ApVerseState::VersePick => render_worldpick(self, frame, main_layout[1]),
             ApVerseState::VerseAreaPick => render_area_pick(self, frame, main_layout[1]),
             ApVerseState::NarrativeEdit => render_narrative_editor(self, frame, main_layout[1]),
             _ => todo!(),
         }
+        render_header(self, frame, main_layout[0]);
     }
 
     fn handle_keys(&mut self, key: &KeyEvent) {
@@ -91,7 +92,8 @@ impl Default for ApVerse {
             state: ApVerseState::VersePick,
             verses: ApVerseVerses::default(),
             verse_pick_liststate: ListState::default().with_selected(Some(0)),
-            verse_area_pick_liststate: ListState::default().with_selected(Some(0))
+            verse_area_pick_liststate: ListState::default().with_selected(Some(0)),
+            cached_verse_name: String::from("enmkdev.neocities.org")
         }
     }
 }

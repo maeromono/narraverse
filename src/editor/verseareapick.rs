@@ -1,5 +1,10 @@
 use crossterm::event::{KeyCode, KeyEvent};
-use ratatui::{Frame, layout::Rect, style::Modifier, widgets::List};
+use ratatui::{
+    Frame,
+    layout::Rect,
+    style::{Modifier, Stylize},
+    widgets::{List, Paragraph},
+};
 
 use crate::apcore::{
     apverse::{ApVerse, ApVerseState},
@@ -7,13 +12,26 @@ use crate::apcore::{
 };
 
 pub fn render_area_pick(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
+    let Some(verse) = av.verses.verses.get(av.verses.verse_index) else {
+        frame.render_widget(
+            Paragraph::new("No 'Verse at this index.\nHit Esc to pick another one.")
+                .red()
+                .bold(),
+            area,
+        );
+        return;
+    };
+    if av.cached_verse_name != verse.name {
+        av.cached_verse_name = verse.name.clone();
+    }
     let list = List::new(vec![
         "Narrative",
         "Entities",
+        "Timeline",
+        "Artifacts",
         "Edit 'Verse",
-        "Something else",
-        "sjfkljhfjlsaja",
-    ]).highlight_style(Modifier::REVERSED);
+    ])
+    .highlight_style(Modifier::REVERSED);
     frame.render_stateful_widget(
         list.block(bordered_block("Select area to edit:")),
         center_area(area),
@@ -23,7 +41,7 @@ pub fn render_area_pick(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
 
 pub fn handle_keys(av: &mut ApVerse, key: &KeyEvent) {
     match key.code {
-        KeyCode::Esc => av.state = ApVerseState::VerseAreaPick,
+        KeyCode::Esc => av.state = ApVerseState::VersePick,
         KeyCode::Char('j') | KeyCode::Down => av.verse_area_pick_liststate.select_next(),
         KeyCode::Char('k') | KeyCode::Up => av.verse_area_pick_liststate.select_previous(),
         _ => {}

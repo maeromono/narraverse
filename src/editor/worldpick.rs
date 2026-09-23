@@ -30,7 +30,10 @@ pub fn handle_keys(av: &mut ApVerse, key: &KeyEvent) {
         KeyCode::Char('q') => av.state = ApVerseState::Quit,
         KeyCode::Char('j') | KeyCode::Down => av.verse_pick_liststate.select_next(),
         KeyCode::Char('k') | KeyCode::Up => av.verse_pick_liststate.select_previous(),
-        KeyCode::Enter => av.state = ApVerseState::VerseAreaPick, // !!! PLACEHOLDER !!! for now
+        KeyCode::Enter => {
+            av.verses.verse_index = av.verse_pick_liststate.selected().unwrap();
+            av.state = ApVerseState::VerseAreaPick;
+        }
         _ => {}
     }
 }
