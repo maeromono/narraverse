@@ -9,7 +9,7 @@ impl Default for ApVerseVerses {
             verses: vec![
                 Verse {
                     name: String::from("Loremverse: Origins"),
-                    narrative: vec![
+                    narratives: vec![
                         Narrative {
                             title: String::from("Chapter I: The birth of Lorem"),
                             narrative: String::from("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque malesuada ante vel risus hendrerit ultrices."),
@@ -28,7 +28,7 @@ impl Default for ApVerseVerses {
 
 pub struct Verse {
     pub name: String,
-    pub narrative: Vec<Narrative>,
+    pub narratives: Vec<Narrative>,
 }
 
 pub struct Narrative {

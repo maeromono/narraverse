@@ -2,10 +2,15 @@ use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{
     Frame,
     layout::{Constraint, Layout, Rect},
+    style::Stylize,
+    widgets::Paragraph,
 };
-use ratatui_textarea::TextArea;
+use ratatui_textarea::{TextArea, WrapMode};
 
-use crate::apcore::{apverse::{ApVerse, ApVerseState}, verses::Narrative};
+use crate::apcore::{
+    apverse::{ApVerse, ApVerseState},
+    verses::Narrative,
+};
 
 pub struct NarrativeEditor {
     pub currently_editing: usize,
@@ -14,28 +19,61 @@ pub struct NarrativeEditor {
 
 impl Default for NarrativeEditor {
     fn default() -> Self {
-        Self { currently_editing: 0, textarea: TextArea::default() }
+        Self {
+            currently_editing: 0,
+            textarea: TextArea::default(),
+        }
     }
 }
 
 impl NarrativeEditor {
-    pub fn edit(narrative: &Narrative) -> Self {
-        Self { currently_editing: 0, textarea: TextArea::from(narrative.narrative.lines()) }
+    pub fn edit(av: &ApVerse, index: usize) -> Self {
+        let Some(narrative) = av
+            .verses
+            .verses
+            .get(av.verses.verse_index)
+            .unwrap()
+            .narratives
+            .get(index)
+        else {
+            panic!("narrative not found");
+        };
+        let mut textarea = TextArea::from(narrative.narrative.lines());
+        textarea.set_wrap_mode(WrapMode::WordOrGlyph);
+        Self {
+            currently_editing: index,
+            textarea,
+        }
     }
 }
 
 pub fn render_narrative_editor(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
+    let Some(narrative) = av
+        .verses
+        .verses
+        .get(av.verses.verse_index)
+        .unwrap()
+        .narratives
+        .get(av.narrative_editor.currently_editing)
+    else {
+        frame.render_widget(Paragraph::new("Narrative not found").red().bold(), area);
+        return;
+    };
     let editor_layout = Layout::vertical([
         Constraint::Length(1),
         Constraint::Fill(1),
         Constraint::Length(1),
     ])
     .split(area);
+    frame.render_widget(Paragraph::new(format!("Editing: {}", narrative.title)).bold(), editor_layout[0]);
+    frame.render_widget(&av.narrative_editor.textarea, editor_layout[1]);
 }
 
 pub fn handle_keys(av: &mut ApVerse, key: &KeyEvent) {
     match key.code {
-        KeyCode::Esc => av.state = ApVerseState::VerseAreaPick,
-        _ => {}
+        KeyCode::Esc => av.state = ApVerseState::NarrativePick,
+        _ => {
+            av.narrative_editor.textarea.input(*key);
+        }
     }
 }

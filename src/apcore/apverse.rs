@@ -14,7 +14,10 @@ use crate::{
         verses::{ApVerseVerses, Verse},
     },
     editor::{
-        narrativeedit::{self, NarrativeEditor, render_narrative_editor}, verseareapick::{self, render_area_pick}, versenarrativepick::{self, render_narrative_pick}, versepick::{self, render_worldpick}
+        narrativeedit::{self, NarrativeEditor, render_narrative_editor},
+        verseareapick::{self, render_area_pick},
+        versenarrativepick::{self, render_narrative_pick},
+        versepick::{self, render_worldpick},
     },
 };
 
@@ -82,15 +85,12 @@ impl ApVerse {
     }
 
     fn handle_keys(&mut self, key: &KeyEvent) {
-        match key.code {
-            KeyCode::Char('q') => self.state = ApVerseState::Quit,
-            _ => match self.state {
-                ApVerseState::VersePick => versepick::handle_keys(self, key),
-                ApVerseState::VerseAreaPick => verseareapick::handle_keys(self, key),
-                ApVerseState::NarrativePick => versenarrativepick::handle_keys(self, key),
-                ApVerseState::NarrativeEdit => narrativeedit::handle_keys(self, key),
-                _ => {}
-            },
+        match self.state {
+            ApVerseState::VersePick => versepick::handle_keys(self, key),
+            ApVerseState::VerseAreaPick => verseareapick::handle_keys(self, key),
+            ApVerseState::NarrativePick => versenarrativepick::handle_keys(self, key),
+            ApVerseState::NarrativeEdit => narrativeedit::handle_keys(self, key),
+            _ => {}
         }
     }
 }
@@ -102,7 +102,7 @@ impl Default for ApVerse {
             verses: ApVerseVerses::default(),
             cached_verse_name: String::from("enmkdev.neocities.org"),
             list_states: ApVerseListStates::default(),
-            narrative_editor: NarrativeEditor::default()
+            narrative_editor: NarrativeEditor::default(),
         }
     }
 }

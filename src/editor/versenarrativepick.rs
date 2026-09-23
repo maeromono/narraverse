@@ -10,7 +10,7 @@ use crate::{
     apcore::{
         apverse::{ApVerse, ApVerseState},
         decosutils::{bordered_block, center_area},
-    },
+    }, editor::narrativeedit::NarrativeEditor,
 };
 
 pub fn render_narrative_pick(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
@@ -24,7 +24,7 @@ pub fn render_narrative_pick(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
         return;
     };
     let mut narrative_list: Vec<String> = vec![];
-    for narr in &verse.narrative {
+    for narr in &verse.narratives {
         narrative_list.push(narr.title.clone());
     }
     let list = List::new(narrative_list)
@@ -48,11 +48,12 @@ pub fn handle_keys(av: &mut ApVerse, key: &KeyEvent) {
             .verse_narrative_pick_liststate
             .select_previous(),
         KeyCode::Enter => {
-            av.verses.verse_index = av
+            let index = av
                 .list_states
                 .verse_narrative_pick_liststate
                 .selected()
                 .unwrap();
+            av.narrative_editor = NarrativeEditor::edit(av, index);
             av.state = ApVerseState::NarrativeEdit;
         }
         _ => {}
