@@ -45,14 +45,16 @@ impl NarrativeEditor {
 }
 
 pub fn render_narrative_editor(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
-    let Some(narrative) = av
-        .verses
-        .verses
-        .get(av.verses.verse_index)
-        .unwrap()
-        .narratives
-        .get(av.narrative_editor.currently_editing)
-    else {
+    let Some(verse) = av.verses.verses.get(av.verses.verse_index) else {
+        frame.render_widget(
+            Paragraph::new("No 'Verse at this index.\nHit Esc to pick another one.")
+                .red()
+                .bold(),
+            area,
+        );
+        return;
+    };
+    let Some(narrative) = verse.narratives.get(av.narrative_editor.currently_editing) else {
         frame.render_widget(Paragraph::new("Narrative not found").red().bold(), area);
         return;
     };

@@ -28,11 +28,13 @@ impl Default for ApVerseVerses {
     }
 }
 
+#[derive(Clone)]
 pub struct Verse {
     pub name: String,
     pub narratives: Vec<Narrative>,
 }
 
+#[derive(Clone)]
 pub struct Narrative {
     pub title: String,
     pub narrative: String,
