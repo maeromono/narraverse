@@ -44,6 +44,11 @@ pub fn handle_keys(av: &mut ApVerse, key: &KeyEvent) {
         KeyCode::Esc => av.state = ApVerseState::VersePick,
         KeyCode::Char('j') | KeyCode::Down => av.verse_area_pick_liststate.select_next(),
         KeyCode::Char('k') | KeyCode::Up => av.verse_area_pick_liststate.select_previous(),
+        KeyCode::Enter => av.state = match av.verse_area_pick_liststate.selected().unwrap() {
+            0 => ApVerseState::NarrativePick,
+            1 => ApVerseState::EntityPick,
+            _ => todo!()
+        },
         _ => {}
     }
 }
