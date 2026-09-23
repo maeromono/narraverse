@@ -1,4 +1,4 @@
-use crossterm::event::{KeyCode, KeyEvent};
+use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use ratatui::{
     Frame,
     layout::{Constraint, Layout, Rect},
@@ -72,10 +72,21 @@ pub fn render_narrative_editor(av: &mut ApVerse, frame: &mut Frame, area: Rect) 
 }
 
 pub fn handle_keys(av: &mut ApVerse, key: &KeyEvent) {
-    match key.code {
-        KeyCode::Esc => av.state = ApVerseState::NarrativePick,
+    match (key.code, key.modifiers) {
+        (KeyCode::Esc, KeyModifiers::NONE) => av.state = ApVerseState::NarrativePick,
+        (KeyCode::Char('w'), KeyModifiers::ALT) => save_narrative(av),
         _ => {
             av.narrative_editor.textarea.input(*key);
         }
     }
+}
+
+fn save_narrative(av: &mut ApVerse) {
+    let Some(verse) = av.verses.verses.get_mut(av.verses.verse_index) else {
+        return;
+    };
+    let Some(narrative) = verse.narratives.get_mut(av.narrative_editor.currently_editing) else {
+        return;
+    };
+    narrative.narrative = av.narrative_editor.textarea.lines().join("\n");
 }
