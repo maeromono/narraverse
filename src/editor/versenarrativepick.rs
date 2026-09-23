@@ -40,7 +40,7 @@ pub fn render_narrative_pick(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
 
 pub fn handle_keys(av: &mut ApVerse, key: &KeyEvent) {
     match key.code {
-        KeyCode::Char('q') => av.state = ApVerseState::Quit,
+        KeyCode::Esc => av.state = ApVerseState::VerseAreaPick,
         KeyCode::Char('j') | KeyCode::Down => {
             av.list_states.verse_narrative_pick_liststate.select_next()
         }
