@@ -7,10 +7,7 @@ use ratatui::{
 };
 use ratatui_textarea::{TextArea, WrapMode};
 
-use crate::apcore::{
-    apverse::{ApVerse, ApVerseState},
-    verses::Narrative,
-};
+use crate::apcore::apverse::{ApVerse, ApVerseState};
 
 pub struct NarrativeEditor {
     pub currently_editing: usize,
@@ -65,7 +62,10 @@ pub fn render_narrative_editor(av: &mut ApVerse, frame: &mut Frame, area: Rect) 
         Constraint::Length(1),
     ])
     .split(area);
-    frame.render_widget(Paragraph::new(format!("Editing: {}", narrative.title)).bold(), editor_layout[0]);
+    frame.render_widget(
+        Paragraph::new(format!("Editing: {}", narrative.title)).bold(),
+        editor_layout[0],
+    );
     frame.render_widget(&av.narrative_editor.textarea, editor_layout[1]);
 }
 

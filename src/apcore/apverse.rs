@@ -2,17 +2,14 @@ use std::io::Result;
 
 use ratatui::{
     DefaultTerminal, Frame,
-    crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind},
+    crossterm::event::{self, Event, KeyEvent, KeyEventKind},
     layout::{Constraint, Layout},
     style::Stylize,
     widgets::{ListState, Paragraph},
 };
 
 use crate::{
-    apcore::{
-        apversemain::render_header,
-        verses::{ApVerseVerses, Verse},
-    },
+    apcore::{apversemain::render_header, verses::ApVerseVerses},
     editor::{
         narrativeedit::{self, NarrativeEditor, render_narrative_editor},
         verseareapick::{self, render_area_pick},

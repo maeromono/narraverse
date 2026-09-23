@@ -10,7 +10,8 @@ use crate::{
     apcore::{
         apverse::{ApVerse, ApVerseState},
         decosutils::{bordered_block, center_area},
-    }, editor::narrativeedit::NarrativeEditor,
+    },
+    editor::narrativeedit::NarrativeEditor,
 };
 
 pub fn render_narrative_pick(av: &mut ApVerse, frame: &mut Frame, area: Rect) {

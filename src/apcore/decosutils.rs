@@ -1,4 +1,7 @@
-use ratatui::{layout::{Constraint, Rect}, widgets::Block};
+use ratatui::{
+    layout::{Constraint, Rect},
+    widgets::Block,
+};
 
 pub fn bordered_block(title: &str) -> Block<'_> {
     Block::bordered().title(title)

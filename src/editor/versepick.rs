@@ -1,12 +1,15 @@
 use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{
     Frame,
-    layout::{Constraint, Rect},
+    layout::Rect,
     style::{Modifier, Stylize},
-    widgets::{Block, List, Padding, Paragraph},
+    widgets::{List, Paragraph},
 };
 
-use crate::apcore::{apverse::{ApVerse, ApVerseState}, decosutils::{bordered_block, center_area}};
+use crate::apcore::{
+    apverse::{ApVerse, ApVerseState},
+    decosutils::{bordered_block, center_area},
+};
 
 pub fn render_worldpick(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
     let mut verse_list: Vec<String> = vec![];
