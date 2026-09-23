@@ -13,12 +13,10 @@ impl Default for ApVerseVerses {
                         Narrative {
                             title: String::from("Chapter I: The birth of Lorem"),
                             narrative: String::from("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque malesuada ante vel risus hendrerit ultrices."),
-                            children: vec![]
                         },
                         Narrative {
                             title: String::from("Chapter II: The birth of Ipsum"),
                             narrative: String::from("Ipsum lorem dolor sit amet, consectetur adipiscing elit. Quisque malesuada ante vel risus hendrerit ultrices."),
-                            children: vec![]
                         },
                     ]
                 }
@@ -36,5 +34,4 @@ pub struct Verse {
 pub struct Narrative {
     pub title: String,
     pub narrative: String,
-    pub children: Vec<Narrative>
 }

@@ -6,9 +6,11 @@ use ratatui::{
     widgets::{List, Paragraph},
 };
 
-use crate::apcore::{
-    apverse::{ApVerse, ApVerseState},
-    decosutils::{bordered_block, center_area},
+use crate::{
+    apcore::{
+        apverse::{ApVerse, ApVerseState},
+        decosutils::{bordered_block, center_area},
+    },
 };
 
 pub fn render_narrative_pick(av: &mut ApVerse, frame: &mut Frame, area: Rect) {

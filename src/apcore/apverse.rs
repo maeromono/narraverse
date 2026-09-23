@@ -14,7 +14,7 @@ use crate::{
         verses::{ApVerseVerses, Verse},
     },
     editor::{
-        narrativeedit::{self, render_narrative_editor}, verseareapick::{self, render_area_pick}, versenarrativepick::{self, render_narrative_pick}, versepick::{self, render_worldpick}
+        narrativeedit::{self, NarrativeEditor, render_narrative_editor}, verseareapick::{self, render_area_pick}, versenarrativepick::{self, render_narrative_pick}, versepick::{self, render_worldpick}
     },
 };
 
@@ -23,6 +23,7 @@ pub struct ApVerse {
     pub verses: ApVerseVerses,
     pub cached_verse_name: String,
     pub list_states: ApVerseListStates,
+    pub narrative_editor: NarrativeEditor,
 }
 
 #[derive(PartialEq, Eq)]
@@ -101,6 +102,7 @@ impl Default for ApVerse {
             verses: ApVerseVerses::default(),
             cached_verse_name: String::from("enmkdev.neocities.org"),
             list_states: ApVerseListStates::default(),
+            narrative_editor: NarrativeEditor::default()
         }
     }
 }
