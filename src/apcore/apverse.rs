@@ -9,7 +9,7 @@ use ratatui::{
 };
 
 use crate::{
-    apcore::{apversemain::render_header, verses::ApVerseVerses},
+    apcore::{apversemain::{render_footer, render_header}, verses::ApVerseVerses},
     editor::{
         narrativeedit::{self, NarrativeEditor, render_narrative_editor},
         verseareapick::{self, render_area_pick},
@@ -79,6 +79,7 @@ impl ApVerse {
             _ => todo!(),
         }
         render_header(self, frame, main_layout[0]);
+        render_footer(self, frame, main_layout[2]);
     }
 
     fn handle_keys(&mut self, key: &KeyEvent) {

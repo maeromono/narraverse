@@ -18,3 +18,15 @@ pub fn render_header(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
     frame.render_widget(name_ver, header_layout[0]);
     frame.render_widget(right_thing, header_layout[1]);
 }
+
+pub fn render_footer(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
+    let bind_help_string = match av.state {
+        ApVerseState::VersePick | ApVerseState::VerseAreaPick | ApVerseState::NarrativePick => {
+            "j/k navigate, Enter select"
+        }
+        ApVerseState::NarrativeEdit => "Alt+w save",
+        _ => "",
+    };
+    let bind_help = Paragraph::new(bind_help_string).centered();
+    frame.render_widget(bind_help, area);
+}
