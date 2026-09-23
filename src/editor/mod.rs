@@ -1,3 +1,4 @@
 pub mod narrativeedit;
 pub mod verseareapick;
-pub mod worldpick;
+pub mod versenarrativepick;
+pub mod versepick;

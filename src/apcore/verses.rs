@@ -8,17 +8,20 @@ impl Default for ApVerseVerses {
         Self {
             verses: vec![
                 Verse {
-                    name: String::from("Loremverse"),
-                    narrative: String::from(
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque malesuada ante vel risus hendrerit ultrices.",
-                    ),
-                },
-                Verse {
-                    name: String::from("Loremverse II"),
-                    narrative: String::from(
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque malesuada ante vel risus hendrerit ultrices. but better. or worse. depending if it's from a passionate writer or from a soulless corpo or an incel",
-                    ),
-                },
+                    name: String::from("Loremverse: Origins"),
+                    narrative: vec![
+                        Narrative {
+                            title: String::from("Chapter I: The birth of Lorem"),
+                            narrative: String::from("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque malesuada ante vel risus hendrerit ultrices."),
+                            children: vec![]
+                        },
+                        Narrative {
+                            title: String::from("Chapter II: The birth of Ipsum"),
+                            narrative: String::from("Ipsum lorem dolor sit amet, consectetur adipiscing elit. Quisque malesuada ante vel risus hendrerit ultrices."),
+                            children: vec![]
+                        },
+                    ]
+                }
             ],
             verse_index: 0,
         }
@@ -27,5 +30,11 @@ impl Default for ApVerseVerses {
 
 pub struct Verse {
     pub name: String,
+    pub narrative: Vec<Narrative>,
+}
+
+pub struct Narrative {
+    pub title: String,
     pub narrative: String,
+    pub children: Vec<Narrative>
 }

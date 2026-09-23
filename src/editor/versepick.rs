@@ -21,17 +21,17 @@ pub fn render_worldpick(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
     frame.render_stateful_widget(
         list.block(bordered_block("Pick a 'Verse:")),
         center_area(area),
-        &mut av.verse_pick_liststate,
+        &mut av.list_states.verse_pick_liststate,
     );
 }
 
 pub fn handle_keys(av: &mut ApVerse, key: &KeyEvent) {
     match key.code {
         KeyCode::Char('q') => av.state = ApVerseState::Quit,
-        KeyCode::Char('j') | KeyCode::Down => av.verse_pick_liststate.select_next(),
-        KeyCode::Char('k') | KeyCode::Up => av.verse_pick_liststate.select_previous(),
+        KeyCode::Char('j') | KeyCode::Down => av.list_states.verse_pick_liststate.select_next(),
+        KeyCode::Char('k') | KeyCode::Up => av.list_states.verse_pick_liststate.select_previous(),
         KeyCode::Enter => {
-            av.verses.verse_index = av.verse_pick_liststate.selected().unwrap();
+            av.verses.verse_index = av.list_states.verse_pick_liststate.selected().unwrap();
             av.state = ApVerseState::VerseAreaPick;
         }
         _ => {}

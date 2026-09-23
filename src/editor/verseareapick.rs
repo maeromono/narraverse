@@ -35,16 +35,16 @@ pub fn render_area_pick(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
     frame.render_stateful_widget(
         list.block(bordered_block("Select area to edit:")),
         center_area(area),
-        &mut av.verse_area_pick_liststate,
+        &mut av.list_states.verse_area_pick_liststate,
     );
 }
 
 pub fn handle_keys(av: &mut ApVerse, key: &KeyEvent) {
     match key.code {
         KeyCode::Esc => av.state = ApVerseState::VersePick,
-        KeyCode::Char('j') | KeyCode::Down => av.verse_area_pick_liststate.select_next(),
-        KeyCode::Char('k') | KeyCode::Up => av.verse_area_pick_liststate.select_previous(),
-        KeyCode::Enter => av.state = match av.verse_area_pick_liststate.selected().unwrap() {
+        KeyCode::Char('j') | KeyCode::Down => av.list_states.verse_area_pick_liststate.select_next(),
+        KeyCode::Char('k') | KeyCode::Up => av.list_states.verse_area_pick_liststate.select_previous(),
+        KeyCode::Enter => av.state = match av.list_states.verse_area_pick_liststate.selected().unwrap() {
             0 => ApVerseState::NarrativePick,
             1 => ApVerseState::EntityPick,
             _ => todo!()

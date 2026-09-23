@@ -9,16 +9,20 @@ use ratatui::{
 };
 
 use crate::{
-    apcore::{apversemain::render_header, verses::{ApVerseVerses, Verse}},
-    editor::{narrativeedit::{self, render_narrative_editor}, verseareapick::{self, render_area_pick}, worldpick::{self, render_worldpick}},
+    apcore::{
+        apversemain::render_header,
+        verses::{ApVerseVerses, Verse},
+    },
+    editor::{
+        narrativeedit::{self, render_narrative_editor}, verseareapick::{self, render_area_pick}, versenarrativepick::{self, render_narrative_pick}, versepick::{self, render_worldpick}
+    },
 };
 
 pub struct ApVerse {
     pub state: ApVerseState,
     pub verses: ApVerseVerses,
-    pub verse_pick_liststate: ListState,
-    pub verse_area_pick_liststate: ListState,
     pub cached_verse_name: String,
+    pub list_states: ApVerseListStates,
 }
 
 #[derive(PartialEq, Eq)]
@@ -69,6 +73,7 @@ impl ApVerse {
         match self.state {
             ApVerseState::VersePick => render_worldpick(self, frame, main_layout[1]),
             ApVerseState::VerseAreaPick => render_area_pick(self, frame, main_layout[1]),
+            ApVerseState::NarrativePick => render_narrative_pick(self, frame, main_layout[1]),
             ApVerseState::NarrativeEdit => render_narrative_editor(self, frame, main_layout[1]),
             _ => todo!(),
         }
@@ -79,8 +84,9 @@ impl ApVerse {
         match key.code {
             KeyCode::Char('q') => self.state = ApVerseState::Quit,
             _ => match self.state {
-                ApVerseState::VersePick => worldpick::handle_keys(self, key),
+                ApVerseState::VersePick => versepick::handle_keys(self, key),
                 ApVerseState::VerseAreaPick => verseareapick::handle_keys(self, key),
+                ApVerseState::NarrativePick => versenarrativepick::handle_keys(self, key),
                 ApVerseState::NarrativeEdit => narrativeedit::handle_keys(self, key),
                 _ => {}
             },
@@ -93,9 +99,25 @@ impl Default for ApVerse {
         Self {
             state: ApVerseState::VersePick,
             verses: ApVerseVerses::default(),
-            verse_pick_liststate: ListState::default().with_selected(Some(0)),
-            verse_area_pick_liststate: ListState::default().with_selected(Some(0)),
-            cached_verse_name: String::from("enmkdev.neocities.org")
+            cached_verse_name: String::from("enmkdev.neocities.org"),
+            list_states: ApVerseListStates::default(),
+        }
+    }
+}
+
+pub struct ApVerseListStates {
+    pub verse_pick_liststate: ListState,
+    pub verse_area_pick_liststate: ListState,
+    pub verse_narrative_pick_liststate: ListState,
+}
+
+impl Default for ApVerseListStates {
+    fn default() -> Self {
+        let ls = ListState::default().with_selected(Some(0));
+        Self {
+            verse_pick_liststate: ls.clone(),
+            verse_area_pick_liststate: ls.clone(),
+            verse_narrative_pick_liststate: ls.clone(),
         }
     }
 }
