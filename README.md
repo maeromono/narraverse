@@ -1,6 +1,9 @@
+# !!! WORK IN PROGRESS ALERT !!!
+Only world creation/modification and narrative editing is available right now. It panics on other states with "not yet implemented". There're expected breaking changes in later updates.
+
 # narraverse
 
-narraverse is an experimental no-BS worldbuilding TUI (that's still in the works lol). For now only narrative editing is available with more to come in later updates.
+narraverse is an experimental no-BS worldbuilding TUI.
 
 ## Installation.
 Prerequisites:
