@@ -7,9 +7,14 @@ use ratatui::{
 };
 
 use crate::{
-    editor::{narrativeedit::NarrativeEditor, narrativeeditmodal::NarrativeEditModal, versedelete::DeletionTarget}, nvcore::{
-        decosutils::{bordered_block, center_area}, narraverse::{Narraverse, NarraverseState}
-    }
+    editor::{
+        narrativeedit::NarrativeEditor, narrativeeditmodal::NarrativeEditModal,
+        versedelete::DeletionTarget,
+    },
+    nvcore::{
+        decosutils::{bordered_block, center_area},
+        narraverse::{Narraverse, NarraverseState},
+    },
 };
 
 pub fn render_narrative_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {

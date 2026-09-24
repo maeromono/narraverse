@@ -15,15 +15,13 @@ impl Default for NarraverseVerses {
     }
 }
 
-#[derive(Clone)]
-#[derive(Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Verse {
     pub name: String,
     pub narratives: Vec<Narrative>,
 }
 
-#[derive(Clone)]
-#[derive(Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Narrative {
     pub title: String,
     pub narrative: String,

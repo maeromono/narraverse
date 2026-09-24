@@ -7,7 +7,10 @@ use ratatui::{
 };
 use ratatui_textarea::{TextArea, WrapMode};
 
-use crate::nvcore::{narraverse::{Narraverse, NarraverseState}, save::save_verses};
+use crate::nvcore::{
+    narraverse::{Narraverse, NarraverseState},
+    save::save_verses,
+};
 
 pub struct NarrativeEditor {
     pub currently_editing: usize,
@@ -85,7 +88,10 @@ fn save_narrative(nv: &mut Narraverse) {
     let Some(verse) = nv.verses.verses.get_mut(nv.verses.verse_index) else {
         return;
     };
-    let Some(narrative) = verse.narratives.get_mut(nv.narrative_editor.currently_editing) else {
+    let Some(narrative) = verse
+        .narratives
+        .get_mut(nv.narrative_editor.currently_editing)
+    else {
         return;
     };
     narrative.narrative = nv.narrative_editor.textarea.lines().join("\n");

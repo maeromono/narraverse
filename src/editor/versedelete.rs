@@ -110,7 +110,9 @@ fn confirm_delete(nv: &mut Narraverse) {
                 nv.state = NarraverseState::NewNarrative;
             } else if narrative_index >= verse.narratives.len() {
                 narrative_index -= 1;
-                nv.list_states.verse_narrative_pick_liststate.select(Some(narrative_index));
+                nv.list_states
+                    .verse_narrative_pick_liststate
+                    .select(Some(narrative_index));
                 nv.state = NarraverseState::NarrativePick;
             } else {
                 nv.state = NarraverseState::NarrativePick;

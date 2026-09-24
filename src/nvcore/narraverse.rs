@@ -10,8 +10,18 @@ use ratatui::{
 
 use crate::{
     editor::{
-        narrativeedit::{self, NarrativeEditor, render_narrative_editor}, narrativeeditmodal::{self, NarrativeEditModal, render_narrative_edit_modal}, verseareapick::{self, render_area_pick}, versedelete::{self, DeletionTarget, render_delete_screen}, verseedit::{self, VerseEdit, render_verse_edit}, versenarrativepick::{self, render_narrative_pick}, versepick::{self, render_worldpick}
-    }, nvcore::{narraversemain::{render_footer, render_header}, verses::NarraverseVerses}
+        narrativeedit::{self, NarrativeEditor, render_narrative_editor},
+        narrativeeditmodal::{self, NarrativeEditModal, render_narrative_edit_modal},
+        verseareapick::{self, render_area_pick},
+        versedelete::{self, DeletionTarget, render_delete_screen},
+        verseedit::{self, VerseEdit, render_verse_edit},
+        versenarrativepick::{self, render_narrative_pick},
+        versepick::{self, render_worldpick},
+    },
+    nvcore::{
+        narraversemain::{render_footer, render_header},
+        verses::NarraverseVerses,
+    },
 };
 
 pub struct Narraverse {
@@ -76,7 +86,9 @@ impl Narraverse {
             NarraverseState::VerseEdit => render_verse_edit(self, frame, main_layout[1]),
             NarraverseState::VerseAreaPick => render_area_pick(self, frame, main_layout[1]),
             NarraverseState::NarrativePick => render_narrative_pick(self, frame, main_layout[1]),
-            NarraverseState::NewNarrative => render_narrative_edit_modal(self, frame, main_layout[1]),
+            NarraverseState::NewNarrative => {
+                render_narrative_edit_modal(self, frame, main_layout[1])
+            }
             NarraverseState::NarrativeEdit => render_narrative_editor(self, frame, main_layout[1]),
             NarraverseState::VerseDelete => render_delete_screen(self, frame, main_layout[1]),
             _ => todo!(),

@@ -7,9 +7,11 @@ use ratatui::{
 };
 
 use crate::{
-    editor::{versedelete::DeletionTarget, verseedit::VerseEdit}, nvcore::{
-        decosutils::{bordered_block, center_area}, narraverse::{Narraverse, NarraverseState}
-    }
+    editor::{versedelete::DeletionTarget, verseedit::VerseEdit},
+    nvcore::{
+        decosutils::{bordered_block, center_area},
+        narraverse::{Narraverse, NarraverseState},
+    },
 };
 
 pub fn render_worldpick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
@@ -40,9 +42,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
         }
         KeyCode::Char('e') => {
             nv.verses.verse_index = nv.list_states.verse_pick_liststate.selected().unwrap();
-            let Some(verse_edit) =
-                VerseEdit::edit(nv, nv.verses.verse_index)
-            else {
+            let Some(verse_edit) = VerseEdit::edit(nv, nv.verses.verse_index) else {
                 return;
             };
             nv.verse_editor = verse_edit;

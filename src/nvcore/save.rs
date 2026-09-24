@@ -1,5 +1,7 @@
 use std::{
-    fs::{File, create_dir_all, read_to_string, rename}, io::{Error, ErrorKind, Result, Write}, path::PathBuf
+    fs::{File, create_dir_all, read_to_string, rename},
+    io::{Error, ErrorKind, Result, Write},
+    path::PathBuf,
 };
 
 use directories::ProjectDirs;

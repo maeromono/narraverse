@@ -7,8 +7,8 @@ use ratatui::{
 };
 
 use crate::nvcore::{
-    narraverse::{Narraverse, NarraverseState},
     decosutils::{bordered_block, center_area},
+    narraverse::{Narraverse, NarraverseState},
 };
 
 pub fn render_area_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {

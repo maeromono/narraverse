@@ -1,8 +1,18 @@
 use crossterm::event::{KeyCode, KeyEvent};
-use ratatui::{Frame, layout::{Constraint, Direction, Layout, Rect}, style::{Color, Style}, widgets::Paragraph};
+use ratatui::{
+    Frame,
+    layout::{Constraint, Direction, Layout, Rect},
+    style::{Color, Style},
+    widgets::Paragraph,
+};
 use ratatui_textarea::TextArea;
 
-use crate::nvcore::{narraverse::{Narraverse, NarraverseState}, decosutils::center_area, save::save_verses, verses::Verse};
+use crate::nvcore::{
+    decosutils::center_area,
+    narraverse::{Narraverse, NarraverseState},
+    save::save_verses,
+    verses::Verse,
+};
 
 pub struct VerseEdit {
     mode: VerseEditMode,
@@ -40,9 +50,11 @@ pub fn render_verse_edit(nv: &Narraverse, frame: &mut Frame, area: Rect) {
     } else {
         (Direction::Vertical, Constraint::Length(2))
     };
-    let ve_layout = Layout::vertical([vert_constraint;1]) // bcuz more coming soon
+    let ve_layout = Layout::vertical([vert_constraint; 1]) // bcuz more coming soon
         .split(center_area(area));
-    let field_layout = Layout::default().direction(direction).constraints([Constraint::Fill(1), Constraint::Fill(2)]);
+    let field_layout = Layout::default()
+        .direction(direction)
+        .constraints([Constraint::Fill(1), Constraint::Fill(2)]);
     let name_field_layout = field_layout.clone().split(ve_layout[0]);
     frame.render_widget(Paragraph::new("Verse name"), name_field_layout[0]);
     frame.render_widget(&nv.verse_editor.verse_name_textarea, name_field_layout[1]);
@@ -83,7 +95,7 @@ fn confirm_edit(nv: &mut Narraverse) {
         VerseEditMode::New => {
             nv.verses.verses.push(Verse {
                 name: nv.verse_editor.verse_name_textarea.lines()[0].clone(),
-                narratives: vec![]
+                narratives: vec![],
             });
             nv.state = NarraverseState::VersePick;
         }

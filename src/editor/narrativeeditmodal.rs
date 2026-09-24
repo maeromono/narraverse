@@ -8,8 +8,8 @@ use ratatui::{
 use ratatui_textarea::TextArea;
 
 use crate::nvcore::{
-    narraverse::{Narraverse, NarraverseState},
     decosutils::center_area,
+    narraverse::{Narraverse, NarraverseState},
     save::save_verses,
     verses::Narrative,
 };
@@ -102,9 +102,10 @@ fn confirm_edit(nv: &mut Narraverse) {
         NarrativeEditModalMode::New => {
             verse.narratives.push(Narrative {
                 title: nv.narrative_edit_modal.narrative_name_textarea.lines()[0].clone(),
-                narrative: String::new()
+                narrative: String::new(),
             });
-            nv.list_states.verse_narrative_pick_liststate = ListState::default().with_selected(Some(0));
+            nv.list_states.verse_narrative_pick_liststate =
+                ListState::default().with_selected(Some(0));
             nv.list_states.verse_narrative_pick_liststate.select_last();
             nv.state = NarraverseState::NarrativePick;
         }

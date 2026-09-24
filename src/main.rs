@@ -1,11 +1,17 @@
-mod nvcore;
 mod editor;
+mod nvcore;
 
 use std::process::exit;
 
 use ratatui::run;
 
-use crate::{editor::verseedit::VerseEdit, nvcore::{narraverse::{Narraverse, NarraverseState}, save::load_verses}};
+use crate::{
+    editor::verseedit::VerseEdit,
+    nvcore::{
+        narraverse::{Narraverse, NarraverseState},
+        save::load_verses,
+    },
+};
 
 fn main() {
     let mut nv = Narraverse::default();
