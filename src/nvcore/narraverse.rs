@@ -19,8 +19,7 @@ use crate::{
         versepick::{self, render_worldpick},
     },
     nvcore::{
-        narraversemain::{render_footer, render_header},
-        verses::NarraverseVerses,
+        error::{self, render_error_screen}, narraversemain::{render_footer, render_header}, verses::NarraverseVerses
     },
 };
 
@@ -33,9 +32,10 @@ pub struct Narraverse {
     pub narrative_edit_modal: NarrativeEditModal,
     pub narrative_editor: NarrativeEditor,
     pub deletion_target: DeletionTarget,
+    pub errors: (Vec<String>, ListState, NarraverseState),
 }
 
-#[derive(PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq)]
 pub enum NarraverseState {
     VersePick,
     VerseEdit,
@@ -44,9 +44,8 @@ pub enum NarraverseState {
     NewNarrative,
     NarrativeEdit,
     EntityPick,
-    NewEntity,
-    EntityEdit,
     VerseDelete,
+    Error,
     Quit,
 }
 
@@ -91,6 +90,7 @@ impl Narraverse {
             }
             NarraverseState::NarrativeEdit => render_narrative_editor(self, frame, main_layout[1]),
             NarraverseState::VerseDelete => render_delete_screen(self, frame, main_layout[1]),
+            NarraverseState::Error => render_error_screen(self, frame, main_layout[1]),
             _ => todo!(),
         }
         render_header(self, frame, main_layout[0]);
@@ -106,8 +106,15 @@ impl Narraverse {
             NarraverseState::NewNarrative => narrativeeditmodal::handle_keys(self, key),
             NarraverseState::NarrativeEdit => narrativeedit::handle_keys(self, key),
             NarraverseState::VerseDelete => versedelete::handle_keys(self, key),
+            NarraverseState::Error => error::handle_keys(self, key),
             _ => {}
         }
+    }
+
+    pub fn send_error(&mut self, message: String, state_to_jump: NarraverseState) {
+        self.errors.0.push(message);
+        self.errors.2 = state_to_jump;
+        self.state = NarraverseState::Error;
     }
 }
 
@@ -122,6 +129,7 @@ impl Default for Narraverse {
             narrative_edit_modal: NarrativeEditModal::default(),
             narrative_editor: NarrativeEditor::default(),
             deletion_target: DeletionTarget::Verse,
+            errors: (vec![], ListState::default().with_selected(Some(0)), NarraverseState::VersePick)
         }
     }
 }

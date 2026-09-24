@@ -119,5 +119,7 @@ fn confirm_delete(nv: &mut Narraverse) {
             }
         }
     }
-    save_verses(&nv.verses);
+    if let Err(err) = save_verses(&nv.verses) {
+        nv.send_error(format!("Cannot finalize deletion:\n{}", err), NarraverseState::VersePick);
+    }
 }

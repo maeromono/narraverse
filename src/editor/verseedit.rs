@@ -108,7 +108,9 @@ fn confirm_edit(nv: &mut Narraverse) {
             nv.state = NarraverseState::VersePick;
         }
     }
-    save_verses(&nv.verses);
+    if let Err(err) = save_verses(&nv.verses) {
+        nv.send_error(format!("Cannot confirm edit:\n{}", err), NarraverseState::VersePick);
+    }
     reset_textareas(nv);
 }
 

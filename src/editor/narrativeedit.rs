@@ -95,5 +95,7 @@ fn save_narrative(nv: &mut Narraverse) {
         return;
     };
     narrative.narrative = nv.narrative_editor.textarea.lines().join("\n");
-    save_verses(&nv.verses);
+    if let Err(err) = save_verses(&nv.verses) {
+        nv.send_error(format!("Cannot save the narrative:\n{}", err), NarraverseState::NarrativeEdit);
+    }
 }
