@@ -1,3 +1,4 @@
+pub mod delete;
 pub mod narrativeedit;
 pub mod narrativeeditmodal;
 pub mod verseareapick;
