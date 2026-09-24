@@ -1,4 +1,3 @@
-# !!! WORK IN PROGRESS ALERT !!!
 <strong>WORK IN PROGRESS ALERT: Only world creation/modification and narrative editing is available right now. It panics on other states with "not yet implemented". There're expected breaking changes in later updates.</strong> I forgot I'm making it for myself, so why'd I put this warning to begin with?
 
 # narraverse
