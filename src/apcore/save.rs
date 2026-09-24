@@ -10,7 +10,7 @@ use crate::apcore::verses::ApVerseVerses;
 fn save_path(file: &str) -> Result<PathBuf> {
     let dirs = ProjectDirs::from("org.neocities", "enmkdev", "apverse")
         .ok_or_else(|| Error::new(ErrorKind::NotFound, "cannot locate data directory"))?;
-    Ok(dirs.data_dir().join(file).join("verse.toml"))
+    Ok(dirs.data_dir().join(format!("{}.toml", file)))
 }
 
 pub fn save_verses(av: &ApVerseVerses) -> Result<()> {
