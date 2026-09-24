@@ -7,52 +7,52 @@ use ratatui::{
 };
 
 use crate::{
-    apcore::{
-        apverse::{ApVerse, ApVerseState},
+    nvcore::{
+        narraverse::{Narraverse, NarraverseState},
         decosutils::{bordered_block, center_area},
     },
     editor::verseedit::VerseEdit,
 };
 
-pub fn render_worldpick(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
+pub fn render_worldpick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     let mut verse_list: Vec<String> = vec![];
-    if av.verses.verses.len() == 0 {
+    if nv.verses.verses.len() == 0 {
         frame.render_widget(Paragraph::new("No verses").red().bold(), area);
         return;
     }
-    for verse in &av.verses.verses {
+    for verse in &nv.verses.verses {
         verse_list.push(format!("Verse: {}", verse.name));
     }
     let list = List::new(verse_list).highlight_style(Modifier::REVERSED);
     frame.render_stateful_widget(
         list.block(bordered_block("Pick a 'Verse:")),
         center_area(area),
-        &mut av.list_states.verse_pick_liststate,
+        &mut nv.list_states.verse_pick_liststate,
     );
 }
 
-pub fn handle_keys(av: &mut ApVerse, key: &KeyEvent) {
+pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
-        KeyCode::Char('q') => av.state = ApVerseState::Quit,
-        KeyCode::Char('j') | KeyCode::Down => av.list_states.verse_pick_liststate.select_next(),
-        KeyCode::Char('k') | KeyCode::Up => av.list_states.verse_pick_liststate.select_previous(),
+        KeyCode::Char('q') => nv.state = NarraverseState::Quit,
+        KeyCode::Char('j') | KeyCode::Down => nv.list_states.verse_pick_liststate.select_next(),
+        KeyCode::Char('k') | KeyCode::Up => nv.list_states.verse_pick_liststate.select_previous(),
         KeyCode::Enter => {
-            av.verses.verse_index = av.list_states.verse_pick_liststate.selected().unwrap();
-            av.state = ApVerseState::VerseAreaPick;
+            nv.verses.verse_index = nv.list_states.verse_pick_liststate.selected().unwrap();
+            nv.state = NarraverseState::VerseAreaPick;
         }
         KeyCode::Char('e') => {
-            av.verses.verse_index = av.list_states.verse_pick_liststate.selected().unwrap();
+            nv.verses.verse_index = nv.list_states.verse_pick_liststate.selected().unwrap();
             let Some(verse_edit) =
-                VerseEdit::edit(av, av.verses.verse_index)
+                VerseEdit::edit(nv, nv.verses.verse_index)
             else {
                 return;
             };
-            av.verse_editor = verse_edit;
-            av.state = ApVerseState::VerseEdit;
+            nv.verse_editor = verse_edit;
+            nv.state = NarraverseState::VerseEdit;
         }
         KeyCode::Char('n') => {
-            av.verse_editor = VerseEdit::default();
-            av.state = ApVerseState::VerseEdit;
+            nv.verse_editor = VerseEdit::default();
+            nv.state = NarraverseState::VerseEdit;
         }
         _ => {}
     }

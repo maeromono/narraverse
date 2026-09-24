@@ -1,7 +1,15 @@
 [package]
-name = "apverse"
+name = "narraverse"
 version = "0.1.0"
+authors = ["EnmakaiDev"]
 edition = "2024"
+license = "GPL-3.0"
+description = "A no-BS TUI for worldbuilding."
+repository = "https://codeberg.org/enmkdev/narraverse"
+homepage = "https://enmkdev.neocities.org/projects/narraverse/"
+readme = "README.md"
+keywords = ["tui", "worldbuilding", "creative"]
+categories = ["command-line-interface", "command-line-utilities"]
 
 [dependencies]
 crossterm = "0.29.0"
@@ -10,3 +18,9 @@ ratatui = "0.30.2"
 ratatui-textarea = "0.9.2"
 serde = { version = "1.0.229", features = ["serde_derive"] }
 toml = "1.1.6"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+strip = "symbols"

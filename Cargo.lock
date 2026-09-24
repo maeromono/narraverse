@@ -33,18 +33,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "apverse"
-version = "0.1.0"
-dependencies = [
- "crossterm",
- "directories",
- "ratatui",
- "ratatui-textarea",
- "serde",
- "toml",
-]
-
-[[package]]
 name = "atomic"
 version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -700,6 +688,18 @@ dependencies = [
  "log",
  "wasi",
  "windows-sys",
+]
+
+[[package]]
+name = "narraverse"
+version = "0.1.0"
+dependencies = [
+ "crossterm",
+ "directories",
+ "ratatui",
+ "ratatui-textarea",
+ "serde",
+ "toml",
 ]
 
 [[package]]

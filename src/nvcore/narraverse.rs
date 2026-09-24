@@ -9,24 +9,24 @@ use ratatui::{
 };
 
 use crate::{
-    apcore::{apversemain::{render_footer, render_header}, verses::ApVerseVerses},
+    nvcore::{narraversemain::{render_footer, render_header}, verses::NarraverseVerses},
     editor::{
         narrativeedit::{self, NarrativeEditor, render_narrative_editor}, narrativeeditmodal::{self, NarrativeEditModal, render_narrative_edit_modal}, verseareapick::{self, render_area_pick}, verseedit::{self, VerseEdit, render_verse_edit}, versenarrativepick::{self, render_narrative_pick}, versepick::{self, render_worldpick}
     },
 };
 
-pub struct ApVerse {
-    pub state: ApVerseState,
-    pub verses: ApVerseVerses,
+pub struct Narraverse {
+    pub state: NarraverseState,
+    pub verses: NarraverseVerses,
     pub cached_verse_name: String,
-    pub list_states: ApVerseListStates,
+    pub list_states: NarraverseListStates,
     pub verse_editor: VerseEdit,
     pub narrative_edit_modal: NarrativeEditModal,
     pub narrative_editor: NarrativeEditor,
 }
 
 #[derive(PartialEq, Eq)]
-pub enum ApVerseState {
+pub enum NarraverseState {
     VersePick,
     VerseEdit,
     VerseAreaPick,
@@ -40,9 +40,9 @@ pub enum ApVerseState {
     Quit,
 }
 
-impl ApVerse {
+impl Narraverse {
     pub fn run(&mut self, term: &mut DefaultTerminal) -> Result<()> {
-        while self.state != ApVerseState::Quit {
+        while self.state != NarraverseState::Quit {
             term.draw(|frame| self.render(frame))?;
             match event::read()? {
                 Event::Key(key) if key.kind == KeyEventKind::Press => self.handle_keys(&key),
@@ -72,12 +72,12 @@ impl ApVerse {
         ])
         .split(area.centered_horizontally(Constraint::Max(100)));
         match self.state {
-            ApVerseState::VersePick => render_worldpick(self, frame, main_layout[1]),
-            ApVerseState::VerseEdit => render_verse_edit(self, frame, main_layout[1]),
-            ApVerseState::VerseAreaPick => render_area_pick(self, frame, main_layout[1]),
-            ApVerseState::NarrativePick => render_narrative_pick(self, frame, main_layout[1]),
-            ApVerseState::NewNarrative => render_narrative_edit_modal(self, frame, main_layout[1]),
-            ApVerseState::NarrativeEdit => render_narrative_editor(self, frame, main_layout[1]),
+            NarraverseState::VersePick => render_worldpick(self, frame, main_layout[1]),
+            NarraverseState::VerseEdit => render_verse_edit(self, frame, main_layout[1]),
+            NarraverseState::VerseAreaPick => render_area_pick(self, frame, main_layout[1]),
+            NarraverseState::NarrativePick => render_narrative_pick(self, frame, main_layout[1]),
+            NarraverseState::NewNarrative => render_narrative_edit_modal(self, frame, main_layout[1]),
+            NarraverseState::NarrativeEdit => render_narrative_editor(self, frame, main_layout[1]),
             _ => todo!(),
         }
         render_header(self, frame, main_layout[0]);
@@ -86,24 +86,24 @@ impl ApVerse {
 
     fn handle_keys(&mut self, key: &KeyEvent) {
         match self.state {
-            ApVerseState::VersePick => versepick::handle_keys(self, key),
-            ApVerseState::VerseEdit => verseedit::handle_keys(self, key),
-            ApVerseState::VerseAreaPick => verseareapick::handle_keys(self, key),
-            ApVerseState::NarrativePick => versenarrativepick::handle_keys(self, key),
-            ApVerseState::NewNarrative => narrativeeditmodal::handle_keys(self, key),
-            ApVerseState::NarrativeEdit => narrativeedit::handle_keys(self, key),
+            NarraverseState::VersePick => versepick::handle_keys(self, key),
+            NarraverseState::VerseEdit => verseedit::handle_keys(self, key),
+            NarraverseState::VerseAreaPick => verseareapick::handle_keys(self, key),
+            NarraverseState::NarrativePick => versenarrativepick::handle_keys(self, key),
+            NarraverseState::NewNarrative => narrativeeditmodal::handle_keys(self, key),
+            NarraverseState::NarrativeEdit => narrativeedit::handle_keys(self, key),
             _ => {}
         }
     }
 }
 
-impl Default for ApVerse {
+impl Default for Narraverse {
     fn default() -> Self {
         Self {
-            state: ApVerseState::VersePick,
-            verses: ApVerseVerses::default(),
+            state: NarraverseState::VersePick,
+            verses: NarraverseVerses::default(),
             cached_verse_name: String::from("enmkdev.neocities.org"),
-            list_states: ApVerseListStates::default(),
+            list_states: NarraverseListStates::default(),
             verse_editor: VerseEdit::default(),
             narrative_edit_modal: NarrativeEditModal::default(),
             narrative_editor: NarrativeEditor::default(),
@@ -111,13 +111,13 @@ impl Default for ApVerse {
     }
 }
 
-pub struct ApVerseListStates {
+pub struct NarraverseListStates {
     pub verse_pick_liststate: ListState,
     pub verse_area_pick_liststate: ListState,
     pub verse_narrative_pick_liststate: ListState,
 }
 
-impl Default for ApVerseListStates {
+impl Default for NarraverseListStates {
     fn default() -> Self {
         let ls = ListState::default().with_selected(Some(0));
         Self {

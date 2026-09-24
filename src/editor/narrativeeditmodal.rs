@@ -7,8 +7,8 @@ use ratatui::{
 };
 use ratatui_textarea::TextArea;
 
-use crate::apcore::{
-    apverse::{ApVerse, ApVerseState},
+use crate::nvcore::{
+    narraverse::{Narraverse, NarraverseState},
     decosutils::center_area,
     save::save_verses,
     verses::Narrative,
@@ -29,8 +29,8 @@ impl NarrativeEditModal {
         }
     }
 
-    pub fn edit(av: &ApVerse, ind: usize) -> Option<Self> {
-        let verse = av.verses.verses.get(ind)?;
+    pub fn edit(nv: &Narraverse, ind: usize) -> Option<Self> {
+        let verse = nv.verses.verses.get(ind)?;
         Some(Self {
             mode: NarrativeEditModalMode::Existing(ind),
             narrative_name_textarea: TextArea::new(vec![verse.name.clone()]),
@@ -44,7 +44,7 @@ enum NarrativeEditModalMode {
     Existing(usize),
 }
 
-pub fn render_narrative_edit_modal(av: &ApVerse, frame: &mut Frame, area: Rect) {
+pub fn render_narrative_edit_modal(nv: &Narraverse, frame: &mut Frame, area: Rect) {
     let (direction, vert_constraint) = if area.width > 50 {
         (Direction::Horizontal, Constraint::Length(1))
     } else {
@@ -58,22 +58,22 @@ pub fn render_narrative_edit_modal(av: &ApVerse, frame: &mut Frame, area: Rect) 
     let name_field_layout = field_layout.clone().split(ve_layout[0]);
     frame.render_widget(Paragraph::new("Narrative title"), name_field_layout[0]);
     frame.render_widget(
-        &av.narrative_edit_modal.narrative_name_textarea,
+        &nv.narrative_edit_modal.narrative_name_textarea,
         name_field_layout[1],
     );
 }
 
-pub fn handle_keys(av: &mut ApVerse, key: &KeyEvent) {
+pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
         KeyCode::Esc => {
-            av.state = ApVerseState::VersePick;
-            reset_textareas(av);
+            nv.state = NarraverseState::VersePick;
+            reset_textareas(nv);
         }
-        KeyCode::Enter => confirm_edit(av),
+        KeyCode::Enter => confirm_edit(nv),
         _ => {
-            let textarea = &mut av.narrative_edit_modal.narrative_name_textarea;
+            let textarea = &mut nv.narrative_edit_modal.narrative_name_textarea;
             if textarea.input(*key) {
-                av.narrative_edit_modal.narrative_name_valid = validate_name(textarea);
+                nv.narrative_edit_modal.narrative_name_valid = validate_name(textarea);
             }
         }
     }
@@ -90,36 +90,36 @@ fn validate_name(textarea: &mut TextArea) -> bool {
     }
 }
 
-fn confirm_edit(av: &mut ApVerse) {
-    if !av.narrative_edit_modal.narrative_name_valid {
+fn confirm_edit(nv: &mut Narraverse) {
+    if !nv.narrative_edit_modal.narrative_name_valid {
         return;
     }
-    let Some(verse) = av.verses.verses.get_mut(av.verses.verse_index) else {
-        av.state = ApVerseState::VersePick;
+    let Some(verse) = nv.verses.verses.get_mut(nv.verses.verse_index) else {
+        nv.state = NarraverseState::VersePick;
         return;
     };
-    match av.narrative_edit_modal.mode {
+    match nv.narrative_edit_modal.mode {
         NarrativeEditModalMode::New => {
             verse.narratives.push(Narrative {
-                title: av.narrative_edit_modal.narrative_name_textarea.lines()[0].clone(),
+                title: nv.narrative_edit_modal.narrative_name_textarea.lines()[0].clone(),
                 narrative: String::new()
             });
-            av.list_states.verse_narrative_pick_liststate = ListState::default().with_selected(Some(0));
-            av.list_states.verse_narrative_pick_liststate.select_last();
-            av.state = ApVerseState::NarrativePick;
+            nv.list_states.verse_narrative_pick_liststate = ListState::default().with_selected(Some(0));
+            nv.list_states.verse_narrative_pick_liststate.select_last();
+            nv.state = NarraverseState::NarrativePick;
         }
         NarrativeEditModalMode::Existing(index) => {
             let Some(narrative) = verse.narratives.get_mut(index) else {
                 return;
             };
-            narrative.title = av.narrative_edit_modal.narrative_name_textarea.lines()[0].clone();
-            av.state = ApVerseState::NarrativePick;
+            narrative.title = nv.narrative_edit_modal.narrative_name_textarea.lines()[0].clone();
+            nv.state = NarraverseState::NarrativePick;
         }
     }
-    save_verses(&av.verses);
-    reset_textareas(av);
+    save_verses(&nv.verses);
+    reset_textareas(nv);
 }
 
-fn reset_textareas(av: &mut ApVerse) {
-    av.narrative_edit_modal.narrative_name_textarea = TextArea::default();
+fn reset_textareas(nv: &mut Narraverse) {
+    nv.narrative_edit_modal.narrative_name_textarea = TextArea::default();
 }

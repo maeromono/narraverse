@@ -7,7 +7,7 @@ use ratatui::{
 };
 use ratatui_textarea::{TextArea, WrapMode};
 
-use crate::apcore::{apverse::{ApVerse, ApVerseState}, save::save_verses};
+use crate::nvcore::{narraverse::{Narraverse, NarraverseState}, save::save_verses};
 
 pub struct NarrativeEditor {
     pub currently_editing: usize,
@@ -24,11 +24,11 @@ impl Default for NarrativeEditor {
 }
 
 impl NarrativeEditor {
-    pub fn edit(av: &ApVerse, index: usize) -> Self {
-        let Some(narrative) = av
+    pub fn edit(nv: &Narraverse, index: usize) -> Self {
+        let Some(narrative) = nv
             .verses
             .verses
-            .get(av.verses.verse_index)
+            .get(nv.verses.verse_index)
             .unwrap()
             .narratives
             .get(index)
@@ -44,8 +44,8 @@ impl NarrativeEditor {
     }
 }
 
-pub fn render_narrative_editor(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
-    let Some(verse) = av.verses.verses.get(av.verses.verse_index) else {
+pub fn render_narrative_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
+    let Some(verse) = nv.verses.verses.get(nv.verses.verse_index) else {
         frame.render_widget(
             Paragraph::new("No 'Verse at this index.\nHit Esc to pick another one.")
                 .red()
@@ -54,7 +54,7 @@ pub fn render_narrative_editor(av: &mut ApVerse, frame: &mut Frame, area: Rect) 
         );
         return;
     };
-    let Some(narrative) = verse.narratives.get(av.narrative_editor.currently_editing) else {
+    let Some(narrative) = verse.narratives.get(nv.narrative_editor.currently_editing) else {
         frame.render_widget(Paragraph::new("Narrative not found").red().bold(), area);
         return;
     };
@@ -68,26 +68,26 @@ pub fn render_narrative_editor(av: &mut ApVerse, frame: &mut Frame, area: Rect) 
         Paragraph::new(format!("Editing: {}", narrative.title)).bold(),
         editor_layout[0],
     );
-    frame.render_widget(&av.narrative_editor.textarea, editor_layout[1]);
+    frame.render_widget(&nv.narrative_editor.textarea, editor_layout[1]);
 }
 
-pub fn handle_keys(av: &mut ApVerse, key: &KeyEvent) {
+pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match (key.code, key.modifiers) {
-        (KeyCode::Esc, KeyModifiers::NONE) => av.state = ApVerseState::NarrativePick,
-        (KeyCode::Char('w'), KeyModifiers::ALT) => save_narrative(av),
+        (KeyCode::Esc, KeyModifiers::NONE) => nv.state = NarraverseState::NarrativePick,
+        (KeyCode::Char('w'), KeyModifiers::ALT) => save_narrative(nv),
         _ => {
-            av.narrative_editor.textarea.input(*key);
+            nv.narrative_editor.textarea.input(*key);
         }
     }
 }
 
-fn save_narrative(av: &mut ApVerse) {
-    let Some(verse) = av.verses.verses.get_mut(av.verses.verse_index) else {
+fn save_narrative(nv: &mut Narraverse) {
+    let Some(verse) = nv.verses.verses.get_mut(nv.verses.verse_index) else {
         return;
     };
-    let Some(narrative) = verse.narratives.get_mut(av.narrative_editor.currently_editing) else {
+    let Some(narrative) = verse.narratives.get_mut(nv.narrative_editor.currently_editing) else {
         return;
     };
-    narrative.narrative = av.narrative_editor.textarea.lines().join("\n");
-    save_verses(&av.verses);
+    narrative.narrative = nv.narrative_editor.textarea.lines().join("\n");
+    save_verses(&nv.verses);
 }

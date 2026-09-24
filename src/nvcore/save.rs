@@ -5,16 +5,16 @@ use std::{
 use directories::ProjectDirs;
 use toml::{from_str, to_string};
 
-use crate::apcore::verses::ApVerseVerses;
+use crate::nvcore::verses::NarraverseVerses;
 
 fn save_path(file: &str) -> Result<PathBuf> {
-    let dirs = ProjectDirs::from("org.neocities", "enmkdev", "apverse")
+    let dirs = ProjectDirs::from("org.neocities", "enmkdev", "narraverse")
         .ok_or_else(|| Error::new(ErrorKind::NotFound, "cannot locate data directory"))?;
     Ok(dirs.data_dir().join(format!("{}.toml", file)))
 }
 
-pub fn save_verses(av: &ApVerseVerses) -> Result<()> {
-    let path = save_path("apverse")?;
+pub fn save_verses(av: &NarraverseVerses) -> Result<()> {
+    let path = save_path("narraverse")?;
     if let Some(parent) = path.parent() {
         create_dir_all(parent)?;
     }
@@ -27,11 +27,11 @@ pub fn save_verses(av: &ApVerseVerses) -> Result<()> {
     Ok(())
 }
 
-pub fn load_verses() -> Result<ApVerseVerses> {
-    let path = save_path("apverse")?;
+pub fn load_verses() -> Result<NarraverseVerses> {
+    let path = save_path("narraverse")?;
     let contents = match read_to_string(&path) {
         Ok(contents) => contents,
-        Err(err) if err.kind() == ErrorKind::NotFound => return Ok(ApVerseVerses::default()),
+        Err(err) if err.kind() == ErrorKind::NotFound => return Ok(NarraverseVerses::default()),
         Err(err) => return Err(err),
     };
     match from_str(&contents) {

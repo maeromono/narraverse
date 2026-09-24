@@ -1,16 +1,16 @@
-mod apcore;
+mod nvcore;
 mod editor;
 
 use std::process::exit;
 
 use ratatui::run;
 
-use crate::apcore::{apverse::ApVerse, save::load_verses};
+use crate::nvcore::{narraverse::Narraverse, save::load_verses};
 
 fn main() {
-    let mut av = ApVerse::default();
-    av.verses = load_verses().unwrap_or_default();
-    if let Err(err) = run(|term| av.run(term)) {
+    let mut nv = Narraverse::default();
+    nv.verses = load_verses().unwrap_or_default();
+    if let Err(err) = run(|term| nv.run(term)) {
         eprintln!("!! Terminal error: {}", err);
         exit(1);
     }

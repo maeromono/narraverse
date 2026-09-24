@@ -6,13 +6,13 @@ use ratatui::{
     widgets::{List, Paragraph},
 };
 
-use crate::apcore::{
-    apverse::{ApVerse, ApVerseState},
+use crate::nvcore::{
+    narraverse::{Narraverse, NarraverseState},
     decosutils::{bordered_block, center_area},
 };
 
-pub fn render_area_pick(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
-    let Some(verse) = av.verses.verses.get(av.verses.verse_index) else {
+pub fn render_area_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
+    let Some(verse) = nv.verses.verses.get(nv.verses.verse_index) else {
         frame.render_widget(
             Paragraph::new("No 'Verse at this index.\nHit Esc to pick another one.")
                 .red()
@@ -21,8 +21,8 @@ pub fn render_area_pick(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
         );
         return;
     };
-    if av.cached_verse_name != verse.name {
-        av.cached_verse_name = verse.name.clone();
+    if nv.cached_verse_name != verse.name {
+        nv.cached_verse_name = verse.name.clone();
     }
     let list = List::new(vec![
         "Narrative",
@@ -35,23 +35,23 @@ pub fn render_area_pick(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
     frame.render_stateful_widget(
         list.block(bordered_block("Select area to edit:")),
         center_area(area),
-        &mut av.list_states.verse_area_pick_liststate,
+        &mut nv.list_states.verse_area_pick_liststate,
     );
 }
 
-pub fn handle_keys(av: &mut ApVerse, key: &KeyEvent) {
+pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
-        KeyCode::Esc => av.state = ApVerseState::VersePick,
+        KeyCode::Esc => nv.state = NarraverseState::VersePick,
         KeyCode::Char('j') | KeyCode::Down => {
-            av.list_states.verse_area_pick_liststate.select_next()
+            nv.list_states.verse_area_pick_liststate.select_next()
         }
         KeyCode::Char('k') | KeyCode::Up => {
-            av.list_states.verse_area_pick_liststate.select_previous()
+            nv.list_states.verse_area_pick_liststate.select_previous()
         }
         KeyCode::Enter => {
-            av.state = match av.list_states.verse_area_pick_liststate.selected().unwrap() {
-                0 => ApVerseState::NarrativePick,
-                1 => ApVerseState::EntityPick,
+            nv.state = match nv.list_states.verse_area_pick_liststate.selected().unwrap() {
+                0 => NarraverseState::NarrativePick,
+                1 => NarraverseState::EntityPick,
                 _ => todo!(),
             }
         }

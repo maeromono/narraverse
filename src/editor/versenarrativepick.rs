@@ -7,15 +7,15 @@ use ratatui::{
 };
 
 use crate::{
-    apcore::{
-        apverse::{ApVerse, ApVerseState},
+    nvcore::{
+        narraverse::{Narraverse, NarraverseState},
         decosutils::{bordered_block, center_area},
     },
     editor::{narrativeedit::NarrativeEditor, narrativeeditmodal::NarrativeEditModal},
 };
 
-pub fn render_narrative_pick(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
-    let Some(verse) = av.verses.verses.get(av.verses.verse_index) else {
+pub fn render_narrative_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
+    let Some(verse) = nv.verses.verses.get(nv.verses.verse_index) else {
         frame.render_widget(
             Paragraph::new("No 'Verse at this index.\nHit Esc to pick another one.")
                 .red()
@@ -34,44 +34,44 @@ pub fn render_narrative_pick(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
     frame.render_stateful_widget(
         list,
         center_area(area),
-        &mut av.list_states.verse_narrative_pick_liststate,
+        &mut nv.list_states.verse_narrative_pick_liststate,
     );
 }
 
-pub fn handle_keys(av: &mut ApVerse, key: &KeyEvent) {
+pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
-        KeyCode::Esc => av.state = ApVerseState::VerseAreaPick,
+        KeyCode::Esc => nv.state = NarraverseState::VerseAreaPick,
         KeyCode::Char('j') | KeyCode::Down => {
-            av.list_states.verse_narrative_pick_liststate.select_next()
+            nv.list_states.verse_narrative_pick_liststate.select_next()
         }
-        KeyCode::Char('k') | KeyCode::Up => av
+        KeyCode::Char('k') | KeyCode::Up => nv
             .list_states
             .verse_narrative_pick_liststate
             .select_previous(),
         KeyCode::Enter => {
-            let index = av
+            let index = nv
                 .list_states
                 .verse_narrative_pick_liststate
                 .selected()
                 .unwrap();
-            av.narrative_editor = NarrativeEditor::edit(av, index);
-            av.state = ApVerseState::NarrativeEdit;
+            nv.narrative_editor = NarrativeEditor::edit(nv, index);
+            nv.state = NarraverseState::NarrativeEdit;
         }
         KeyCode::Char('n') => {
-            av.narrative_edit_modal = NarrativeEditModal::default();
-            av.state = ApVerseState::NewNarrative;
+            nv.narrative_edit_modal = NarrativeEditModal::default();
+            nv.state = NarraverseState::NewNarrative;
         }
         KeyCode::Char('r') => {
-            let index = av
+            let index = nv
                 .list_states
                 .verse_narrative_pick_liststate
                 .selected()
                 .unwrap();
-            let Some(modal) = NarrativeEditModal::edit(av, index) else {
+            let Some(modal) = NarrativeEditModal::edit(nv, index) else {
                 return;
             };
-            av.narrative_edit_modal = modal;
-            av.state = ApVerseState::NewNarrative;
+            nv.narrative_edit_modal = modal;
+            nv.state = NarraverseState::NewNarrative;
         }
         _ => {}
     }
