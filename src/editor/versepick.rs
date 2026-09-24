@@ -6,9 +6,12 @@ use ratatui::{
     widgets::{List, Paragraph},
 };
 
-use crate::apcore::{
-    apverse::{ApVerse, ApVerseState},
-    decosutils::{bordered_block, center_area},
+use crate::{
+    apcore::{
+        apverse::{ApVerse, ApVerseState},
+        decosutils::{bordered_block, center_area},
+    },
+    editor::verseedit::VerseEdit,
 };
 
 pub fn render_worldpick(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
@@ -36,6 +39,20 @@ pub fn handle_keys(av: &mut ApVerse, key: &KeyEvent) {
         KeyCode::Enter => {
             av.verses.verse_index = av.list_states.verse_pick_liststate.selected().unwrap();
             av.state = ApVerseState::VerseAreaPick;
+        }
+        KeyCode::Char('e') => {
+            av.verses.verse_index = av.list_states.verse_pick_liststate.selected().unwrap();
+            let Some(verse_edit) =
+                VerseEdit::edit(av, av.verses.verse_index)
+            else {
+                return;
+            };
+            av.verse_editor = verse_edit;
+            av.state = ApVerseState::VerseEdit;
+        }
+        KeyCode::Char('n') => {
+            av.verse_editor = VerseEdit::default();
+            av.state = ApVerseState::VerseEdit;
         }
         _ => {}
     }

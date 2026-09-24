@@ -11,10 +11,7 @@ use ratatui::{
 use crate::{
     apcore::{apversemain::{render_footer, render_header}, verses::ApVerseVerses},
     editor::{
-        narrativeedit::{self, NarrativeEditor, render_narrative_editor},
-        verseareapick::{self, render_area_pick},
-        versenarrativepick::{self, render_narrative_pick},
-        versepick::{self, render_worldpick},
+        narrativeedit::{self, NarrativeEditor, render_narrative_editor}, verseareapick::{self, render_area_pick}, verseedit::{self, VerseEdit, render_verse_edit}, versenarrativepick::{self, render_narrative_pick}, versepick::{self, render_worldpick}
     },
 };
 
@@ -23,12 +20,14 @@ pub struct ApVerse {
     pub verses: ApVerseVerses,
     pub cached_verse_name: String,
     pub list_states: ApVerseListStates,
+    pub verse_editor: VerseEdit,
     pub narrative_editor: NarrativeEditor,
 }
 
 #[derive(PartialEq, Eq)]
 pub enum ApVerseState {
     VersePick,
+    VerseEdit,
     VerseAreaPick,
     NarrativePick,
     NewNarrative,
@@ -73,6 +72,7 @@ impl ApVerse {
         .split(area.centered_horizontally(Constraint::Max(100)));
         match self.state {
             ApVerseState::VersePick => render_worldpick(self, frame, main_layout[1]),
+            ApVerseState::VerseEdit => render_verse_edit(self, frame, main_layout[1]),
             ApVerseState::VerseAreaPick => render_area_pick(self, frame, main_layout[1]),
             ApVerseState::NarrativePick => render_narrative_pick(self, frame, main_layout[1]),
             ApVerseState::NarrativeEdit => render_narrative_editor(self, frame, main_layout[1]),
@@ -85,6 +85,7 @@ impl ApVerse {
     fn handle_keys(&mut self, key: &KeyEvent) {
         match self.state {
             ApVerseState::VersePick => versepick::handle_keys(self, key),
+            ApVerseState::VerseEdit => verseedit::handle_keys(self, key),
             ApVerseState::VerseAreaPick => verseareapick::handle_keys(self, key),
             ApVerseState::NarrativePick => versenarrativepick::handle_keys(self, key),
             ApVerseState::NarrativeEdit => narrativeedit::handle_keys(self, key),
@@ -100,6 +101,7 @@ impl Default for ApVerse {
             verses: ApVerseVerses::default(),
             cached_verse_name: String::from("enmkdev.neocities.org"),
             list_states: ApVerseListStates::default(),
+            verse_editor: VerseEdit::default(),
             narrative_editor: NarrativeEditor::default(),
         }
     }
