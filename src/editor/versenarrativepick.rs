@@ -27,6 +27,11 @@ pub fn render_narrative_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect)
         );
         return;
     };
+    if verse.narratives.len() == 0 {
+        nv.narrative_edit_modal = NarrativeEditModal::default();
+        nv.state = NarraverseState::NewNarrative;
+        return;
+    }
     let mut narrative_list: Vec<String> = vec![];
     for narr in &verse.narratives {
         narrative_list.push(narr.title.clone());
