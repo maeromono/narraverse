@@ -7,11 +7,9 @@ use ratatui::{
 };
 
 use crate::{
-    nvcore::{
-        narraverse::{Narraverse, NarraverseState},
-        decosutils::{bordered_block, center_area},
-    },
-    editor::verseedit::VerseEdit,
+    editor::{versedelete::DeletionTarget, verseedit::VerseEdit}, nvcore::{
+        decosutils::{bordered_block, center_area}, narraverse::{Narraverse, NarraverseState}
+    }
 };
 
 pub fn render_worldpick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
@@ -56,6 +54,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
         }
         KeyCode::Char('d') => {
             nv.verses.verse_index = nv.list_states.verse_pick_liststate.selected().unwrap();
+            nv.deletion_target = DeletionTarget::Verse;
             nv.state = NarraverseState::VerseDelete;
         }
         _ => {}

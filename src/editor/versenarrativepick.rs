@@ -7,11 +7,9 @@ use ratatui::{
 };
 
 use crate::{
-    nvcore::{
-        narraverse::{Narraverse, NarraverseState},
-        decosutils::{bordered_block, center_area},
-    },
-    editor::{narrativeedit::NarrativeEditor, narrativeeditmodal::NarrativeEditModal},
+    editor::{narrativeedit::NarrativeEditor, narrativeeditmodal::NarrativeEditModal, versedelete::DeletionTarget}, nvcore::{
+        decosutils::{bordered_block, center_area}, narraverse::{Narraverse, NarraverseState}
+    }
 };
 
 pub fn render_narrative_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
@@ -72,6 +70,10 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             };
             nv.narrative_edit_modal = modal;
             nv.state = NarraverseState::NewNarrative;
+        }
+        KeyCode::Char('d') => {
+            nv.deletion_target = DeletionTarget::Narrative;
+            nv.state = NarraverseState::VerseDelete;
         }
         _ => {}
     }

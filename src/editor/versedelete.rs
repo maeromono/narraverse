@@ -1,14 +1,68 @@
 use crossterm::event::{KeyCode, KeyEvent};
-use ratatui::{Frame, layout::Rect, style::Stylize, widgets::{Paragraph, Wrap}};
+use ratatui::{
+    Frame,
+    layout::Rect,
+    style::Stylize,
+    widgets::{Paragraph, Wrap},
+};
 
-use crate::{editor::verseedit::VerseEdit, nvcore::{decosutils::center_area, narraverse::{Narraverse, NarraverseState}, save::save_verses}};
+use crate::{
+    editor::{narrativeeditmodal::NarrativeEditModal, verseedit::VerseEdit},
+    nvcore::{
+        decosutils::center_area,
+        narraverse::{Narraverse, NarraverseState},
+        save::save_verses,
+    },
+};
+
+#[derive(PartialEq, Eq)]
+pub enum DeletionTarget {
+    Verse,
+    Narrative,
+}
 
 pub fn render_delete_screen(nv: &Narraverse, frame: &mut Frame, area: Rect) {
     let Some(verse) = nv.verses.verses.get(nv.verses.verse_index) else {
-        frame.render_widget(Paragraph::new("No Verse at this index.\nHit Esc to cancel.").red().bold(), area);
+        frame.render_widget(
+            Paragraph::new("No Verse at this index.\nHit Esc to cancel.")
+                .red()
+                .bold(),
+            area,
+        );
         return;
     };
-    let delete_confirmation_message = Paragraph::new(format!("Delete Verse \"{}\"?\nAll narrative you've weitten will be permanently erased.", verse.name)).wrap(Wrap{trim:false}).yellow().bold();
+    let delete_confirmation_message: Paragraph;
+    if nv.deletion_target == DeletionTarget::Verse {
+        delete_confirmation_message = Paragraph::new(format!(
+            "Delete Verse \"{}\"?\nAll narrative you've weitten will be permanently erased.",
+            verse.name
+        ))
+        .wrap(Wrap { trim: false })
+        .yellow()
+        .bold();
+    } else {
+        let Some(narrative) = verse.narratives.get(
+            nv.list_states
+                .verse_narrative_pick_liststate
+                .selected()
+                .unwrap(),
+        ) else {
+            frame.render_widget(
+                Paragraph::new("No narrative at this index.\nHit Esc to cancel.")
+                    .red()
+                    .bold(),
+                area,
+            );
+            return;
+        };
+        delete_confirmation_message = Paragraph::new(format!(
+            "Delete narrative \"{}\"?\nYou cannot revert this.",
+            narrative.title
+        ))
+        .wrap(Wrap { trim: false })
+        .yellow()
+        .bold();
+    }
     frame.render_widget(delete_confirmation_message, center_area(area));
 }
 
@@ -25,17 +79,43 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
 }
 
 fn confirm_delete(nv: &mut Narraverse) {
-    let mut verse_index = nv.verses.verse_index;
-    nv.verses.verses.remove(verse_index);
-    if nv.verses.verses.len() == 0 {
-        nv.verse_editor = VerseEdit::default();
-        nv.state = NarraverseState::VerseEdit;
-    } else if verse_index >= nv.verses.verses.len() {
-        verse_index -= 1;
-        nv.verses.verse_index = verse_index;
+    let Some(verse) = nv.verses.verses.get_mut(nv.verses.verse_index) else {
         nv.state = NarraverseState::VersePick;
-    } else {
-        nv.state = NarraverseState::VersePick;
+        return;
+    };
+    match nv.deletion_target {
+        DeletionTarget::Verse => {
+            let mut verse_index = nv.verses.verse_index;
+            nv.verses.verses.remove(verse_index);
+            if nv.verses.verses.len() == 0 {
+                nv.verse_editor = VerseEdit::default();
+                nv.state = NarraverseState::VerseEdit;
+            } else if verse_index >= nv.verses.verses.len() {
+                verse_index -= 1;
+                nv.verses.verse_index = verse_index;
+                nv.state = NarraverseState::VersePick;
+            } else {
+                nv.state = NarraverseState::VersePick;
+            }
+        }
+        DeletionTarget::Narrative => {
+            let mut narrative_index = nv
+                .list_states
+                .verse_narrative_pick_liststate
+                .selected()
+                .unwrap();
+            verse.narratives.remove(narrative_index);
+            if verse.narratives.len() == 0 {
+                nv.narrative_edit_modal = NarrativeEditModal::default();
+                nv.state = NarraverseState::NewNarrative;
+            } else if narrative_index >= verse.narratives.len() {
+                narrative_index -= 1;
+                nv.list_states.verse_narrative_pick_liststate.select(Some(narrative_index));
+                nv.state = NarraverseState::NarrativePick;
+            } else {
+                nv.state = NarraverseState::NarrativePick;
+            }
+        }
     }
     save_verses(&nv.verses);
 }

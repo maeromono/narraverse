@@ -10,7 +10,7 @@ use ratatui::{
 
 use crate::{
     editor::{
-        narrativeedit::{self, NarrativeEditor, render_narrative_editor}, narrativeeditmodal::{self, NarrativeEditModal, render_narrative_edit_modal}, verseareapick::{self, render_area_pick}, versedelete::{self, render_delete_screen}, verseedit::{self, VerseEdit, render_verse_edit}, versenarrativepick::{self, render_narrative_pick}, versepick::{self, render_worldpick}
+        narrativeedit::{self, NarrativeEditor, render_narrative_editor}, narrativeeditmodal::{self, NarrativeEditModal, render_narrative_edit_modal}, verseareapick::{self, render_area_pick}, versedelete::{self, DeletionTarget, render_delete_screen}, verseedit::{self, VerseEdit, render_verse_edit}, versenarrativepick::{self, render_narrative_pick}, versepick::{self, render_worldpick}
     }, nvcore::{narraversemain::{render_footer, render_header}, verses::NarraverseVerses}
 };
 
@@ -22,6 +22,7 @@ pub struct Narraverse {
     pub verse_editor: VerseEdit,
     pub narrative_edit_modal: NarrativeEditModal,
     pub narrative_editor: NarrativeEditor,
+    pub deletion_target: DeletionTarget,
 }
 
 #[derive(PartialEq, Eq)]
@@ -108,6 +109,7 @@ impl Default for Narraverse {
             verse_editor: VerseEdit::default(),
             narrative_edit_modal: NarrativeEditModal::default(),
             narrative_editor: NarrativeEditor::default(),
+            deletion_target: DeletionTarget::Verse,
         }
     }
 }
