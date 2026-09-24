@@ -6,10 +6,10 @@ use ratatui::{
     widgets::{List, Paragraph},
 };
 
-use crate::nvcore::{
-    decosutils::{bordered_block, center_area},
+use crate::{editor::verseedit::VerseEdit, nvcore::{
+    decosutils::{block, center_area},
     narraverse::{Narraverse, NarraverseState},
-};
+}};
 
 pub fn render_area_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     let Some(verse) = nv.verses.verses.get(nv.verses.verse_index) else {
@@ -33,7 +33,7 @@ pub fn render_area_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     ])
     .highlight_style(Modifier::REVERSED);
     frame.render_stateful_widget(
-        list.block(bordered_block("Select area to edit:")),
+        list.block(block("Select area to edit:")),
         center_area(area),
         &mut nv.list_states.verse_area_pick_liststate,
     );
@@ -49,9 +49,14 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             nv.list_states.verse_area_pick_liststate.select_previous()
         }
         KeyCode::Enter => {
+            let Some(verse_edit) = VerseEdit::edit(nv, nv.verses.verse_index) else {
+                return;
+            };
+            nv.verse_editor = verse_edit;
             nv.state = match nv.list_states.verse_area_pick_liststate.selected().unwrap() {
                 0 => NarraverseState::NarrativePick,
                 1 => NarraverseState::EntityPick,
+                4 => NarraverseState::VerseEdit,
                 _ => todo!(),
             }
         }

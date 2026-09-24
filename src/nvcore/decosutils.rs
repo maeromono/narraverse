@@ -1,10 +1,9 @@
 use ratatui::{
-    layout::{Constraint, Rect},
-    widgets::Block,
+    layout::{Constraint, Rect}, style::Modifier, widgets::Block
 };
 
-pub fn bordered_block(title: &str) -> Block<'_> {
-    Block::bordered().title(title)
+pub fn block(title: &str) -> Block<'_> {
+    Block::default().title(title).title_style(Modifier::BOLD)
 }
 
 pub fn center_area(area: Rect) -> Rect {

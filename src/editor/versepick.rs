@@ -9,7 +9,7 @@ use ratatui::{
 use crate::{
     editor::{versedelete::DeletionTarget, verseedit::VerseEdit},
     nvcore::{
-        decosutils::{bordered_block, center_area},
+        decosutils::{block, center_area},
         narraverse::{Narraverse, NarraverseState},
     },
 };
@@ -25,7 +25,7 @@ pub fn render_worldpick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     }
     let list = List::new(verse_list).highlight_style(Modifier::REVERSED);
     frame.render_stateful_widget(
-        list.block(bordered_block("Pick a 'Verse:")),
+        list.block(block("Pick a 'Verse:")),
         center_area(area),
         &mut nv.list_states.verse_pick_liststate,
     );

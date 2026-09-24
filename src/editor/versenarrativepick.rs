@@ -12,7 +12,7 @@ use crate::{
         versedelete::DeletionTarget,
     },
     nvcore::{
-        decosutils::{bordered_block, center_area},
+        decosutils::{block, center_area},
         narraverse::{Narraverse, NarraverseState},
     },
 };
@@ -38,7 +38,7 @@ pub fn render_narrative_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect)
     }
     let list = List::new(narrative_list)
         .highlight_style(Modifier::REVERSED)
-        .block(bordered_block("Pick a narrative:"));
+        .block(block("Pick a narrative:"));
     frame.render_stateful_widget(
         list,
         center_area(area),
