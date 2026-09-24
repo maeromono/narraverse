@@ -54,6 +54,10 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             nv.verse_editor = VerseEdit::default();
             nv.state = NarraverseState::VerseEdit;
         }
+        KeyCode::Char('d') => {
+            nv.verses.verse_index = nv.list_states.verse_pick_liststate.selected().unwrap();
+            nv.state = NarraverseState::VerseDelete;
+        }
         _ => {}
     }
 }

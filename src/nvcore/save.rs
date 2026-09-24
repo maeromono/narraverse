@@ -13,12 +13,12 @@ fn save_path(file: &str) -> Result<PathBuf> {
     Ok(dirs.data_dir().join(format!("{}.toml", file)))
 }
 
-pub fn save_verses(av: &NarraverseVerses) -> Result<()> {
+pub fn save_verses(nv: &NarraverseVerses) -> Result<()> {
     let path = save_path("narraverse")?;
     if let Some(parent) = path.parent() {
         create_dir_all(parent)?;
     }
-    let contents = to_string(av).map_err(|err| Error::new(ErrorKind::InvalidData, err))?;
+    let contents = to_string(nv).map_err(|err| Error::new(ErrorKind::InvalidData, err))?;
     let tmp_path = path.with_extension("tmp");
     let mut tmp = File::create(&tmp_path)?;
     tmp.write_all(contents.as_bytes())?;
