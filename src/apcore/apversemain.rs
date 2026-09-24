@@ -22,9 +22,9 @@ pub fn render_header(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
 pub fn render_footer(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
     let bind_help_string = match av.state {
         ApVerseState::VersePick => "e edit, n new, j/k navigate, Enter select",
-        ApVerseState::VerseAreaPick | ApVerseState::NarrativePick => {
-            "j/k navigate, Enter select"
-        }
+        ApVerseState::VerseEdit | ApVerseState::NewNarrative => "Esc cancel, Enter confirm",
+        ApVerseState::VerseAreaPick => "j/k navigate, Enter select",
+        ApVerseState::NarrativePick => "r rename, n new, j/k navigate, Enter select",
         ApVerseState::NarrativeEdit => "Alt+w save",
         _ => "",
     };

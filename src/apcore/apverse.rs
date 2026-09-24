@@ -11,7 +11,7 @@ use ratatui::{
 use crate::{
     apcore::{apversemain::{render_footer, render_header}, verses::ApVerseVerses},
     editor::{
-        narrativeedit::{self, NarrativeEditor, render_narrative_editor}, verseareapick::{self, render_area_pick}, verseedit::{self, VerseEdit, render_verse_edit}, versenarrativepick::{self, render_narrative_pick}, versepick::{self, render_worldpick}
+        narrativeedit::{self, NarrativeEditor, render_narrative_editor}, narrativeeditmodal::{self, NarrativeEditModal, render_narrative_edit_modal}, verseareapick::{self, render_area_pick}, verseedit::{self, VerseEdit, render_verse_edit}, versenarrativepick::{self, render_narrative_pick}, versepick::{self, render_worldpick}
     },
 };
 
@@ -21,6 +21,7 @@ pub struct ApVerse {
     pub cached_verse_name: String,
     pub list_states: ApVerseListStates,
     pub verse_editor: VerseEdit,
+    pub narrative_edit_modal: NarrativeEditModal,
     pub narrative_editor: NarrativeEditor,
 }
 
@@ -75,6 +76,7 @@ impl ApVerse {
             ApVerseState::VerseEdit => render_verse_edit(self, frame, main_layout[1]),
             ApVerseState::VerseAreaPick => render_area_pick(self, frame, main_layout[1]),
             ApVerseState::NarrativePick => render_narrative_pick(self, frame, main_layout[1]),
+            ApVerseState::NewNarrative => render_narrative_edit_modal(self, frame, main_layout[1]),
             ApVerseState::NarrativeEdit => render_narrative_editor(self, frame, main_layout[1]),
             _ => todo!(),
         }
@@ -88,6 +90,7 @@ impl ApVerse {
             ApVerseState::VerseEdit => verseedit::handle_keys(self, key),
             ApVerseState::VerseAreaPick => verseareapick::handle_keys(self, key),
             ApVerseState::NarrativePick => versenarrativepick::handle_keys(self, key),
+            ApVerseState::NewNarrative => narrativeeditmodal::handle_keys(self, key),
             ApVerseState::NarrativeEdit => narrativeedit::handle_keys(self, key),
             _ => {}
         }
@@ -102,6 +105,7 @@ impl Default for ApVerse {
             cached_verse_name: String::from("enmkdev.neocities.org"),
             list_states: ApVerseListStates::default(),
             verse_editor: VerseEdit::default(),
+            narrative_edit_modal: NarrativeEditModal::default(),
             narrative_editor: NarrativeEditor::default(),
         }
     }

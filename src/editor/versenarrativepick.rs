@@ -11,7 +11,7 @@ use crate::{
         apverse::{ApVerse, ApVerseState},
         decosutils::{bordered_block, center_area},
     },
-    editor::narrativeedit::NarrativeEditor,
+    editor::{narrativeedit::NarrativeEditor, narrativeeditmodal::NarrativeEditModal},
 };
 
 pub fn render_narrative_pick(av: &mut ApVerse, frame: &mut Frame, area: Rect) {
@@ -56,6 +56,22 @@ pub fn handle_keys(av: &mut ApVerse, key: &KeyEvent) {
                 .unwrap();
             av.narrative_editor = NarrativeEditor::edit(av, index);
             av.state = ApVerseState::NarrativeEdit;
+        }
+        KeyCode::Char('n') => {
+            av.narrative_edit_modal = NarrativeEditModal::default();
+            av.state = ApVerseState::NewNarrative;
+        }
+        KeyCode::Char('r') => {
+            let index = av
+                .list_states
+                .verse_narrative_pick_liststate
+                .selected()
+                .unwrap();
+            let Some(modal) = NarrativeEditModal::edit(av, index) else {
+                return;
+            };
+            av.narrative_edit_modal = modal;
+            av.state = ApVerseState::NewNarrative;
         }
         _ => {}
     }
