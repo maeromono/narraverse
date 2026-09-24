@@ -7,7 +7,7 @@ use ratatui::{
 };
 use ratatui_textarea::{TextArea, WrapMode};
 
-use crate::apcore::apverse::{ApVerse, ApVerseState};
+use crate::apcore::{apverse::{ApVerse, ApVerseState}, save::save_verses};
 
 pub struct NarrativeEditor {
     pub currently_editing: usize,
@@ -89,4 +89,5 @@ fn save_narrative(av: &mut ApVerse) {
         return;
     };
     narrative.narrative = av.narrative_editor.textarea.lines().join("\n");
+    save_verses(&av.verses);
 }
