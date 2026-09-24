@@ -26,6 +26,7 @@ pub fn render_footer(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
         NarraverseState::VerseAreaPick => "j/k navigate, Enter select",
         NarraverseState::NarrativePick => "r rename, n new, j/k navigate, Enter select",
         NarraverseState::NarrativeEdit => "Alt+w save",
+        NarraverseState::VerseDelete => "n cancel, y confirm",
         _ => "",
     };
     let bind_help = Paragraph::new(bind_help_string).centered();

@@ -34,7 +34,7 @@ pub fn render_delete_screen(nv: &Narraverse, frame: &mut Frame, area: Rect) {
     let delete_confirmation_message: Paragraph;
     if nv.deletion_target == DeletionTarget::Verse {
         delete_confirmation_message = Paragraph::new(format!(
-            "Delete Verse \"{}\"?\nAll narrative you've weitten will be permanently erased.",
+            "Delete Verse \"{}\"?\nAll narrative you've written will be permanently erased.",
             verse.name
         ))
         .wrap(Wrap { trim: false })
