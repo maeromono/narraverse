@@ -16,11 +16,13 @@ pub fn render_error_screen(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
             .red()
             .bold()
             .wrap(Wrap { trim: false });
-    let error_message_paragraph = Paragraph::new(if let Some(err) = nv.errors.0.clone() {
-        err
-    } else {
-        String::from("Unknown error")
-    })
+    let error_message_paragraph = Paragraph::new(
+        nv.errors
+            .0
+            .as_ref()
+            .map(|err| err.as_str())
+            .unwrap_or("Unknown error"),
+    )
     .wrap(Wrap { trim: false });
     frame.render_widget(error_paragraph, error_layout[0]);
     frame.render_widget(error_message_paragraph, error_layout[1]);

@@ -13,12 +13,7 @@ use crate::{editor::verseedit::VerseEdit, nvcore::{
 
 pub fn render_area_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     let Some(verse) = nv.verses.verses.get(nv.verses.verse_index) else {
-        frame.render_widget(
-            Paragraph::new("No 'Verse at this index.\nHit Esc to pick another one.")
-                .red()
-                .bold(),
-            area,
-        );
+        nv.send_error(String::from("No Verse at this index."), NarraverseState::VersePick);
         return;
     };
     if nv.cached_verse_name != verse.name {
