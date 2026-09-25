@@ -49,11 +49,14 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             nv.list_states.verse_area_pick_liststate.select_previous()
         }
         KeyCode::Enter => {
+            let Some(selected_index) = nv.list_states.verse_area_pick_liststate.selected() else {
+                return;
+            };
             let Some(verse_edit) = VerseEdit::edit(nv, nv.verses.verse_index) else {
                 return;
             };
             nv.verse_editor = verse_edit;
-            nv.state = match nv.list_states.verse_area_pick_liststate.selected().unwrap() {
+            nv.state = match selected_index {
                 0 => NarraverseState::NarrativePick,
                 1 => NarraverseState::EntityPick,
                 4 => NarraverseState::VerseEdit,

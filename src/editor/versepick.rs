@@ -44,8 +44,10 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             nv.state = NarraverseState::VerseAreaPick;
         }
         KeyCode::Char('e') => {
-            nv.verses.verse_index = nv.list_states.verse_pick_liststate.selected().unwrap();
-            let Some(verse_edit) = VerseEdit::edit(nv, nv.verses.verse_index) else {
+            let Some(selected_index) = nv.list_states.verse_pick_liststate.selected() else {
+                return;
+            };
+            let Some(verse_edit) = VerseEdit::edit(nv, selected_index) else {
                 return;
             };
             nv.verse_editor = verse_edit;
@@ -56,7 +58,10 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             nv.state = NarraverseState::VerseEdit;
         }
         KeyCode::Char('d') => {
-            nv.verses.verse_index = nv.list_states.verse_pick_liststate.selected().unwrap();
+            let Some(selected_index) = nv.list_states.verse_pick_liststate.selected() else {
+                return;
+            };
+            nv.verses.verse_index = selected_index;
             nv.deletion_target = DeletionTarget::Verse;
             nv.state = NarraverseState::VerseDelete;
         }
