@@ -32,7 +32,7 @@ pub struct Narraverse {
     pub narrative_edit_modal: NarrativeEditModal,
     pub narrative_editor: NarrativeEditor,
     pub deletion_target: DeletionTarget,
-    pub errors: (Option<String>, NarraverseState),
+    pub errors: (String, NarraverseState),
 }
 
 #[derive(Clone, PartialEq, Eq)]
@@ -112,7 +112,7 @@ impl Narraverse {
     }
 
     pub fn send_error(&mut self, message: String, state_to_jump: NarraverseState) {
-        self.errors.0 = Some(message);
+        self.errors.0 = message;
         self.errors.1 = state_to_jump;
         self.state = NarraverseState::Error;
     }
@@ -129,7 +129,7 @@ impl Default for Narraverse {
             narrative_edit_modal: NarrativeEditModal::default(),
             narrative_editor: NarrativeEditor::default(),
             deletion_target: DeletionTarget::Verse,
-            errors: (None, NarraverseState::VersePick)
+            errors: (String::new(), NarraverseState::VersePick)
         }
     }
 }
