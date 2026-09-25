@@ -2,7 +2,7 @@ use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{
     Frame,
     layout::Rect,
-    style::{Modifier, Stylize},
+    style::Modifier,
     widgets::{List, Paragraph},
 };
 
@@ -17,7 +17,11 @@ use crate::{
 pub fn render_worldpick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     let mut verse_list: Vec<String> = vec![];
     if nv.verses.verses.len() == 0 {
-        frame.render_widget(Paragraph::new("No verses").red().bold(), area);
+        frame.render_widget(
+            Paragraph::new("Hit n to create a new one.")
+                .block(block_with_title("You have no Verses.")),
+            center_area(area),
+        );
         return;
     }
     for verse in &nv.verses.verses {

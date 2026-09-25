@@ -2,7 +2,7 @@ use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{
     Frame,
     layout::Rect,
-    style::{Modifier, Stylize},
+    style::Modifier,
     widgets::{List, Paragraph},
 };
 
@@ -19,12 +19,7 @@ use crate::{
 
 pub fn render_narrative_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     let Some(verse) = nv.verses.verses.get(nv.verses.verse_index) else {
-        frame.render_widget(
-            Paragraph::new("No 'Verse at this index.\nHit Esc to pick another one.")
-                .red()
-                .bold(),
-            area,
-        );
+        nv.send_error(String::from("No Verse at this index."), NarraverseState::VersePick);
         return;
     };
     if verse.narratives.len() == 0 {

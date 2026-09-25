@@ -2,8 +2,8 @@ use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{
     Frame,
     layout::Rect,
-    style::{Modifier, Stylize},
-    widgets::{List, Paragraph},
+    style::Modifier,
+    widgets::List,
 };
 
 use crate::{editor::verseedit::VerseEdit, nvcore::{

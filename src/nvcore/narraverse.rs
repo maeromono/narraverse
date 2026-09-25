@@ -111,9 +111,9 @@ impl Narraverse {
         }
     }
 
-    pub fn send_error(&mut self, message: String, state_to_jump: NarraverseState) {
+    pub fn send_error(&mut self, message: String, return_state: NarraverseState) {
         self.errors.0 = message;
-        self.errors.1 = state_to_jump;
+        self.errors.1 = return_state;
         self.state = NarraverseState::Error;
     }
 }

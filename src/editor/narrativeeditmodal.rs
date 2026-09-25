@@ -95,6 +95,7 @@ fn confirm_edit(nv: &mut Narraverse) {
         return;
     }
     let Some(verse) = nv.verses.verses.get_mut(nv.verses.verse_index) else {
+        nv.send_error(String::from("No Verse at this index."), NarraverseState::VersePick);
         nv.state = NarraverseState::VersePick;
         return;
     };
