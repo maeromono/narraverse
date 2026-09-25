@@ -12,7 +12,7 @@ use crate::{
         versedelete::DeletionTarget,
     },
     nvcore::{
-        decosutils::{block, center_area},
+        decosutils::{block_with_title, center_area},
         narraverse::{Narraverse, NarraverseState},
     },
 };
@@ -28,8 +28,11 @@ pub fn render_narrative_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect)
         return;
     };
     if verse.narratives.len() == 0 {
-        nv.narrative_edit_modal = NarrativeEditModal::default();
-        nv.state = NarraverseState::NewNarrative;
+        frame.render_widget(
+            Paragraph::new("Hit n to create a new one.")
+                .block(block_with_title("This Verse has no narrative.")),
+            center_area(area),
+        );
         return;
     }
     let mut narrative_list: Vec<String> = vec![];
@@ -38,7 +41,7 @@ pub fn render_narrative_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect)
     }
     let list = List::new(narrative_list)
         .highlight_style(Modifier::REVERSED)
-        .block(block("Pick a narrative:"));
+        .block(block_with_title("Pick a narrative:"));
     frame.render_stateful_widget(
         list,
         center_area(area),
@@ -57,11 +60,9 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             .verse_narrative_pick_liststate
             .select_previous(),
         KeyCode::Enter => {
-            let index = nv
-                .list_states
-                .verse_narrative_pick_liststate
-                .selected()
-                .unwrap();
+            let Some(index) = nv.list_states.verse_narrative_pick_liststate.selected() else {
+                return;
+            };
             nv.narrative_editor = NarrativeEditor::edit(nv, index);
             nv.state = NarraverseState::NarrativeEdit;
         }

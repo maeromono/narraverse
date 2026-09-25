@@ -7,7 +7,7 @@ use ratatui::{
 };
 
 use crate::{editor::verseedit::VerseEdit, nvcore::{
-    decosutils::{block, center_area},
+    decosutils::{block_with_title, center_area},
     narraverse::{Narraverse, NarraverseState},
 }};
 
@@ -33,7 +33,7 @@ pub fn render_area_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     ])
     .highlight_style(Modifier::REVERSED);
     frame.render_stateful_widget(
-        list.block(block("Select area to edit:")),
+        list.block(block_with_title("Select area to edit:")),
         center_area(area),
         &mut nv.list_states.verse_area_pick_liststate,
     );

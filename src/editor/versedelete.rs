@@ -21,14 +21,9 @@ pub enum DeletionTarget {
     Narrative,
 }
 
-pub fn render_delete_screen(nv: &Narraverse, frame: &mut Frame, area: Rect) {
+pub fn render_delete_screen(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     let Some(verse) = nv.verses.verses.get(nv.verses.verse_index) else {
-        frame.render_widget(
-            Paragraph::new("No Verse at this index.\nHit Esc to cancel.")
-                .red()
-                .bold(),
-            area,
-        );
+        nv.send_error(String::from("No Verse at this index."), NarraverseState::NarrativePick);
         return;
     };
     let delete_confirmation_message: Paragraph;
@@ -41,18 +36,12 @@ pub fn render_delete_screen(nv: &Narraverse, frame: &mut Frame, area: Rect) {
         .yellow()
         .bold();
     } else {
-        let Some(narrative) = verse.narratives.get(
-            nv.list_states
-                .verse_narrative_pick_liststate
-                .selected()
-                .unwrap(),
-        ) else {
-            frame.render_widget(
-                Paragraph::new("No narrative at this index.\nHit Esc to cancel.")
-                    .red()
-                    .bold(),
-                area,
-            );
+        let Some(narrative_index) = nv.list_states.verse_narrative_pick_liststate.selected() else {
+            nv.state = NarraverseState::NarrativePick;
+            return;
+        };
+        let Some(narrative) = verse.narratives.get(narrative_index) else {
+            nv.state = NarraverseState::NarrativePick;
             return;
         };
         delete_confirmation_message = Paragraph::new(format!(
@@ -106,8 +95,7 @@ fn confirm_delete(nv: &mut Narraverse) {
                 .unwrap();
             verse.narratives.remove(narrative_index);
             if verse.narratives.len() == 0 {
-                nv.narrative_edit_modal = NarrativeEditModal::default();
-                nv.state = NarraverseState::NewNarrative;
+                nv.list_states.verse_narrative_pick_liststate.select(None);
             } else if narrative_index >= verse.narratives.len() {
                 narrative_index -= 1;
                 nv.list_states

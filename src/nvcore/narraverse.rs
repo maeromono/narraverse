@@ -142,7 +142,7 @@ pub struct NarraverseListStates {
 
 impl Default for NarraverseListStates {
     fn default() -> Self {
-        let ls = ListState::default().with_selected(Some(0));
+        let ls = ListState::default();
         Self {
             verse_pick_liststate: ls.clone(),
             verse_area_pick_liststate: ls.clone(),
