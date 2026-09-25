@@ -78,10 +78,8 @@ fn confirm_delete(nv: &mut Narraverse) {
             } else if verse_index >= nv.verses.verses.len() {
                 verse_index -= 1;
                 nv.verses.verse_index = verse_index;
-                nv.state = NarraverseState::VersePick;
-            } else {
-                nv.state = NarraverseState::VersePick;
             }
+            nv.state = NarraverseState::VersePick;
         }
         DeletionTarget::Narrative => {
             let mut narrative_index = nv
@@ -97,10 +95,8 @@ fn confirm_delete(nv: &mut Narraverse) {
                 nv.list_states
                     .verse_narrative_pick_liststate
                     .select(Some(narrative_index));
-                nv.state = NarraverseState::NarrativePick;
-            } else {
-                nv.state = NarraverseState::NarrativePick;
             }
+            nv.state = NarraverseState::NarrativePick;
         }
     }
     if let Err(err) = save_verses(&nv.verses) {

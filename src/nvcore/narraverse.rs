@@ -35,7 +35,7 @@ pub struct Narraverse {
     pub errors: (String, NarraverseState),
 }
 
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum NarraverseState {
     VersePick,
     VerseEdit,
@@ -94,7 +94,8 @@ impl Narraverse {
             _ => todo!(),
         }
         render_header(self, frame, main_layout[0]);
-        render_footer(self, frame, main_layout[2]);
+        // render_footer(self, frame, main_layout[2]);
+        frame.render_widget(Paragraph::new(format!("{:?}", self.state)), main_layout[2]);
     }
 
     fn handle_keys(&mut self, key: &KeyEvent) {
