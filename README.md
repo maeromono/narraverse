@@ -14,8 +14,8 @@ Prerequisites:
 ```
 
 ## Roadmap.
+- [X] Stabilize the thing a little bit
 - [ ] Entity creation & modification
-- [ ] Stabilize the thing a little bit
 
 ## License.
 GPL-3.0 only. Read more in [the license file](https://codeberg.org/enmkdev/narraverse/src/branch/main/LICENSE.md).
