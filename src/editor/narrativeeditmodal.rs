@@ -48,7 +48,7 @@ impl NarrativeEditModal {
         let verse = nv.verses.verses.get(ind)?;
         let narrative = verse.narratives.get(nind)?;
         Some(Self {
-            mode: NarrativeEditModalMode::Existing(ind),
+            mode: NarrativeEditModalMode::Existing(nind),
             current_focus: CurrentFocus::Title,
             narrative_name_textarea: TextArea::new(vec![narrative.title.clone()]),
             narrative_writtenby_textarea: TextArea::new(vec![narrative.written_by.clone()]),
