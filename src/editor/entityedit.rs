@@ -90,37 +90,40 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
         KeyCode::Esc => {
             nv.state = NarraverseState::EntityPick;
             reset_textareas(nv);
+            return;
         }
         KeyCode::Tab => {
-            nv.entity_edit_modal.current_focus = next_cycle(&nv.entity_edit_modal.current_focus)
+            nv.entity_edit_modal.current_focus = next_cycle(&nv.entity_edit_modal.current_focus);
+            return;
         }
         KeyCode::BackTab => {
-            nv.entity_edit_modal.current_focus = previous_cycle(&nv.entity_edit_modal.current_focus)
+            nv.entity_edit_modal.current_focus = previous_cycle(&nv.entity_edit_modal.current_focus);
+            return;
         }
-        KeyCode::Left => {
-            if nv.entity_edit_modal.current_focus != CurrentFocus::Type {
-                return;
-            }
-            nv.entity_edit_modal.entity_type = previous_cycle(&nv.entity_edit_modal.entity_type);
+        KeyCode::Enter => {
+            confirm_edit(nv);
+            return;
         }
-        KeyCode::Right => {
-            if nv.entity_edit_modal.current_focus != CurrentFocus::Type {
-                return;
+        _ => {}
+    }
+    match nv.entity_edit_modal.current_focus {
+        CurrentFocus::Type => match key.code {
+            KeyCode::Left | KeyCode::Char('h') => {
+                nv.entity_edit_modal.entity_type = previous_cycle(&nv.entity_edit_modal.entity_type);
             }
-            nv.entity_edit_modal.entity_type = next_cycle(&nv.entity_edit_modal.entity_type);
-        }
-        KeyCode::Enter => confirm_edit(nv),
-        _ => {
-            if nv.entity_edit_modal.current_focus != CurrentFocus::Name {
-                return;
+            KeyCode::Right | KeyCode::Char('l') => {
+                nv.entity_edit_modal.entity_type = next_cycle(&nv.entity_edit_modal.entity_type);
             }
+            _ => {}
+        },
+        CurrentFocus::Name => {
             let textarea = &mut nv.entity_edit_modal.entity_name_textarea;
             if textarea.input(*key) {
                 nv.entity_edit_modal.entity_name_valid = validate_length(textarea, 1, 100);
             }
         }
     }
-}
+}   
 
 fn confirm_edit(nv: &mut Narraverse) {
     if !nv.entity_edit_modal.entity_name_valid {
@@ -161,4 +164,5 @@ fn confirm_edit(nv: &mut Narraverse) {
 
 fn reset_textareas(nv: &mut Narraverse) {
     nv.entity_edit_modal.entity_name_textarea = TextArea::default();
+    nv.entity_edit_modal.entity_type = EntityType::Character;
 }
