@@ -26,19 +26,19 @@ fn save_path() -> Result<PathBuf> {
     Ok(dirs.config_local_dir().join("config.toml"))
 }
 
-pub fn save_config(config: &NarraverseConfig) -> Result<()> {
-    let path = save_path()?;
-    if let Some(parent) = path.parent() {
-        create_dir_all(parent)?;
-    }
-    let contents = to_string(config).map_err(|err| Error::new(ErrorKind::InvalidData, err))?;
-    let tmp_path = path.with_extension("tmp");
-    let mut tmp = File::create(&tmp_path)?;
-    tmp.write_all(contents.as_bytes())?;
-    tmp.sync_all()?;
-    rename(&tmp_path, &path)?;
-    Ok(())
-}
+// pub fn save_config(config: &NarraverseConfig) -> Result<()> {
+//     let path = save_path()?;
+//     if let Some(parent) = path.parent() {
+//         create_dir_all(parent)?;
+//     }
+//     let contents = to_string(config).map_err(|err| Error::new(ErrorKind::InvalidData, err))?;
+//     let tmp_path = path.with_extension("tmp");
+//     let mut tmp = File::create(&tmp_path)?;
+//     tmp.write_all(contents.as_bytes())?;
+//     tmp.sync_all()?;
+//     rename(&tmp_path, &path)?;
+//     Ok(())
+// }
 
 pub fn load_config() -> Result<NarraverseConfig> {
     let path = save_path()?;
