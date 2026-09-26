@@ -19,7 +19,9 @@ use crate::{
         versepick::{self, render_worldpick},
     },
     nvcore::{
-        error::{self, render_error_screen}, narraversemain::{render_footer, render_header}, verses::NarraverseVerses
+        error::{self, render_error_screen},
+        narraversemain::{render_footer, render_header},
+        verses::NarraverseVerses,
     },
 };
 
@@ -33,6 +35,7 @@ pub struct Narraverse {
     pub narrative_editor: NarrativeEditor,
     pub deletion_target: DeletionTarget,
     pub errors: (String, NarraverseState),
+    pub footer_notification: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -94,7 +97,14 @@ impl Narraverse {
             _ => todo!(),
         }
         render_header(self, frame, main_layout[0]);
-        render_footer(self, frame, main_layout[2]);
+        if let Some(message) = self.footer_notification.clone() {
+            frame.render_widget(
+                Paragraph::new(message).centered().bold().reversed(),
+                main_layout[2],
+            );
+        } else {
+            render_footer(self, frame, main_layout[2]);
+        }
     }
 
     fn handle_keys(&mut self, key: &KeyEvent) {
@@ -116,6 +126,10 @@ impl Narraverse {
         self.errors.1 = return_state;
         self.state = NarraverseState::Error;
     }
+
+    pub fn send_footer_notification(&mut self, message: String) {
+        self.footer_notification = Some(message);
+    }
 }
 
 impl Default for Narraverse {
@@ -129,7 +143,8 @@ impl Default for Narraverse {
             narrative_edit_modal: NarrativeEditModal::default(),
             narrative_editor: NarrativeEditor::default(),
             deletion_target: DeletionTarget::Verse,
-            errors: (String::new(), NarraverseState::VersePick)
+            errors: (String::new(), NarraverseState::VersePick),
+            footer_notification: None,
         }
     }
 }
