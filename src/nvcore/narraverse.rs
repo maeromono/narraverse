@@ -102,6 +102,7 @@ impl Narraverse {
                 Paragraph::new(message).centered().bold().reversed(),
                 main_layout[2],
             );
+            self.footer_notification = None;
         } else {
             render_footer(self, frame, main_layout[2]);
         }
