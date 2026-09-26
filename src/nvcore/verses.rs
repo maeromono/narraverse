@@ -30,3 +30,21 @@ pub struct Narrative {
     pub date: NaiveDate,
     pub summary: Option<String>
 }
+
+#[derive(Clone, Serialize, Deserialize)]
+pub struct Entity {
+    pub name: String,
+    pub entity_type: EntityType,
+}
+
+#[derive(Clone, Serialize, Deserialize)]
+pub enum EntityType {
+    Character,
+    Creature,
+    Location,
+    Item,
+    Group,
+    Organization,
+    Corporate,
+    Concept
+}
