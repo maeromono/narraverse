@@ -1,3 +1,5 @@
+<strong>WORK IN PROGRESS.</strong> Pretty barebones. Selecting "Timeline" and "Artifacts" in the area menu will result in a "not yet implemented" panic.
+
 # narraverse
 
 narraverse is an experimental, plain text no-BS worldbuilding TUI featuring narrative and entity creation/modification with more features to come.
