@@ -20,6 +20,7 @@ impl Default for NarraverseVerses {
 pub struct Verse {
     pub name: String,
     pub narratives: Vec<Narrative>,
+    pub entities: Vec<Entity>
 }
 
 #[derive(Clone, Serialize, Deserialize)]

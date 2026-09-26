@@ -22,7 +22,7 @@ pub fn render_header(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
 pub fn render_footer(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     let bind_help_string = match nv.state {
         NarraverseState::VersePick => "e edit, n new, j/k navigate, Enter select",
-        NarraverseState::VerseEdit | NarraverseState::NewNarrative => "Esc cancel, Tab cycle, Enter confirm",
+        NarraverseState::VerseEdit | NarraverseState::NarrativeModal => "Esc cancel, Tab cycle, Enter confirm",
         NarraverseState::VerseAreaPick => "j/k navigate, Enter select",
         NarraverseState::NarrativePick => "e edit, n new, j/k navigate, Enter select",
         NarraverseState::NarrativeEdit => "Alt+w save",

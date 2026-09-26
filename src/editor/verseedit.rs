@@ -7,7 +7,11 @@ use ratatui::{
 use ratatui_textarea::TextArea;
 
 use crate::nvcore::{
-    decosutils::center_area, narraverse::{Narraverse, NarraverseState}, save::save_verses, textareautils::validate_length, verses::Verse
+    decosutils::center_area,
+    narraverse::{Narraverse, NarraverseState},
+    save::save_verses,
+    textareautils::validate_length,
+    verses::Verse,
 };
 
 pub struct VerseEdit {
@@ -81,12 +85,16 @@ fn confirm_edit(nv: &mut Narraverse) {
             nv.verses.verses.push(Verse {
                 name: nv.verse_editor.verse_name_textarea.lines()[0].clone(),
                 narratives: vec![],
+                entities: vec![],
             });
             nv.state = NarraverseState::VersePick;
         }
         VerseEditMode::Existing(index) => {
             let Some(verse) = nv.verses.verses.get_mut(index) else {
-                nv.state = NarraverseState::VersePick;
+                nv.send_error(
+                    String::from("No Verse at this index."),
+                    NarraverseState::VersePick,
+                );
                 return;
             };
             verse.name = nv.verse_editor.verse_name_textarea.lines()[0].clone();
@@ -94,7 +102,10 @@ fn confirm_edit(nv: &mut Narraverse) {
         }
     }
     if let Err(err) = save_verses(&nv.verses) {
-        nv.send_error(format!("Cannot confirm edit:\n{}", err), NarraverseState::VersePick);
+        nv.send_error(
+            format!("Cannot confirm edit:\n{}", err),
+            NarraverseState::VersePick,
+        );
     }
     reset_textareas(nv);
 }

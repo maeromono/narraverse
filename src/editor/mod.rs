@@ -1,3 +1,4 @@
+pub mod entityedit;
 pub mod narrativeedit;
 pub mod narrativeeditmodal;
 pub mod verseareapick;

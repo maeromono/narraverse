@@ -225,6 +225,10 @@ fn confirm_edit(nv: &mut Narraverse) {
         }
         NarrativeEditModalMode::Existing(index) => {
             let Some(narrative) = verse.narratives.get_mut(index) else {
+                nv.send_error(
+                    String::from("No narrative at this index."),
+                    NarraverseState::VersePick,
+                );
                 return;
             };
             narrative.title = nv.narrative_edit_modal.narrative_name_textarea.lines()[0].clone();
