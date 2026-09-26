@@ -27,23 +27,15 @@ impl Default for NarrativeEditor {
 }
 
 impl NarrativeEditor {
-    pub fn edit(nv: &Narraverse, index: usize) -> Self {
-        let Some(narrative) = nv
-            .verses
-            .verses
-            .get(nv.verses.verse_index)
-            .unwrap()
-            .narratives
-            .get(index)
-        else {
-            panic!("narrative not found");
-        };
+    pub fn edit(nv: &Narraverse, index: usize) -> Option<Self> {
+        let verse = nv.verses.verses.get(nv.verses.verse_index)?;
+        let narrative = verse.narratives.get(index)?;
         let mut textarea = TextArea::from(narrative.narrative.lines());
         textarea.set_wrap_mode(WrapMode::WordOrGlyph);
-        Self {
+        Some(Self {
             currently_editing: index,
             textarea,
-        }
+        })
     }
 }
 

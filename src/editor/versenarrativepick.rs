@@ -58,7 +58,10 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             let Some(index) = nv.list_states.verse_narrative_pick_liststate.selected() else {
                 return;
             };
-            nv.narrative_editor = NarrativeEditor::edit(nv, index);
+            let Some(nar_ed) = NarrativeEditor::edit(nv, index) else {
+                return;
+            };
+            nv.narrative_editor = nar_ed;
             nv.state = NarraverseState::NarrativeEdit;
         }
         KeyCode::Char('n') => {
