@@ -1,6 +1,6 @@
 # narraverse
 
-narraverse is an experimental no-BS worldbuilding TUI.
+narraverse is an experimental, plain text no-BS worldbuilding TUI featuring narrative and entity creation/modification with more features to come.
 
 ## Installation.
 Prerequisites:
@@ -9,6 +9,17 @@ Prerequisites:
 ### From source
 ```bash
 git clone https://codeberg.org/enmkdev/narraverse && cd narraverse && cargo install --path .
+```
+
+## Configuration.
+The config file is located at "~/.config/narraverse/config.toml" (idk for Windows).
+
+### Config options:
+- default_written_by (string): the default name to use for prefilling the "Written by" field on narrative creation.
+
+### Default configuration:
+```toml
+default_written_by = "Me"
 ```
 
 ## Roadmap.
