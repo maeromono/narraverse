@@ -4,13 +4,12 @@ use enum_iterator::{Sequence, next_cycle, previous_cycle};
 use ratatui::{
     Frame,
     layout::{Constraint, Direction, Layout, Rect},
-    style::Style,
     widgets::{ListState, Paragraph},
 };
 use ratatui_textarea::TextArea;
 
 use crate::nvcore::{
-    decosutils::center_area,
+    decosutils::{center_area, focus_highlight},
     narraverse::{Narraverse, NarraverseState},
     save::save_verses,
     textareautils::{validate_date, validate_length},
@@ -44,11 +43,11 @@ impl NarrativeEditModal {
         }
     }
 
-    pub fn edit(nv: &Narraverse, ind: usize, nind: usize) -> Option<Self> {
-        let verse = nv.verses.verses.get(ind)?;
-        let narrative = verse.narratives.get(nind)?;
+    pub fn edit(nv: &Narraverse, ind: usize) -> Option<Self> {
+        let verse = nv.verses.verses.get(nv.verses.verse_index)?;
+        let narrative = verse.narratives.get(ind)?;
         Some(Self {
-            mode: NarrativeEditModalMode::Existing(nind),
+            mode: NarrativeEditModalMode::Existing(ind),
             current_focus: CurrentFocus::Title,
             narrative_name_textarea: TextArea::new(vec![narrative.title.clone()]),
             narrative_writtenby_textarea: TextArea::new(vec![narrative.written_by.clone()]),
@@ -182,14 +181,6 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     }
 }
 
-fn focus_highlight(focused: bool) -> Style {
-    if focused {
-        Style::default().bold().reversed()
-    } else {
-        Style::default()
-    }
-}
-
 fn confirm_edit(nv: &mut Narraverse) {
     if !(nv.narrative_edit_modal.narrative_name_valid
         && nv.narrative_edit_modal.narrative_writtenby_valid
@@ -218,9 +209,6 @@ fn confirm_edit(nv: &mut Narraverse) {
                 summary,
                 narrative: String::new(),
             });
-            nv.list_states.verse_narrative_pick_liststate =
-                ListState::default().with_selected(Some(0));
-            nv.list_states.verse_narrative_pick_liststate.select_last();
             nv.state = NarraverseState::NarrativePick;
         }
         NarrativeEditModalMode::Existing(index) => {

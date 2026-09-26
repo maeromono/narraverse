@@ -1,6 +1,7 @@
 use std::fmt::Display;
 
 use chrono::NaiveDate;
+use enum_iterator::Sequence;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
@@ -40,7 +41,7 @@ pub struct Entity {
     pub entity_type: EntityType,
 }
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, Sequence)]
 pub enum EntityType {
     Character,
     Creature,
