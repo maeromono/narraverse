@@ -27,7 +27,6 @@ pub struct NarrativeEditModal {
     narrative_name_valid: bool,
     narrative_writtenby_valid: bool,
     narrative_date_valid: bool,
-    narrative_summary_valid: bool,
 }
 
 impl NarrativeEditModal {
@@ -42,7 +41,6 @@ impl NarrativeEditModal {
             narrative_name_valid: false,
             narrative_writtenby_valid: false,
             narrative_date_valid: false,
-            narrative_summary_valid: true,
         }
     }
 
@@ -59,9 +57,8 @@ impl NarrativeEditModal {
                 narrative.summary.clone().unwrap_or_default(),
             ]),
             narrative_name_valid: true,
-            narrative_writtenby_valid: false,
-            narrative_date_valid: false,
-            narrative_summary_valid: true,
+            narrative_writtenby_valid: true,
+            narrative_date_valid: true,
         })
     }
 
@@ -175,11 +172,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
                 }
             }
             CurrentFocus::Summary => {
-                let textarea = &mut nv.narrative_edit_modal.narrative_summary_textarea;
-                if textarea.input(*key) {
-                    nv.narrative_edit_modal.narrative_summary_valid =
-                        validate_length(textarea, 1, 100);
-                }
+                nv.narrative_edit_modal.narrative_summary_textarea.input(*key);
             }
         },
     }
