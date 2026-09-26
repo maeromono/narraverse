@@ -36,7 +36,7 @@ impl EntityEditModal {
         Some(Self {
             mode: EntityEditMode::Existing(ind),
             current_focus: CurrentFocus::Name,
-            entity_name_textarea: TextArea::new(vec![verse.name.clone()]),
+            entity_name_textarea: TextArea::new(vec![entity.name.clone()]),
             entity_name_valid: true,
             entity_type: entity.entity_type.clone(),
         })
