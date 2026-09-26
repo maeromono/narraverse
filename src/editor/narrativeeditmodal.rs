@@ -4,7 +4,7 @@ use enum_iterator::{Sequence, next_cycle, previous_cycle};
 use ratatui::{
     Frame,
     layout::{Constraint, Direction, Layout, Rect},
-    widgets::{ListState, Paragraph},
+    widgets::Paragraph,
 };
 use ratatui_textarea::TextArea;
 
