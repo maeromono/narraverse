@@ -8,7 +8,7 @@ use ratatui::{
 
 use crate::{
     editor::{
-        entityedit::EntityEditModal
+        entityedit::EntityEditModal, versedelete::DeletionTarget
     },
     nvcore::{
         decosutils::{block_with_title, center_area},
@@ -53,22 +53,14 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             .list_states
             .verse_entity_pick_liststate
             .select_previous(),
-        KeyCode::Enter => {
-            todo!();
-            // let Some(index) = nv.list_states.verse_entity_pick_liststate.selected() else {
-            //     return;
-            // };
-        }
         KeyCode::Char('n') => {
             nv.entity_edit_modal = EntityEditModal::default();
             nv.state = NarraverseState::EntityModal;
         }
         KeyCode::Char('e') => {
-            let index = nv
-                .list_states
-                .verse_entity_pick_liststate
-                .selected()
-                .unwrap();
+            let Some(index) = nv.list_states.verse_entity_pick_liststate.selected() else {
+                return;
+            };
             let Some(modal) = EntityEditModal::edit(nv, index) else {
                 return;
             };
@@ -76,7 +68,11 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             nv.state = NarraverseState::EntityModal;
         }
         KeyCode::Char('d') => {
-            todo!();
+            let Some(_) = nv.list_states.verse_entity_pick_liststate.selected() else {
+                return;
+            };
+            nv.deletion_target = DeletionTarget::Entity;
+            nv.state = NarraverseState::VerseDelete;
         }
         _ => {}
     }

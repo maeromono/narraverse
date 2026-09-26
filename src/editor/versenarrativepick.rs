@@ -69,11 +69,9 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             nv.state = NarraverseState::NarrativeModal;
         }
         KeyCode::Char('e') => {
-            let index = nv
-                .list_states
-                .verse_narrative_pick_liststate
-                .selected()
-                .unwrap();
+            let Some(index) = nv.list_states.verse_narrative_pick_liststate.selected() else {
+                return;
+            };
             let Some(modal) = NarrativeEditModal::edit(nv, index) else {
                 return;
             };
@@ -81,6 +79,9 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             nv.state = NarraverseState::NarrativeModal;
         }
         KeyCode::Char('d') => {
+            let Some(_) = nv.list_states.verse_narrative_pick_liststate.selected() else {
+                return;
+            };
             nv.deletion_target = DeletionTarget::Narrative;
             nv.state = NarraverseState::VerseDelete;
         }

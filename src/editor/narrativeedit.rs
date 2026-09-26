@@ -73,12 +73,14 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
 
 fn save_narrative(nv: &mut Narraverse) {
     let Some(verse) = nv.verses.verses.get_mut(nv.verses.verse_index) else {
+        nv.send_error(String::from("No Verse at this index."), NarraverseState::VersePick);
         return;
     };
     let Some(narrative) = verse
         .narratives
         .get_mut(nv.narrative_editor.currently_editing)
     else {
+        nv.send_error(String::from("No narrative at this index."), NarraverseState::NarrativePick);
         return;
     };
     narrative.narrative = nv.narrative_editor.textarea.lines().join("\n");
