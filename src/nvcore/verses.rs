@@ -24,5 +24,8 @@ pub struct Verse {
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Narrative {
     pub title: String,
+    pub written_by: String,
     pub narrative: String,
+    pub date: String,
+    pub summary: Option<String>
 }

@@ -71,7 +71,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
                 .verse_narrative_pick_liststate
                 .selected()
                 .unwrap();
-            let Some(modal) = NarrativeEditModal::edit(nv, index) else {
+            let Some(modal) = NarrativeEditModal::edit(nv, nv.verses.verse_index, index) else {
                 return;
             };
             nv.narrative_edit_modal = modal;
