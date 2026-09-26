@@ -1,3 +1,4 @@
+use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
@@ -26,6 +27,6 @@ pub struct Narrative {
     pub title: String,
     pub written_by: String,
     pub narrative: String,
-    pub date: String,
+    pub date: NaiveDate,
     pub summary: Option<String>
 }

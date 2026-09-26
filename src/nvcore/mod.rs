@@ -4,4 +4,5 @@ pub mod error;
 pub mod narraverse;
 pub mod narraversemain;
 pub mod save;
+pub mod textareautils;
 pub mod verses;

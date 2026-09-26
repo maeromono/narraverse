@@ -2,16 +2,12 @@ use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{
     Frame,
     layout::{Constraint, Direction, Layout, Rect},
-    style::{Color, Style},
     widgets::Paragraph,
 };
 use ratatui_textarea::TextArea;
 
 use crate::nvcore::{
-    decosutils::center_area,
-    narraverse::{Narraverse, NarraverseState},
-    save::save_verses,
-    verses::Verse,
+    decosutils::center_area, narraverse::{Narraverse, NarraverseState}, save::save_verses, textareautils::validate_length, verses::Verse
 };
 
 pub struct VerseEdit {
@@ -70,20 +66,9 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
         _ => {
             let textarea = &mut nv.verse_editor.verse_name_textarea;
             if textarea.input(*key) {
-                nv.verse_editor.verse_name_valid = validate_name(textarea);
+                nv.verse_editor.verse_name_valid = validate_length(textarea, 1, 50);
             }
         }
-    }
-}
-
-fn validate_name(textarea: &mut TextArea) -> bool {
-    let length = textarea.lines()[0].len();
-    if length > 50 || length < 1 {
-        textarea.set_style(Style::default().fg(Color::Black).bg(Color::Red));
-        false
-    } else {
-        textarea.set_style(Style::default());
-        true
     }
 }
 

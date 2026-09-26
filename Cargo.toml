@@ -12,6 +12,7 @@ keywords = ["tui", "worldbuilding", "creative"]
 categories = ["command-line-interface", "command-line-utilities"]
 
 [dependencies]
+chrono = { version = "0.4.45", features = ["serde"] }
 crossterm = "0.29.0"
 directories = "6.0.0"
 enum-iterator = "2.3.0"
