@@ -62,10 +62,10 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             nv.state = NarraverseState::NarrativeEdit;
         }
         KeyCode::Char('n') => {
-            nv.narrative_edit_modal = NarrativeEditModal::default();
+            nv.narrative_edit_modal = NarrativeEditModal::default().prefill_writtenby_field(nv);
             nv.state = NarraverseState::NewNarrative;
         }
-        KeyCode::Char('r') => {
+        KeyCode::Char('e') => {
             let index = nv
                 .list_states
                 .verse_narrative_pick_liststate

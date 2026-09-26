@@ -4,7 +4,7 @@ use enum_iterator::{Sequence, next_cycle, previous_cycle};
 use ratatui::{
     Frame,
     layout::{Constraint, Direction, Layout, Rect},
-    style::{Color, Style},
+    style::Style,
     widgets::{ListState, Paragraph},
 };
 use ratatui_textarea::TextArea;
@@ -64,6 +64,12 @@ impl NarrativeEditModal {
             narrative_summary_valid: true,
         })
     }
+
+    pub fn prefill_writtenby_field(mut self, nv: &Narraverse) -> Self {
+        self.narrative_writtenby_textarea = TextArea::new(vec![nv.config.default_written_by.clone()]);
+        self.narrative_writtenby_valid = validate_length(&mut self.narrative_writtenby_textarea, 1, 100);
+        self
+    }
 }
 
 enum NarrativeEditModalMode {
@@ -113,7 +119,7 @@ pub fn render_narrative_edit_modal(nv: &Narraverse, frame: &mut Frame, area: Rec
         writtenby_field_layout[1],
     );
     frame.render_widget(
-        Paragraph::new("Narrative date")
+        Paragraph::new("Narrative date (ISO)")
             .style(focus_highlight(matches!(focus, CurrentFocus::Date))),
         date_field_layout[0],
     );
@@ -122,7 +128,8 @@ pub fn render_narrative_edit_modal(nv: &Narraverse, frame: &mut Frame, area: Rec
         date_field_layout[1],
     );
     frame.render_widget(
-        Paragraph::new("Summary").style(focus_highlight(matches!(focus, CurrentFocus::Summary))),
+        Paragraph::new("Summary (optional)")
+            .style(focus_highlight(matches!(focus, CurrentFocus::Summary))),
         summary_field_layout[0],
     );
     frame.render_widget(
@@ -164,8 +171,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             CurrentFocus::Date => {
                 let textarea = &mut nv.narrative_edit_modal.narrative_date_textarea;
                 if textarea.input(*key) {
-                    nv.narrative_edit_modal.narrative_date_valid =
-                        validate_date(textarea);
+                    nv.narrative_edit_modal.narrative_date_valid = validate_date(textarea);
                 }
             }
             CurrentFocus::Summary => {
@@ -203,11 +209,7 @@ fn confirm_edit(nv: &mut Narraverse) {
         return;
     };
     let sum = nv.narrative_edit_modal.narrative_summary_textarea.lines()[0].clone();
-    let summary = if sum.is_empty() {
-        None
-    } else {
-        Some(sum)
-    };
+    let summary = if sum.is_empty() { None } else { Some(sum) };
     match nv.narrative_edit_modal.mode {
         NarrativeEditModalMode::New => {
             verse.narratives.push(Narrative {
