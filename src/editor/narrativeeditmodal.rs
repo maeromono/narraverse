@@ -63,8 +63,10 @@ impl NarrativeEditModal {
     }
 
     pub fn prefill_writtenby_field(mut self, nv: &Narraverse) -> Self {
-        self.narrative_writtenby_textarea = TextArea::new(vec![nv.config.default_written_by.clone()]);
-        self.narrative_writtenby_valid = validate_length(&mut self.narrative_writtenby_textarea, 1, 100);
+        self.narrative_writtenby_textarea =
+            TextArea::new(vec![nv.config.default_written_by.clone()]);
+        self.narrative_writtenby_valid =
+            validate_length(&mut self.narrative_writtenby_textarea, 1, 100);
         self
     }
 }
@@ -172,7 +174,9 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
                 }
             }
             CurrentFocus::Summary => {
-                nv.narrative_edit_modal.narrative_summary_textarea.input(*key);
+                nv.narrative_edit_modal
+                    .narrative_summary_textarea
+                    .input(*key);
             }
         },
     }
@@ -198,7 +202,6 @@ fn confirm_edit(nv: &mut Narraverse) {
             String::from("No Verse at this index."),
             NarraverseState::VersePick,
         );
-        nv.state = NarraverseState::VersePick;
         return;
     };
     let sum = nv.narrative_edit_modal.narrative_summary_textarea.lines()[0].clone();
@@ -225,6 +228,13 @@ fn confirm_edit(nv: &mut Narraverse) {
                 return;
             };
             narrative.title = nv.narrative_edit_modal.narrative_name_textarea.lines()[0].clone();
+            narrative.written_by =
+                nv.narrative_edit_modal.narrative_writtenby_textarea.lines()[0].clone();
+            narrative.date = nv.narrative_edit_modal.narrative_date_textarea.lines()[0]
+                .clone()
+                .parse::<NaiveDate>()
+                .unwrap();
+            narrative.summary = summary;
             nv.state = NarraverseState::NarrativePick;
         }
     }
