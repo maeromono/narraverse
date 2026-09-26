@@ -19,13 +19,12 @@ use crate::{
         versepick::{self, render_worldpick},
     },
     nvcore::{
-        error::{self, render_error_screen},
-        narraversemain::{render_footer, render_header},
-        verses::NarraverseVerses,
+        config::NarraverseConfig, error::{self, render_error_screen}, narraversemain::{render_footer, render_header}, verses::NarraverseVerses
     },
 };
 
 pub struct Narraverse {
+    pub config: NarraverseConfig,
     pub state: NarraverseState,
     pub verses: NarraverseVerses,
     pub cached_verse_name: String,
@@ -136,6 +135,7 @@ impl Narraverse {
 impl Default for Narraverse {
     fn default() -> Self {
         Self {
+            config: NarraverseConfig::default(),
             state: NarraverseState::VersePick,
             verses: NarraverseVerses::default(),
             cached_verse_name: String::from("enmkdev.neocities.org"),
