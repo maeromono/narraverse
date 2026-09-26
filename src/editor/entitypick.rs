@@ -7,9 +7,7 @@ use ratatui::{
 };
 
 use crate::{
-    editor::{
-        entityedit::EntityEditModal, versedelete::DeletionTarget
-    },
+    editor::{entityedit::EntityEditModal, versedelete::DeletionTarget},
     nvcore::{
         decosutils::{block_with_title, center_area},
         narraverse::{Narraverse, NarraverseState},
@@ -18,7 +16,10 @@ use crate::{
 
 pub fn render_entity_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     let Some(verse) = nv.verses.verses.get(nv.verses.verse_index) else {
-        nv.send_error(String::from("No Verse at this index."), NarraverseState::VersePick);
+        nv.send_error(
+            String::from("No Verse at this index."),
+            NarraverseState::VersePick,
+        );
         return;
     };
     if verse.entities.len() == 0 {
@@ -49,10 +50,9 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
         KeyCode::Char('j') | KeyCode::Down => {
             nv.list_states.verse_entity_pick_liststate.select_next()
         }
-        KeyCode::Char('k') | KeyCode::Up => nv
-            .list_states
-            .verse_entity_pick_liststate
-            .select_previous(),
+        KeyCode::Char('k') | KeyCode::Up => {
+            nv.list_states.verse_entity_pick_liststate.select_previous()
+        }
         KeyCode::Char('n') => {
             nv.entity_edit_modal = EntityEditModal::default();
             nv.state = NarraverseState::EntityModal;

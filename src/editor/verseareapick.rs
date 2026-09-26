@@ -1,19 +1,20 @@
 use crossterm::event::{KeyCode, KeyEvent};
-use ratatui::{
-    Frame,
-    layout::Rect,
-    style::Modifier,
-    widgets::List,
-};
+use ratatui::{Frame, layout::Rect, style::Modifier, widgets::List};
 
-use crate::{editor::verseedit::VerseEdit, nvcore::{
-    decosutils::{block_with_title, center_area},
-    narraverse::{Narraverse, NarraverseState},
-}};
+use crate::{
+    editor::verseedit::VerseEdit,
+    nvcore::{
+        decosutils::{block_with_title, center_area},
+        narraverse::{Narraverse, NarraverseState},
+    },
+};
 
 pub fn render_area_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     let Some(verse) = nv.verses.verses.get(nv.verses.verse_index) else {
-        nv.send_error(String::from("No Verse at this index."), NarraverseState::VersePick);
+        nv.send_error(
+            String::from("No Verse at this index."),
+            NarraverseState::VersePick,
+        );
         return;
     };
     if nv.cached_verse_name != verse.name {

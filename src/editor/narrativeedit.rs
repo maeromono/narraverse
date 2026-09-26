@@ -41,11 +41,17 @@ impl NarrativeEditor {
 
 pub fn render_narrative_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     let Some(verse) = nv.verses.verses.get(nv.verses.verse_index) else {
-        nv.send_error(String::from("No Verse at this index."), NarraverseState::VersePick);
+        nv.send_error(
+            String::from("No Verse at this index."),
+            NarraverseState::VersePick,
+        );
         return;
     };
     let Some(narrative) = verse.narratives.get(nv.narrative_editor.currently_editing) else {
-        nv.send_error(String::from("No narrative at this index."), NarraverseState::NarrativePick);
+        nv.send_error(
+            String::from("No narrative at this index."),
+            NarraverseState::NarrativePick,
+        );
         return;
     };
     let editor_layout = Layout::vertical([
@@ -73,19 +79,28 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
 
 fn save_narrative(nv: &mut Narraverse) {
     let Some(verse) = nv.verses.verses.get_mut(nv.verses.verse_index) else {
-        nv.send_error(String::from("No Verse at this index."), NarraverseState::VersePick);
+        nv.send_error(
+            String::from("No Verse at this index."),
+            NarraverseState::VersePick,
+        );
         return;
     };
     let Some(narrative) = verse
         .narratives
         .get_mut(nv.narrative_editor.currently_editing)
     else {
-        nv.send_error(String::from("No narrative at this index."), NarraverseState::NarrativePick);
+        nv.send_error(
+            String::from("No narrative at this index."),
+            NarraverseState::NarrativePick,
+        );
         return;
     };
     narrative.narrative = nv.narrative_editor.textarea.lines().join("\n");
     if let Err(err) = save_verses(&nv.verses) {
-        nv.send_error(format!("Cannot save the narrative:\n{}", err), NarraverseState::NarrativeEdit);
+        nv.send_error(
+            format!("Cannot save the narrative:\n{}", err),
+            NarraverseState::NarrativeEdit,
+        );
     } else {
         nv.send_footer_notification(String::from("Narrative saved"));
     }

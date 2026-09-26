@@ -1,5 +1,7 @@
 use ratatui::{
-    layout::{Constraint, Rect}, style::{Modifier, Style}, widgets::Block
+    layout::{Constraint, Rect},
+    style::{Modifier, Style},
+    widgets::Block,
 };
 
 pub fn block_with_title(title: &str) -> Block<'_> {

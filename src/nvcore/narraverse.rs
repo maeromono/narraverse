@@ -10,7 +10,15 @@ use ratatui::{
 
 use crate::{
     editor::{
-        entityedit::{self, EntityEditModal, render_entity_edit}, entitypick::{self, render_entity_pick}, narrativeedit::{self, NarrativeEditor, render_narrative_editor}, narrativeeditmodal::{self, NarrativeEditModal, render_narrative_edit_modal}, verseareapick::{self, render_area_pick}, versedelete::{self, DeletionTarget, render_delete_screen}, verseedit::{self, VerseEdit, render_verse_edit}, versenarrativepick::{self, render_narrative_pick}, versepick::{self, render_worldpick}
+        entityedit::{self, EntityEditModal, render_entity_edit},
+        entitypick::{self, render_entity_pick},
+        narrativeedit::{self, NarrativeEditor, render_narrative_editor},
+        narrativeeditmodal::{self, NarrativeEditModal, render_narrative_edit_modal},
+        verseareapick::{self, render_area_pick},
+        versedelete::{self, DeletionTarget, render_delete_screen},
+        verseedit::{self, VerseEdit, render_verse_edit},
+        versenarrativepick::{self, render_narrative_pick},
+        versepick::{self, render_worldpick},
     },
     nvcore::{
         config::NarraverseConfig,
@@ -168,7 +176,7 @@ impl Default for NarraverseListStates {
             verse_pick_liststate: ls.clone(),
             verse_area_pick_liststate: ls.clone(),
             verse_narrative_pick_liststate: ls.clone(),
-            verse_entity_pick_liststate: ls.clone()
+            verse_entity_pick_liststate: ls.clone(),
         }
     }
 }

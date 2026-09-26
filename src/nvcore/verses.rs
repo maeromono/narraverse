@@ -23,7 +23,7 @@ impl Default for NarraverseVerses {
 pub struct Verse {
     pub name: String,
     pub narratives: Vec<Narrative>,
-    pub entities: Vec<Entity>
+    pub entities: Vec<Entity>,
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -32,7 +32,7 @@ pub struct Narrative {
     pub written_by: String,
     pub narrative: String,
     pub date: NaiveDate,
-    pub summary: Option<String>
+    pub summary: Option<String>,
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -50,20 +50,24 @@ pub enum EntityType {
     Group,
     Organization,
     Corporate,
-    Concept
+    Concept,
 }
 
 impl Display for EntityType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", match self {
-            EntityType::Character => "Char",
-            EntityType::Creature => "Cret",
-            EntityType::Location => "Loct",
-            EntityType::Item => "Item",
-            EntityType::Group => "Grop",
-            EntityType::Organization => "Orgn",
-            EntityType::Corporate => "Corp",
-            EntityType::Concept => "Cnct",
-        })
+        write!(
+            f,
+            "{}",
+            match self {
+                EntityType::Character => "Char",
+                EntityType::Creature => "Cret",
+                EntityType::Location => "Loct",
+                EntityType::Item => "Item",
+                EntityType::Group => "Grop",
+                EntityType::Organization => "Orgn",
+                EntityType::Corporate => "Corp",
+                EntityType::Concept => "Cnct",
+            }
+        )
     }
 }

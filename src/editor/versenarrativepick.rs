@@ -19,7 +19,10 @@ use crate::{
 
 pub fn render_narrative_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     let Some(verse) = nv.verses.verses.get(nv.verses.verse_index) else {
-        nv.send_error(String::from("No Verse at this index."), NarraverseState::VersePick);
+        nv.send_error(
+            String::from("No Verse at this index."),
+            NarraverseState::VersePick,
+        );
         return;
     };
     if verse.narratives.len() == 0 {

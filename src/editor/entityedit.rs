@@ -8,7 +8,11 @@ use ratatui::{
 use ratatui_textarea::TextArea;
 
 use crate::nvcore::{
-    decosutils::{center_area, focus_highlight}, narraverse::{Narraverse, NarraverseState}, save::save_verses, textareautils::validate_length, verses::{Entity, EntityType}
+    decosutils::{center_area, focus_highlight},
+    narraverse::{Narraverse, NarraverseState},
+    save::save_verses,
+    textareautils::validate_length,
+    verses::{Entity, EntityType},
 };
 
 pub struct EntityEditModal {
@@ -97,7 +101,8 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             return;
         }
         KeyCode::BackTab => {
-            nv.entity_edit_modal.current_focus = previous_cycle(&nv.entity_edit_modal.current_focus);
+            nv.entity_edit_modal.current_focus =
+                previous_cycle(&nv.entity_edit_modal.current_focus);
             return;
         }
         KeyCode::Enter => {
@@ -109,7 +114,8 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match nv.entity_edit_modal.current_focus {
         CurrentFocus::Type => match key.code {
             KeyCode::Left | KeyCode::Char('h') => {
-                nv.entity_edit_modal.entity_type = previous_cycle(&nv.entity_edit_modal.entity_type);
+                nv.entity_edit_modal.entity_type =
+                    previous_cycle(&nv.entity_edit_modal.entity_type);
             }
             KeyCode::Right | KeyCode::Char('l') => {
                 nv.entity_edit_modal.entity_type = next_cycle(&nv.entity_edit_modal.entity_type);
@@ -123,14 +129,17 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             }
         }
     }
-}   
+}
 
 fn confirm_edit(nv: &mut Narraverse) {
     if !nv.entity_edit_modal.entity_name_valid {
         return;
     }
     let Some(verse) = nv.verses.verses.get_mut(nv.verses.verse_index) else {
-        nv.send_error(String::from("No Verse at this index."), NarraverseState::VersePick);
+        nv.send_error(
+            String::from("No Verse at this index."),
+            NarraverseState::VersePick,
+        );
         return;
     };
     match nv.entity_edit_modal.mode {
@@ -143,7 +152,10 @@ fn confirm_edit(nv: &mut Narraverse) {
         }
         EntityEditMode::Existing(index) => {
             let Some(entity) = verse.entities.get_mut(index) else {
-                nv.send_error(String::from("No entity at this index."), NarraverseState::EntityPick);
+                nv.send_error(
+                    String::from("No entity at this index."),
+                    NarraverseState::EntityPick,
+                );
                 return;
             };
             entity.name = nv.entity_edit_modal.entity_name_textarea.lines()[0].clone();

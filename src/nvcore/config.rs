@@ -1,6 +1,10 @@
-use std::{fs::{File, create_dir_all, read_to_string, rename}, io::{Error, ErrorKind, Result, Write}, path::PathBuf};
 use directories::ProjectDirs;
 use serde::{Deserialize, Serialize};
+use std::{
+    fs::{File, create_dir_all, read_to_string, rename},
+    io::{Error, ErrorKind, Result, Write},
+    path::PathBuf,
+};
 use toml::{from_str, to_string};
 
 #[derive(Serialize, Deserialize)]
