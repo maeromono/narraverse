@@ -84,7 +84,7 @@ pub fn render_entity_edit(nv: &Narraverse, frame: &mut Frame, area: Rect) {
         type_field_layout[0],
     );
     frame.render_widget(
-        Paragraph::new(format!("< {} >", nv.entity_edit_modal.entity_type)),
+        Paragraph::new(format!("< {} >", nv.entity_edit_modal.entity_type.full_name())),
         type_field_layout[1],
     );
 }

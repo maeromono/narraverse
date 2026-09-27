@@ -32,7 +32,7 @@ pub fn render_entity_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     }
     let mut entity_list: Vec<String> = vec![];
     for entity in &verse.entities {
-        entity_list.push(format!("[{}] {}", entity.entity_type, entity.name));
+        entity_list.push(format!("[{}] {}", entity.entity_type.short_name(), entity.name));
     }
     let list = List::new(entity_list)
         .highlight_style(Modifier::REVERSED)

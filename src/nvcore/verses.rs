@@ -1,5 +1,3 @@
-use std::fmt::Display;
-
 use chrono::NaiveDate;
 use enum_iterator::Sequence;
 use serde::{Deserialize, Serialize};
@@ -46,28 +44,34 @@ pub enum EntityType {
     Character,
     Creature,
     Location,
-    Item,
     Group,
     Organization,
     Corporate,
     Concept,
 }
 
-impl Display for EntityType {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                EntityType::Character => "Char",
-                EntityType::Creature => "Cret",
-                EntityType::Location => "Loct",
-                EntityType::Item => "Item",
-                EntityType::Group => "Grop",
-                EntityType::Organization => "Orgn",
-                EntityType::Corporate => "Corp",
-                EntityType::Concept => "Cnct",
-            }
-        )
+impl EntityType {
+    pub fn short_name(&self) -> &'static str {
+        match self {
+            EntityType::Character => "Char",
+            EntityType::Creature => "Cret",
+            EntityType::Location => "Loct",
+            EntityType::Group => "Grop",
+            EntityType::Organization => "Orgn",
+            EntityType::Corporate => "Corp",
+            EntityType::Concept => "Cnct",
+        }
+    }
+
+    pub fn full_name(&self) -> &'static str {
+        match self {
+            EntityType::Character => "Character",
+            EntityType::Creature => "Creature",
+            EntityType::Location => "Location",
+            EntityType::Group => "Group",
+            EntityType::Organization => "Organization",
+            EntityType::Corporate => "Corporate",
+            EntityType::Concept => "Concept",
+        }
     }
 }
