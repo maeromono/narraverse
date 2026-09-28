@@ -5,6 +5,7 @@ use ratatui::{
     widgets::Paragraph,
 };
 use ratatui_textarea::TextArea;
+use uuid::Uuid;
 
 use crate::nvcore::{
     decosutils::center_area,
@@ -84,6 +85,7 @@ fn confirm_edit(nv: &mut Narraverse) {
         VerseEditMode::New => {
             nv.verses.verses.push(Verse {
                 name: nv.verse_editor.verse_name_textarea.lines()[0].clone(),
+                uuid: Uuid::now_v7(),
                 narratives: vec![],
                 entities: vec![],
             });
