@@ -5,14 +5,27 @@ use uuid::Uuid;
 
 #[derive(Serialize, Deserialize)]
 pub struct NarraverseVerses {
+    #[serde(skip)]
     pub verses: Vec<Verse>,
+    pub verse_files: Vec<String>,
     pub verse_index: usize,
+}
+
+impl NarraverseVerses {
+    pub fn refresh_verse_files(&mut self) {
+        let mut files_list: Vec<String> = vec![];
+        for verse in &self.verses {
+            files_list.push(format!("verse-{}", verse.uuid));
+        }
+        self.verse_files = files_list;
+    }
 }
 
 impl Default for NarraverseVerses {
     fn default() -> Self {
         Self {
             verses: vec![],
+            verse_files: vec![],
             verse_index: 0,
         }
     }

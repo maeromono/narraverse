@@ -129,7 +129,7 @@ fn confirm_delete(nv: &mut Narraverse) {
             nv.state = NarraverseState::EntityPick;
         }
     }
-    if let Err(err) = save_verses(&nv.verses) {
+    if let Err(err) = save_verses(&mut nv.verses) {
         nv.send_error(
             format!("Cannot finalize deletion:\n{}", err),
             NarraverseState::VersePick,

@@ -163,7 +163,7 @@ fn confirm_edit(nv: &mut Narraverse) {
             nv.state = NarraverseState::EntityPick;
         }
     }
-    if let Err(err) = save_verses(&nv.verses) {
+    if let Err(err) = save_verses(&mut nv.verses) {
         nv.send_error(
             format!("Entity edited, but won't save:\n{}", err),
             NarraverseState::EntityPick,
