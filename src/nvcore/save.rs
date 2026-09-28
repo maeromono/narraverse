@@ -21,6 +21,17 @@ pub fn save_verses(nv: &mut NarraverseVerses) -> Result<()> {
         create_dir_all(parent)?;
     }
     nv.refresh_verse_files();
+    let verses_len = nv.verses.len();
+    let files_len = nv.verse_files.len();
+    if verses_len != files_len {
+        return Err(Error::new(
+            ErrorKind::InvalidData,
+            format!(
+                "Mismatched lengths of verses ({}) and verse files ({}) vecs. This is not supposed to happen.",
+                verses_len, files_len
+            ),
+        ));
+    }
     for (verse, file) in nv.verses.iter().zip(nv.verse_files.iter()) {
         let path = save_path(file.as_str())?;
         let contents = to_string(verse).map_err(|err| Error::new(ErrorKind::InvalidData, err))?;
@@ -56,9 +67,6 @@ pub fn load_verses() -> Result<NarraverseVerses> {
     }?;
     for file in &nv.verse_files {
         let path = save_path(file)?;
-        if !Path::new(&path).try_exists().unwrap_or(false) {
-            continue;
-        }
         let contents = match read_to_string(&path) {
             Ok(contents) => contents,
             Err(err) if err.kind() == ErrorKind::NotFound => continue,
@@ -72,6 +80,10 @@ pub fn load_verses() -> Result<NarraverseVerses> {
             }
         };
         nv.verses.push(verse_itself);
+    }
+    let verses_len = nv.verses.len();
+    if verses_len != nv.verse_files.len() {
+        nv.verse_files.truncate(verses_len);
     }
     Ok(nv)
 }
