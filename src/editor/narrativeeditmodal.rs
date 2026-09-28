@@ -11,7 +11,7 @@ use ratatui_textarea::TextArea;
 use crate::nvcore::{
     decosutils::{center_area, focus_highlight},
     narraverse::{Narraverse, NarraverseState},
-    save::save_verses,
+    save::{save_verse, save_verses},
     textareautils::{validate_date, validate_length},
     verses::Narrative,
 };
@@ -230,7 +230,7 @@ fn confirm_edit(nv: &mut Narraverse) {
             nv.state = NarraverseState::NarrativePick;
         }
     }
-    if let Err(err) = save_verses(&mut nv.verses) {
+    if let Err(err) = save_verse(&verse, format!("verse-{}", verse.uuid).as_str()) {
         nv.send_error(
             format!("Narrative edited, but won't save:\n{}", err),
             NarraverseState::NarrativePick,

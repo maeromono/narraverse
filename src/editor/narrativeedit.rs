@@ -9,7 +9,7 @@ use ratatui_textarea::{TextArea, WrapMode};
 
 use crate::nvcore::{
     narraverse::{Narraverse, NarraverseState},
-    save::save_verses,
+    save::{save_verse, save_verses},
 };
 
 pub struct NarrativeEditor {
@@ -96,7 +96,7 @@ fn save_narrative(nv: &mut Narraverse) {
         return;
     };
     narrative.narrative = nv.narrative_editor.textarea.lines().join("\n");
-    if let Err(err) = save_verses(&mut nv.verses) {
+    if let Err(err) = save_verse(&verse, format!("verse-{}", verse.uuid).as_str()) {
         nv.send_error(
             format!("Cannot save the narrative:\n{}", err),
             NarraverseState::NarrativeEdit,

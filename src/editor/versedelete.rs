@@ -30,7 +30,7 @@ pub fn render_delete_screen(nv: &mut Narraverse, frame: &mut Frame, area: Rect) 
     let delete_confirmation_message: Paragraph = match nv.deletion_target {
         DeletionTarget::Verse => {
             Paragraph::new(format!(
-                "Delete Verse \"{}\"?\nAll narrative you've written and entities you've created will be permanently erased.",
+                "Delete Verse \"{}\"?\nIt'll be removed from the index, but will remain on disk.",
                 verse.name
             ))
             .wrap(Wrap { trim: false })

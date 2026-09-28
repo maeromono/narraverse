@@ -42,7 +42,22 @@ pub fn save_verses(nv: &mut NarraverseVerses) -> Result<()> {
     Ok(())
 }
 
+pub fn save_verse(verse: &Verse, file: &str) -> Result<()> {
+    let path = save_path(file)?;
+    if let Some(parent) = path.parent() {
+        create_dir_all(parent)?;
+    }
+    let contents = to_string(verse).map_err(|err| Error::new(ErrorKind::InvalidData, err))?;
+    write(&path, &contents)?;
+    Ok(())
+}
+
 fn write(path: &Path, contents: &str) -> Result<()> {
+    if let Ok(existing) = read_to_string(path) {
+        if existing == contents {
+            return Ok(())
+        }
+    }
     let tmp_path = path.with_extension("tmp");
     let mut tmp = File::create(&tmp_path)?;
     tmp.write_all(contents.as_bytes())?;
