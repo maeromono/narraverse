@@ -6,40 +6,49 @@ use ratatui::{
     widgets::Paragraph,
 };
 use ratatui_textarea::{TextArea, WrapMode};
+use uuid::Uuid;
 
 use crate::nvcore::{
     narraverse::{Narraverse, NarraverseState},
-    save::{save_verse, save_verses},
+    save::save_verse,
 };
 
-pub struct NarrativeEditor {
-    pub currently_editing: usize,
-    pub textarea: TextArea<'static>,
+pub struct NarraverseEditor {
+    pub mode: EditorMode,
+    pub editing_uuid: Uuid,
+    pub editor_textarea: TextArea<'static>,
 }
 
-impl Default for NarrativeEditor {
+impl Default for NarraverseEditor {
     fn default() -> Self {
         Self {
-            currently_editing: 0,
-            textarea: TextArea::default(),
+            mode: EditorMode::Narrative,
+            editing_uuid: Uuid::default(),
+            editor_textarea: TextArea::default(),
         }
     }
 }
 
-impl NarrativeEditor {
-    pub fn edit(nv: &Narraverse, index: usize) -> Option<Self> {
+impl NarraverseEditor {
+    pub fn edit(nv: &Narraverse, mode: EditorMode, uuid: Uuid) -> Option<Self> {
         let verse = nv.verses.verses.get(nv.verses.verse_index)?;
-        let narrative = verse.narratives.get(index)?;
+        let narrative = verse.narratives.get(&uuid)?;
         let mut textarea = TextArea::from(narrative.narrative.lines());
         textarea.set_wrap_mode(WrapMode::WordOrGlyph);
         Some(Self {
-            currently_editing: index,
-            textarea,
+            mode,
+            editing_uuid: uuid,
+            editor_textarea: textarea,
         })
     }
 }
 
-pub fn render_narrative_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
+pub enum EditorMode {
+    Narrative,
+    Entity,
+}
+
+pub fn render_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     let Some(verse) = nv.verses.verses.get(nv.verses.verse_index) else {
         nv.send_error(
             String::from("No Verse at this index."),
@@ -47,7 +56,7 @@ pub fn render_narrative_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rec
         );
         return;
     };
-    let Some(narrative) = verse.narratives.get(nv.narrative_editor.currently_editing) else {
+    let Some(narrative) = verse.narratives.get(&nv.editor.editing_uuid) else {
         nv.send_error(
             String::from("No narrative at this index."),
             NarraverseState::NarrativePick,
@@ -64,7 +73,7 @@ pub fn render_narrative_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rec
         Paragraph::new(format!("Editing: {}", narrative.title)).bold(),
         editor_layout[0],
     );
-    frame.render_widget(&nv.narrative_editor.textarea, editor_layout[1]);
+    frame.render_widget(&nv.editor.editor_textarea, editor_layout[1]);
 }
 
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
@@ -72,7 +81,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
         (KeyCode::Esc, KeyModifiers::NONE) => nv.state = NarraverseState::NarrativePick,
         (KeyCode::Char('w'), KeyModifiers::ALT) => save_narrative(nv),
         _ => {
-            nv.narrative_editor.textarea.input(*key);
+            nv.editor.editor_textarea.input(*key);
         }
     }
 }
@@ -87,7 +96,7 @@ fn save_narrative(nv: &mut Narraverse) {
     };
     let Some(narrative) = verse
         .narratives
-        .get_mut(nv.narrative_editor.currently_editing)
+        .get_mut(&nv.editor.editing_uuid)
     else {
         nv.send_error(
             String::from("No narrative at this index."),
@@ -95,7 +104,7 @@ fn save_narrative(nv: &mut Narraverse) {
         );
         return;
     };
-    narrative.narrative = nv.narrative_editor.textarea.lines().join("\n");
+    narrative.narrative = nv.editor.editor_textarea.lines().join("\n");
     if let Err(err) = save_verse(&verse, format!("verse-{}", verse.uuid).as_str()) {
         nv.send_error(
             format!("Cannot save the narrative:\n{}", err),

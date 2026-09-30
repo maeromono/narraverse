@@ -1,5 +1,6 @@
 use chrono::NaiveDate;
 use enum_iterator::Sequence;
+use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -35,8 +36,8 @@ impl Default for NarraverseVerses {
 pub struct Verse {
     pub name: String,
     pub uuid: Uuid,
-    pub narratives: Vec<Narrative>,
-    pub entities: Vec<Entity>,
+    pub narratives: IndexMap<Uuid, Narrative>,
+    pub entities: IndexMap<Uuid, Entity>,
 }
 
 #[derive(Clone, Serialize, Deserialize)]

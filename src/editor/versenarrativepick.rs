@@ -8,7 +8,7 @@ use ratatui::{
 
 use crate::{
     editor::{
-        narrativeedit::NarrativeEditor, narrativeeditmodal::NarrativeEditModal,
+        nveditor::NarraverseEditor, narrativeeditmodal::NarrativeEditModal,
         versedelete::DeletionTarget,
     },
     nvcore::{
@@ -34,7 +34,7 @@ pub fn render_narrative_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect)
         return;
     }
     let mut narrative_list: Vec<String> = vec![];
-    for narr in &verse.narratives {
+    for narr in verse.narratives.values() {
         narrative_list.push(narr.title.clone());
     }
     let list = List::new(narrative_list)
@@ -58,14 +58,15 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             .verse_narrative_pick_liststate
             .select_previous(),
         KeyCode::Enter => {
-            let Some(index) = nv.list_states.verse_narrative_pick_liststate.selected() else {
-                return;
-            };
-            let Some(nar_ed) = NarrativeEditor::edit(nv, index) else {
-                return;
-            };
-            nv.narrative_editor = nar_ed;
-            nv.state = NarraverseState::NarrativeEdit;
+            // let Some(index) = nv.list_states.verse_narrative_pick_liststate.selected() else {
+            //     return;
+            // };
+            todo!("following the indexmap migration you cannot edit narrs anymore but for now lmfao")
+            // let Some(nar_ed) = NarraverseEditor::edit(nv, index) else {
+            //     return;
+            // };
+            // nv.editor = nar_ed;
+            // nv.state = NarraverseState::NarrativeEdit;
         }
         KeyCode::Char('n') => {
             nv.narrative_edit_modal = NarrativeEditModal::default().prefill_writtenby_field(nv);

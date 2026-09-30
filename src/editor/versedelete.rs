@@ -43,7 +43,7 @@ pub fn render_delete_screen(nv: &mut Narraverse, frame: &mut Frame, area: Rect) 
                 nv.state = NarraverseState::NarrativePick;
                 return;
             };
-            let Some(narrative) = verse.narratives.get(narrative_index) else {
+            let Some(narrative) = verse.narratives.get_index(narrative_index) else {
                 nv.send_error(
                     String::from("No narrative at this index."),
                     NarraverseState::NarrativePick,
@@ -52,7 +52,7 @@ pub fn render_delete_screen(nv: &mut Narraverse, frame: &mut Frame, area: Rect) 
             };
             Paragraph::new(format!(
                 "Delete narrative \"{}\"?\nYou cannot revert this.",
-                narrative.title
+                narrative.1.title
             ))
             .wrap(Wrap { trim: false })
             .yellow()
@@ -63,11 +63,11 @@ pub fn render_delete_screen(nv: &mut Narraverse, frame: &mut Frame, area: Rect) 
                 nv.state = NarraverseState::EntityPick;
                 return;
             };
-            let Some(entity) = verse.entities.get(entity_index) else {
+            let Some(entity) = verse.entities.get_index(entity_index) else {
                 nv.send_error(String::from("No entity at this index."), NarraverseState::EntityPick);
                 return;
             };
-            Paragraph::new(format!("Delete entity \"{}\"?\nYou cannot revert this.", entity.name)).wrap(Wrap { trim: false }).yellow().bold()
+            Paragraph::new(format!("Delete entity \"{}\"?\nYou cannot revert this.", entity.1.name)).wrap(Wrap { trim: false }).yellow().bold()
         }
     };
     frame.render_widget(delete_confirmation_message, center_area(area));
@@ -115,7 +115,7 @@ fn confirm_delete(nv: &mut Narraverse) {
                 nv.state = NarraverseState::NarrativePick;
                 return;
             };
-            verse.narratives.remove(narrative_index);
+            verse.narratives.shift_remove_index(narrative_index);
             nv.list_states.verse_narrative_pick_liststate.select(None);
             nv.state = NarraverseState::NarrativePick;
         }
@@ -124,7 +124,7 @@ fn confirm_delete(nv: &mut Narraverse) {
                 nv.state = NarraverseState::EntityPick;
                 return;
             };
-            verse.entities.remove(entity_index);
+            verse.entities.shift_remove_index(entity_index);
             nv.list_states.verse_entity_pick_liststate.select(None);
             nv.state = NarraverseState::EntityPick;
         }

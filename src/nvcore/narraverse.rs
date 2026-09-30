@@ -12,7 +12,7 @@ use crate::{
     editor::{
         entityedit::{self, EntityEditModal, render_entity_edit},
         entitypick::{self, render_entity_pick},
-        narrativeedit::{self, NarrativeEditor, render_narrative_editor},
+        nveditor::{self, NarraverseEditor, render_editor},
         narrativeeditmodal::{self, NarrativeEditModal, render_narrative_edit_modal},
         verseareapick::{self, render_area_pick},
         versedelete::{self, DeletionTarget, render_delete_screen},
@@ -36,7 +36,7 @@ pub struct Narraverse {
     pub list_states: NarraverseListStates,
     pub verse_editor: VerseEdit,
     pub narrative_edit_modal: NarrativeEditModal,
-    pub narrative_editor: NarrativeEditor,
+    pub editor: NarraverseEditor,
     pub entity_edit_modal: EntityEditModal,
     pub deletion_target: DeletionTarget,
     pub errors: (String, NarraverseState),
@@ -97,7 +97,7 @@ impl Narraverse {
             NarraverseState::NarrativeModal => {
                 render_narrative_edit_modal(self, frame, main_layout[1])
             }
-            NarraverseState::NarrativeEdit => render_narrative_editor(self, frame, main_layout[1]),
+            NarraverseState::NarrativeEdit => render_editor(self, frame, main_layout[1]),
             NarraverseState::EntityPick => render_entity_pick(self, frame, main_layout[1]),
             NarraverseState::EntityModal => render_entity_edit(self, frame, main_layout[1]),
             NarraverseState::VerseDelete => render_delete_screen(self, frame, main_layout[1]),
@@ -123,7 +123,7 @@ impl Narraverse {
             NarraverseState::VerseAreaPick => verseareapick::handle_keys(self, key),
             NarraverseState::NarrativePick => versenarrativepick::handle_keys(self, key),
             NarraverseState::NarrativeModal => narrativeeditmodal::handle_keys(self, key),
-            NarraverseState::NarrativeEdit => narrativeedit::handle_keys(self, key),
+            NarraverseState::NarrativeEdit => nveditor::handle_keys(self, key),
             NarraverseState::EntityPick => entitypick::handle_keys(self, key),
             NarraverseState::EntityModal => entityedit::handle_keys(self, key),
             NarraverseState::VerseDelete => versedelete::handle_keys(self, key),
@@ -153,7 +153,7 @@ impl Default for Narraverse {
             list_states: NarraverseListStates::default(),
             verse_editor: VerseEdit::default(),
             narrative_edit_modal: NarrativeEditModal::default(),
-            narrative_editor: NarrativeEditor::default(),
+            editor: NarraverseEditor::default(),
             entity_edit_modal: EntityEditModal::default(),
             deletion_target: DeletionTarget::Verse,
             errors: (String::new(), NarraverseState::VersePick),

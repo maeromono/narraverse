@@ -7,11 +7,12 @@ use ratatui::{
     widgets::Paragraph,
 };
 use ratatui_textarea::TextArea;
+use uuid::Uuid;
 
 use crate::nvcore::{
     decosutils::{center_area, focus_highlight},
     narraverse::{Narraverse, NarraverseState},
-    save::{save_verse, save_verses},
+    save::save_verse,
     textareautils::{validate_date, validate_length},
     verses::Narrative,
 };
@@ -45,15 +46,15 @@ impl NarrativeEditModal {
 
     pub fn edit(nv: &Narraverse, ind: usize) -> Option<Self> {
         let verse = nv.verses.verses.get(nv.verses.verse_index)?;
-        let narrative = verse.narratives.get(ind)?;
+        let narrative = verse.narratives.get_index(ind)?;
         Some(Self {
             mode: NarrativeEditModalMode::Existing(ind),
             current_focus: CurrentFocus::Title,
-            narrative_name_textarea: TextArea::new(vec![narrative.title.clone()]),
-            narrative_writtenby_textarea: TextArea::new(vec![narrative.written_by.clone()]),
-            narrative_date_textarea: TextArea::new(vec![narrative.date.to_string()]),
+            narrative_name_textarea: TextArea::new(vec![narrative.1.title.clone()]),
+            narrative_writtenby_textarea: TextArea::new(vec![narrative.1.written_by.clone()]),
+            narrative_date_textarea: TextArea::new(vec![narrative.1.date.to_string()]),
             narrative_summary_textarea: TextArea::new(vec![
-                narrative.summary.clone().unwrap_or_default(),
+                narrative.1.summary.clone().unwrap_or_default(),
             ]),
             narrative_name_valid: true,
             narrative_writtenby_valid: true,
@@ -199,7 +200,7 @@ fn confirm_edit(nv: &mut Narraverse) {
     let summary = if sum.is_empty() { None } else { Some(sum) };
     match nv.narrative_edit_modal.mode {
         NarrativeEditModalMode::New => {
-            verse.narratives.push(Narrative {
+            verse.narratives.insert(Uuid::now_v7(), Narrative {
                 title: nv.narrative_edit_modal.narrative_name_textarea.lines()[0].clone(),
                 written_by: nv.narrative_edit_modal.narrative_writtenby_textarea.lines()[0].clone(),
                 date: nv.narrative_edit_modal.narrative_date_textarea.lines()[0]
@@ -212,21 +213,21 @@ fn confirm_edit(nv: &mut Narraverse) {
             nv.state = NarraverseState::NarrativePick;
         }
         NarrativeEditModalMode::Existing(index) => {
-            let Some(narrative) = verse.narratives.get_mut(index) else {
+            let Some(narrative) = verse.narratives.get_index_mut(index) else {
                 nv.send_error(
                     String::from("No narrative at this index."),
                     NarraverseState::VersePick,
                 );
                 return;
             };
-            narrative.title = nv.narrative_edit_modal.narrative_name_textarea.lines()[0].clone();
-            narrative.written_by =
+            narrative.1.title = nv.narrative_edit_modal.narrative_name_textarea.lines()[0].clone();
+            narrative.1.written_by =
                 nv.narrative_edit_modal.narrative_writtenby_textarea.lines()[0].clone();
-            narrative.date = nv.narrative_edit_modal.narrative_date_textarea.lines()[0]
+            narrative.1.date = nv.narrative_edit_modal.narrative_date_textarea.lines()[0]
                 .clone()
                 .parse::<NaiveDate>()
                 .unwrap();
-            narrative.summary = summary;
+            narrative.1.summary = summary;
             nv.state = NarraverseState::NarrativePick;
         }
     }

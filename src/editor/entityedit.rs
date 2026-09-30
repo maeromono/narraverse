@@ -6,11 +6,12 @@ use ratatui::{
     widgets::Paragraph,
 };
 use ratatui_textarea::TextArea;
+use uuid::Uuid;
 
 use crate::nvcore::{
     decosutils::{center_area, focus_highlight},
     narraverse::{Narraverse, NarraverseState},
-    save::{save_verse, save_verses},
+    save::save_verse,
     textareautils::validate_length,
     verses::{Entity, EntityType},
 };
@@ -36,13 +37,13 @@ impl EntityEditModal {
 
     pub fn edit(nv: &Narraverse, ind: usize) -> Option<Self> {
         let verse = nv.verses.verses.get(nv.verses.verse_index)?;
-        let entity = verse.entities.get(ind)?;
+        let entity = verse.entities.get_index(ind)?;
         Some(Self {
             mode: EntityEditMode::Existing(ind),
             current_focus: CurrentFocus::Name,
-            entity_name_textarea: TextArea::new(vec![entity.name.clone()]),
+            entity_name_textarea: TextArea::new(vec![entity.1.name.clone()]),
             entity_name_valid: true,
-            entity_type: entity.entity_type.clone(),
+            entity_type: entity.1.entity_type.clone(),
         })
     }
 }
@@ -144,22 +145,22 @@ fn confirm_edit(nv: &mut Narraverse) {
     };
     match nv.entity_edit_modal.mode {
         EntityEditMode::New => {
-            verse.entities.push(Entity {
+            verse.entities.insert(Uuid::now_v7(), Entity {
                 name: nv.entity_edit_modal.entity_name_textarea.lines()[0].clone(),
                 entity_type: nv.entity_edit_modal.entity_type.clone(),
             });
             nv.state = NarraverseState::EntityPick;
         }
         EntityEditMode::Existing(index) => {
-            let Some(entity) = verse.entities.get_mut(index) else {
+            let Some(entity) = verse.entities.get_index_mut(index) else {
                 nv.send_error(
                     String::from("No entity at this index."),
                     NarraverseState::EntityPick,
                 );
                 return;
             };
-            entity.name = nv.entity_edit_modal.entity_name_textarea.lines()[0].clone();
-            entity.entity_type = nv.entity_edit_modal.entity_type.clone();
+            entity.1.name = nv.entity_edit_modal.entity_name_textarea.lines()[0].clone();
+            entity.1.entity_type = nv.entity_edit_modal.entity_type.clone();
             nv.state = NarraverseState::EntityPick;
         }
     }
