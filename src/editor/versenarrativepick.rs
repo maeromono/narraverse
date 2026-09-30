@@ -5,6 +5,7 @@ use ratatui::{
     style::Modifier,
     widgets::{List, Paragraph},
 };
+use uuid::Uuid;
 
 use crate::{
     editor::{
@@ -12,7 +13,7 @@ use crate::{
     },
     nvcore::{
         decosutils::{block_with_title, center_area},
-        narraverse::{Narraverse, NarraverseState},
+        narraverse::{Narraverse, NarraverseState}, verses::Narrative,
     },
 };
 
@@ -57,18 +58,10 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             .verse_narrative_pick_liststate
             .select_previous(),
         KeyCode::Enter => {
-            let Some(verse) = nv.verses.verses.get(nv.verses.verse_index) else {
+            let Some(narr) = selected_narrative(nv) else {
                 return;
             };
-            let Some(index) = nv.list_states.verse_narrative_pick_liststate.selected() else {
-                return;
-            };
-            let Some(narr) = verse.narratives.get_index(index) else {
-                return;
-            };
-            let Some(nar_ed) = NarraverseEditor::edit(nv, EditorMode::Narrative, *narr.0) else {
-                return;
-            };
+            let nar_ed = NarraverseEditor::edit(EditorMode::Narrative, narr.0, narr.1);
             nv.editor = nar_ed;
             nv.state = NarraverseState::NarrativeEdit;
         }
@@ -95,4 +88,10 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
         }
         _ => {}
     }
+}
+
+fn selected_narrative<'a>(nv: &'a Narraverse) -> Option<(Uuid, &'a Narrative)> {
+    let verse = nv.verses.verses.get(nv.verses.verse_index)?;
+    let idx = nv.list_states.verse_narrative_pick_liststate.selected()?;
+    verse.narratives.get_index(idx).map(|(k, v)| (*k, v))
 }
