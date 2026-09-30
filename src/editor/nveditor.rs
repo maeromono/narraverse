@@ -10,7 +10,7 @@ use uuid::Uuid;
 
 use crate::nvcore::{
     narraverse::{Narraverse, NarraverseState},
-    save::save_verse, verses::{Narrative, NarraverseVerses},
+    save::save_verse, verses::NarraverseVerses,
 };
 
 pub struct NarraverseEditor {
@@ -30,10 +30,16 @@ impl Default for NarraverseEditor {
 }
 
 impl NarraverseEditor {
-    pub fn edit(mode: EditorMode, uuid: Uuid, narrative: &Narrative) -> Self {
+    pub fn edit(verses: &NarraverseVerses, mode: EditorMode, uuid: Uuid) -> Option<Self> {
+        let verse = verses.verses.get(verses.verse_index)?;
+        let narrative = verse.narratives.get(&uuid)?;
         let mut textarea = TextArea::from(narrative.narrative.lines());
         textarea.set_wrap_mode(WrapMode::WordOrGlyph);
-        Self { mode, editing_uuid: uuid, editor_textarea: textarea }
+        Some(Self {
+            mode,
+            editing_uuid: uuid,
+            editor_textarea: textarea,
+        })
     }
 }
 
