@@ -35,22 +35,22 @@ impl EntityEditModal {
         }
     }
 
-    pub fn edit(verses: &NarraverseVerses, ind: usize) -> Option<Self> {
+    pub fn edit(verses: &NarraverseVerses, uuid: Uuid) -> Option<Self> {
         let verse = verses.verses.get(&verses.verse_uuid)?;
-        let entity = verse.entities.get_index(ind)?;
+        let entity = verse.entities.get(&uuid)?;
         Some(Self {
-            mode: EntityEditMode::Existing(ind),
+            mode: EntityEditMode::Existing(uuid),
             current_focus: CurrentFocus::Name,
-            entity_name_textarea: TextArea::new(vec![entity.1.name.clone()]),
+            entity_name_textarea: TextArea::new(vec![entity.name.clone()]),
             entity_name_valid: true,
-            entity_type: entity.1.entity_type.clone(),
+            entity_type: entity.entity_type.clone(),
         })
     }
 }
 
 enum EntityEditMode {
     New,
-    Existing(usize),
+    Existing(Uuid),
 }
 
 #[derive(Sequence, PartialEq, Eq)]
@@ -158,16 +158,16 @@ fn confirm_edit(nv: &mut Narraverse) {
             );
             nv.state = NarraverseState::EntityPick;
         }
-        EntityEditMode::Existing(index) => {
-            let Some(entity) = verse.1.entities.get_index_mut(index) else {
+        EntityEditMode::Existing(uuid) => {
+            let Some(entity) = verse.1.entities.get_mut(&uuid) else {
                 nv.send_error(
                     String::from("No entity at this index."),
                     NarraverseState::EntityPick,
                 );
                 return;
             };
-            entity.1.name = nv.entity_edit_modal.entity_name_textarea.lines()[0].clone();
-            entity.1.entity_type = nv.entity_edit_modal.entity_type.clone();
+            entity.name = nv.entity_edit_modal.entity_name_textarea.lines()[0].clone();
+            entity.entity_type = nv.entity_edit_modal.entity_type.clone();
             nv.state = NarraverseState::EntityPick;
         }
     }

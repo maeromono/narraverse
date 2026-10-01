@@ -77,10 +77,10 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             nv.state = NarraverseState::EntityModal;
         }
         KeyCode::Char('e') => {
-            let Some(index) = nv.list_states.verse_entity_pick_liststate.selected() else {
+            let Some(uuid) = selected_ent_uuid(nv) else {
                 return;
             };
-            let Some(modal) = EntityEditModal::edit(&nv.verses, index) else {
+            let Some(modal) = EntityEditModal::edit(&nv.verses, uuid) else {
                 return;
             };
             nv.entity_edit_modal = modal;
