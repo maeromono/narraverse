@@ -9,8 +9,7 @@ use uuid::Uuid;
 
 use crate::{
     editor::{
-        nveditor::{EditorMode, NarraverseEditor},
-        versedelete::DeletionTarget,
+        artifacteditmodal::ArtifactEditModal, nveditor::{EditorMode, NarraverseEditor}, versedelete::DeletionTarget
     },
     nvcore::{
         decosutils::{block_with_title, center_area},
@@ -72,10 +71,18 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             nv.state = NarraverseState::Editor;
         }
         KeyCode::Char('n') => {
-            todo!()
+            nv.artifact_edit_modal = ArtifactEditModal::default();
+            nv.state = NarraverseState::ArtifactModal;
         }
         KeyCode::Char('e') => {
-            todo!()
+            let Some(uuid) = selected_art_uuid(nv) else {
+                return;
+            };
+            let Some(art_mod) = ArtifactEditModal::edit(&nv.verses, uuid) else {
+                return;
+            };
+            nv.artifact_edit_modal = art_mod;
+            nv.state = NarraverseState::ArtifactModal;
         }
         KeyCode::Char('d') => {
             let Some(_) = nv.list_states.verse_artifact_pick_liststate.selected() else {

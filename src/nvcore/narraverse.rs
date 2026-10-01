@@ -10,7 +10,7 @@ use ratatui::{
 
 use crate::{
     editor::{
-        artifactpick::{self, render_artifact_pick}, entityedit::{self, EntityEditModal, render_entity_edit}, entitypick::{self, render_entity_pick}, narrativeeditmodal::{self, NarrativeEditModal, render_narrative_edit_modal}, nveditor::{self, NarraverseEditor, render_editor}, verseareapick::{self, render_area_pick}, versedelete::{self, DeletionTarget, render_delete_screen}, verseedit::{self, VerseEdit, render_verse_edit}, versenarrativepick::{self, render_narrative_pick}, versepick::{self, render_worldpick}
+        artifacteditmodal::{self, ArtifactEditModal, render_artifact_edit}, artifactpick::{self, render_artifact_pick}, entityedit::{self, EntityEditModal, render_entity_edit}, entitypick::{self, render_entity_pick}, narrativeeditmodal::{self, NarrativeEditModal, render_narrative_edit_modal}, nveditor::{self, NarraverseEditor, render_editor}, verseareapick::{self, render_area_pick}, versedelete::{self, DeletionTarget, render_delete_screen}, verseedit::{self, VerseEdit, render_verse_edit}, versenarrativepick::{self, render_narrative_pick}, versepick::{self, render_worldpick}
     },
     nvcore::{
         config::NarraverseConfig,
@@ -30,6 +30,7 @@ pub struct Narraverse {
     pub narrative_edit_modal: NarrativeEditModal,
     pub editor: NarraverseEditor,
     pub entity_edit_modal: EntityEditModal,
+    pub artifact_edit_modal: ArtifactEditModal,
     pub deletion_target: DeletionTarget,
     pub errors: (String, NarraverseState),
     pub footer_notification: Option<String>,
@@ -97,6 +98,7 @@ impl Narraverse {
             NarraverseState::EntityPick => render_entity_pick(self, frame, main_layout[1]),
             NarraverseState::EntityModal => render_entity_edit(self, frame, main_layout[1]),
             NarraverseState::ArtifactPick => render_artifact_pick(self, frame, main_layout[1]),
+            NarraverseState::ArtifactModal => render_artifact_edit(self, frame, main_layout[1]),
             NarraverseState::VerseDelete => render_delete_screen(self, frame, main_layout[1]),
             NarraverseState::Error => render_error_screen(self, frame, main_layout[1]),
             _ => todo!(),
@@ -124,6 +126,7 @@ impl Narraverse {
             NarraverseState::EntityPick => entitypick::handle_keys(self, key),
             NarraverseState::EntityModal => entityedit::handle_keys(self, key),
             NarraverseState::ArtifactPick => artifactpick::handle_keys(self, key),
+            NarraverseState::ArtifactModal => artifacteditmodal::handle_keys(self, key),
             NarraverseState::VerseDelete => versedelete::handle_keys(self, key),
             NarraverseState::Error => error::handle_keys(self, key),
             _ => {}
@@ -153,6 +156,7 @@ impl Default for Narraverse {
             narrative_edit_modal: NarrativeEditModal::default(),
             editor: NarraverseEditor::default(),
             entity_edit_modal: EntityEditModal::default(),
+            artifact_edit_modal: ArtifactEditModal::default(),
             deletion_target: DeletionTarget::Verse,
             errors: (String::new(), NarraverseState::VersePick),
             footer_notification: None,
