@@ -11,7 +11,7 @@ use uuid::Uuid;
 use crate::nvcore::{
     narraverse::{Narraverse, NarraverseState},
     save::save_verse,
-    verses::{NarraverseVerses, Verse},
+    verses::NarraverseVerses,
 };
 
 pub struct NarraverseEditor {
@@ -76,10 +76,12 @@ pub fn render_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
 
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match (key.code, key.modifiers) {
-        (KeyCode::Esc, KeyModifiers::NONE) => nv.state = match nv.editor.mode {
-            EditorMode::Narrative => NarraverseState::NarrativePick,
-            EditorMode::Entity => NarraverseState::EntityPick,
-        },
+        (KeyCode::Esc, KeyModifiers::NONE) => {
+            nv.state = match nv.editor.mode {
+                EditorMode::Narrative => NarraverseState::NarrativePick,
+                EditorMode::Entity => NarraverseState::EntityPick,
+            }
+        }
         (KeyCode::Char('w'), KeyModifiers::ALT) => save_narrative(nv),
         _ => {
             nv.editor.editor_textarea.input(*key);

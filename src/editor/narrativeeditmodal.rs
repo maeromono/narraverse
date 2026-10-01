@@ -200,16 +200,20 @@ fn confirm_edit(nv: &mut Narraverse) {
     let summary = if sum.is_empty() { None } else { Some(sum) };
     match nv.narrative_edit_modal.mode {
         NarrativeEditModalMode::New => {
-            verse.narratives.insert(Uuid::now_v7(), Narrative {
-                title: nv.narrative_edit_modal.narrative_name_textarea.lines()[0].clone(),
-                written_by: nv.narrative_edit_modal.narrative_writtenby_textarea.lines()[0].clone(),
-                date: nv.narrative_edit_modal.narrative_date_textarea.lines()[0]
-                    .clone()
-                    .parse::<NaiveDate>()
-                    .unwrap(),
-                summary,
-                narrative: String::new(),
-            });
+            verse.narratives.insert(
+                Uuid::now_v7(),
+                Narrative {
+                    title: nv.narrative_edit_modal.narrative_name_textarea.lines()[0].clone(),
+                    written_by: nv.narrative_edit_modal.narrative_writtenby_textarea.lines()[0]
+                        .clone(),
+                    date: nv.narrative_edit_modal.narrative_date_textarea.lines()[0]
+                        .clone()
+                        .parse::<NaiveDate>()
+                        .unwrap(),
+                    summary,
+                    narrative: String::new(),
+                },
+            );
             nv.state = NarraverseState::NarrativePick;
         }
         NarrativeEditModalMode::Existing(index) => {

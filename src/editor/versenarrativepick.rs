@@ -9,7 +9,9 @@ use uuid::Uuid;
 
 use crate::{
     editor::{
-        narrativeeditmodal::NarrativeEditModal, nveditor::{EditorMode, NarraverseEditor}, versedelete::DeletionTarget
+        narrativeeditmodal::NarrativeEditModal,
+        nveditor::{EditorMode, NarraverseEditor},
+        versedelete::DeletionTarget,
     },
     nvcore::{
         decosutils::{block_with_title, center_area},
@@ -61,7 +63,8 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             let Some(uuid) = selected_narr_uuid(nv) else {
                 return;
             };
-            let Some(nar_ed) = NarraverseEditor::edit(&nv.verses, EditorMode::Narrative, uuid) else {
+            let Some(nar_ed) = NarraverseEditor::edit(&nv.verses, EditorMode::Narrative, uuid)
+            else {
                 return;
             };
             nv.editor = nar_ed;
@@ -95,5 +98,9 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
 fn selected_narr_uuid(nv: &Narraverse) -> Option<Uuid> {
     let verse = nv.verses.verses.get(nv.verses.verse_index)?;
     let index = nv.list_states.verse_narrative_pick_liststate.selected()?;
-    verse.narratives.get_index(index).map(|(uuid, _)| uuid).copied()
+    verse
+        .narratives
+        .get_index(index)
+        .map(|(uuid, _)| uuid)
+        .copied()
 }

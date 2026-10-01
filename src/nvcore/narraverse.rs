@@ -12,8 +12,8 @@ use crate::{
     editor::{
         entityedit::{self, EntityEditModal, render_entity_edit},
         entitypick::{self, render_entity_pick},
-        nveditor::{self, NarraverseEditor, render_editor},
         narrativeeditmodal::{self, NarrativeEditModal, render_narrative_edit_modal},
+        nveditor::{self, NarraverseEditor, render_editor},
         verseareapick::{self, render_area_pick},
         versedelete::{self, DeletionTarget, render_delete_screen},
         verseedit::{self, VerseEdit, render_verse_edit},

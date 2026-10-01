@@ -85,7 +85,10 @@ pub fn render_entity_edit(nv: &Narraverse, frame: &mut Frame, area: Rect) {
         type_field_layout[0],
     );
     frame.render_widget(
-        Paragraph::new(format!("< {} >", nv.entity_edit_modal.entity_type.full_name())),
+        Paragraph::new(format!(
+            "< {} >",
+            nv.entity_edit_modal.entity_type.full_name()
+        )),
         type_field_layout[1],
     );
 }
@@ -145,11 +148,14 @@ fn confirm_edit(nv: &mut Narraverse) {
     };
     match nv.entity_edit_modal.mode {
         EntityEditMode::New => {
-            verse.entities.insert(Uuid::now_v7(), Entity {
-                name: nv.entity_edit_modal.entity_name_textarea.lines()[0].clone(),
-                entity_type: nv.entity_edit_modal.entity_type.clone(),
-                details: String::new()
-            });
+            verse.entities.insert(
+                Uuid::now_v7(),
+                Entity {
+                    name: nv.entity_edit_modal.entity_name_textarea.lines()[0].clone(),
+                    entity_type: nv.entity_edit_modal.entity_type.clone(),
+                    details: String::new(),
+                },
+            );
             nv.state = NarraverseState::EntityPick;
         }
         EntityEditMode::Existing(index) => {

@@ -1,7 +1,7 @@
 pub mod entityedit;
 pub mod entitypick;
-pub mod nveditor;
 pub mod narrativeeditmodal;
+pub mod nveditor;
 pub mod verseareapick;
 pub mod versedelete;
 pub mod verseedit;

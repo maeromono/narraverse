@@ -8,7 +8,11 @@ use ratatui::{
 use uuid::Uuid;
 
 use crate::{
-    editor::{entityedit::EntityEditModal, nveditor::{EditorMode, NarraverseEditor}, versedelete::DeletionTarget},
+    editor::{
+        entityedit::EntityEditModal,
+        nveditor::{EditorMode, NarraverseEditor},
+        versedelete::DeletionTarget,
+    },
     nvcore::{
         decosutils::{block_with_title, center_area},
         narraverse::{Narraverse, NarraverseState},
@@ -33,7 +37,11 @@ pub fn render_entity_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     }
     let mut entity_list: Vec<String> = vec![];
     for entity in verse.entities.values() {
-        entity_list.push(format!("[{}] {}", entity.entity_type.short_name(), entity.name));
+        entity_list.push(format!(
+            "[{}] {}",
+            entity.entity_type.short_name(),
+            entity.name
+        ));
     }
     let list = List::new(entity_list)
         .highlight_style(Modifier::REVERSED)
@@ -92,5 +100,9 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
 fn selected_ent_uuid(nv: &Narraverse) -> Option<Uuid> {
     let verse = nv.verses.verses.get(nv.verses.verse_index)?;
     let index = nv.list_states.verse_entity_pick_liststate.selected()?;
-    verse.entities.get_index(index).map(|(uuid, _)| uuid).copied()
+    verse
+        .entities
+        .get_index(index)
+        .map(|(uuid, _)| uuid)
+        .copied()
 }

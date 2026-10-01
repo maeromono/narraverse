@@ -28,15 +28,13 @@ pub fn render_delete_screen(nv: &mut Narraverse, frame: &mut Frame, area: Rect) 
         return;
     };
     let delete_confirmation_message: Paragraph = match nv.deletion_target {
-        DeletionTarget::Verse => {
-            Paragraph::new(format!(
-                "Delete Verse \"{}\"?\nIt'll be removed from the index, but will remain on disk.",
-                verse.name
-            ))
-            .wrap(Wrap { trim: false })
-            .yellow()
-            .bold()
-        }
+        DeletionTarget::Verse => Paragraph::new(format!(
+            "Delete Verse \"{}\"?\nIt'll be removed from the index, but will remain on disk.",
+            verse.name
+        ))
+        .wrap(Wrap { trim: false })
+        .yellow()
+        .bold(),
         DeletionTarget::Narrative => {
             let Some(narrative_index) = nv.list_states.verse_narrative_pick_liststate.selected()
             else {
@@ -64,10 +62,19 @@ pub fn render_delete_screen(nv: &mut Narraverse, frame: &mut Frame, area: Rect) 
                 return;
             };
             let Some(entity) = verse.entities.get_index(entity_index) else {
-                nv.send_error(String::from("No entity at this index."), NarraverseState::EntityPick);
+                nv.send_error(
+                    String::from("No entity at this index."),
+                    NarraverseState::EntityPick,
+                );
                 return;
             };
-            Paragraph::new(format!("Delete entity \"{}\"?\nYou cannot revert this.", entity.1.name)).wrap(Wrap { trim: false }).yellow().bold()
+            Paragraph::new(format!(
+                "Delete entity \"{}\"?\nYou cannot revert this.",
+                entity.1.name
+            ))
+            .wrap(Wrap { trim: false })
+            .yellow()
+            .bold()
         }
     };
     frame.render_widget(delete_confirmation_message, center_area(area));
