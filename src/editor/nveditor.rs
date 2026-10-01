@@ -76,7 +76,10 @@ pub fn render_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
 
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match (key.code, key.modifiers) {
-        (KeyCode::Esc, KeyModifiers::NONE) => nv.state = NarraverseState::NarrativePick,
+        (KeyCode::Esc, KeyModifiers::NONE) => nv.state = match nv.editor.mode {
+            EditorMode::Narrative => NarraverseState::NarrativePick,
+            EditorMode::Entity => NarraverseState::EntityPick,
+        },
         (KeyCode::Char('w'), KeyModifiers::ALT) => save_narrative(nv),
         _ => {
             nv.editor.editor_textarea.input(*key);
@@ -122,10 +125,10 @@ fn save_narrative(nv: &mut Narraverse) {
     }
     if let Err(err) = save_verse(&verse, format!("verse-{}", verse.uuid).as_str()) {
         nv.send_error(
-            format!("Cannot save the narrative:\n{}", err),
+            format!("Cannot perform the save:\n{}", err),
             NarraverseState::NarrativeEdit,
         );
     } else {
-        nv.send_footer_notification(String::from("Narrative saved"));
+        nv.send_footer_notification(String::from("Saved successfully"));
     }
 }
