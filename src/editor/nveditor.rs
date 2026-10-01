@@ -139,7 +139,7 @@ fn save_narrative(nv: &mut Narraverse) {
     if let Err(err) = save_verse(&verse, format!("verse-{}", verse.uuid).as_str()) {
         nv.send_error(
             format!("Cannot perform the save:\n{}", err),
-            NarraverseState::NarrativeEdit,
+            NarraverseState::Editor,
         );
     } else {
         nv.send_footer_notification(String::from("Saved successfully"));

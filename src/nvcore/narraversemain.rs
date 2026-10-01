@@ -29,7 +29,7 @@ pub fn render_footer(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
         NarraverseState::NarrativePick | NarraverseState::EntityPick => {
             "e edit, n new, j/k navigate, Enter select"
         }
-        NarraverseState::NarrativeEdit => "Esc back, Alt+w save",
+        NarraverseState::Editor => "Esc back, Alt+w save",
         NarraverseState::VerseDelete => "n cancel, y confirm",
         _ => "",
     };

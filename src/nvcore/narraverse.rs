@@ -50,9 +50,13 @@ pub enum NarraverseState {
     VerseAreaPick,
     NarrativePick,
     NarrativeModal,
-    NarrativeEdit,
     EntityPick,
     EntityModal,
+    TimelinePick,
+    TimelineModal,
+    ArtifactPick,
+    ArtifactModal,
+    Editor,
     VerseDelete,
     Error,
     Quit,
@@ -97,7 +101,7 @@ impl Narraverse {
             NarraverseState::NarrativeModal => {
                 render_narrative_edit_modal(self, frame, main_layout[1])
             }
-            NarraverseState::NarrativeEdit => render_editor(self, frame, main_layout[1]),
+            NarraverseState::Editor => render_editor(self, frame, main_layout[1]),
             NarraverseState::EntityPick => render_entity_pick(self, frame, main_layout[1]),
             NarraverseState::EntityModal => render_entity_edit(self, frame, main_layout[1]),
             NarraverseState::VerseDelete => render_delete_screen(self, frame, main_layout[1]),
@@ -123,7 +127,7 @@ impl Narraverse {
             NarraverseState::VerseAreaPick => verseareapick::handle_keys(self, key),
             NarraverseState::NarrativePick => versenarrativepick::handle_keys(self, key),
             NarraverseState::NarrativeModal => narrativeeditmodal::handle_keys(self, key),
-            NarraverseState::NarrativeEdit => nveditor::handle_keys(self, key),
+            NarraverseState::Editor => nveditor::handle_keys(self, key),
             NarraverseState::EntityPick => entitypick::handle_keys(self, key),
             NarraverseState::EntityModal => entityedit::handle_keys(self, key),
             NarraverseState::VerseDelete => versedelete::handle_keys(self, key),

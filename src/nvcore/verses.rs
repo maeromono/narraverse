@@ -32,12 +32,14 @@ impl Default for NarraverseVerses {
     }
 }
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, Default)]
 pub struct Verse {
     pub name: String,
     pub uuid: Uuid,
     pub narratives: IndexMap<Uuid, Narrative>,
     pub entities: IndexMap<Uuid, Entity>,
+    pub timeline: Vec<TimelineItem>,
+    pub artifacts: IndexMap<Uuid, Artifact>
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -64,7 +66,6 @@ pub enum EntityType {
     Group,
     Organization,
     Corporate,
-    Concept,
 }
 
 impl EntityType {
@@ -76,7 +77,6 @@ impl EntityType {
             EntityType::Group => "Grop",
             EntityType::Organization => "Orgn",
             EntityType::Corporate => "Corp",
-            EntityType::Concept => "Cnct",
         }
     }
 
@@ -88,7 +88,25 @@ impl EntityType {
             EntityType::Group => "Group",
             EntityType::Organization => "Organization",
             EntityType::Corporate => "Corporate",
-            EntityType::Concept => "Concept",
         }
     }
+}
+
+#[derive(Clone, Serialize, Deserialize)]
+pub struct TimelineItem {
+    pub details: String,
+    pub narrative_tie: Uuid
+}
+
+#[derive(Clone, Serialize, Deserialize)]
+pub struct Artifact {
+    pub name: String,
+    pub artifact_type: ArtifactType,
+    pub details: String
+}
+
+#[derive(Clone, Serialize, Deserialize, Sequence)]
+pub enum ArtifactType {
+    Item,
+    Concept
 }

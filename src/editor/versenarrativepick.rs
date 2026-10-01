@@ -68,7 +68,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
                 return;
             };
             nv.editor = nar_ed;
-            nv.state = NarraverseState::NarrativeEdit;
+            nv.state = NarraverseState::Editor;
         }
         KeyCode::Char('n') => {
             nv.narrative_edit_modal = NarrativeEditModal::default().prefill_writtenby_field(nv);

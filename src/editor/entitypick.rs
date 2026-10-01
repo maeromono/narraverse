@@ -70,7 +70,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
                 return;
             };
             nv.editor = nar_ed;
-            nv.state = NarraverseState::NarrativeEdit;
+            nv.state = NarraverseState::Editor;
         }
         KeyCode::Char('n') => {
             nv.entity_edit_modal = EntityEditModal::default();

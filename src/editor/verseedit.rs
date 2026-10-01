@@ -1,5 +1,4 @@
 use crossterm::event::{KeyCode, KeyEvent};
-use indexmap::IndexMap;
 use ratatui::{
     Frame,
     layout::{Constraint, Direction, Layout, Rect},
@@ -87,8 +86,7 @@ fn confirm_edit(nv: &mut Narraverse) {
             nv.verses.verses.push(Verse {
                 name: nv.verse_editor.verse_name_textarea.lines()[0].clone(),
                 uuid: Uuid::now_v7(),
-                narratives: IndexMap::default(),
-                entities: IndexMap::default(),
+                ..Default::default()
             });
             nv.state = NarraverseState::VersePick;
         }
