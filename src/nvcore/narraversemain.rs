@@ -24,11 +24,12 @@ pub fn render_footer(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
         NarraverseState::VersePick => "e edit, n new, j/k navigate, Enter select",
         NarraverseState::VerseEdit
         | NarraverseState::NarrativeModal
-        | NarraverseState::EntityModal => "Esc cancel, Tab cycle, Enter confirm",
+        | NarraverseState::EntityModal
+        | NarraverseState::ArtifactModal => "Esc cancel, Tab cycle, Enter confirm",
         NarraverseState::VerseAreaPick => "j/k navigate, Enter select",
-        NarraverseState::NarrativePick | NarraverseState::EntityPick => {
-            "e edit, n new, j/k navigate, Enter select"
-        }
+        NarraverseState::NarrativePick
+        | NarraverseState::EntityPick
+        | NarraverseState::ArtifactPick => "e edit, n new, j/k navigate, Enter select",
         NarraverseState::Editor => "Esc back, Alt+w save",
         NarraverseState::VerseDelete => "n cancel, y confirm",
         _ => "",
