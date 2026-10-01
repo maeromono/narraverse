@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use ratatui::{
     Frame,
@@ -60,6 +62,15 @@ pub enum EditorMode {
     Entity,
 }
 
+impl Display for EditorMode {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", match self {
+            EditorMode::Narrative => "Narrative",
+            EditorMode::Entity => "Entity"
+        })
+    }
+}
+
 pub fn render_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     let editor_layout = Layout::vertical([
         Constraint::Length(1),
@@ -68,7 +79,7 @@ pub fn render_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     ])
     .split(area);
     frame.render_widget(
-        Paragraph::new(format!("Editing: {}", nv.editor.cached_name)).bold(),
+        Paragraph::new(format!("Editing: {} ({})", nv.editor.cached_name, nv.editor.mode)).bold(),
         editor_layout[0],
     );
     frame.render_widget(&nv.editor.editor_textarea, editor_layout[1]);
