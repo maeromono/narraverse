@@ -5,12 +5,13 @@ use ratatui::{
     style::Modifier,
     widgets::{List, Paragraph},
 };
+use uuid::Uuid;
 
 use crate::{
     editor::{versedelete::DeletionTarget, verseedit::VerseEdit},
     nvcore::{
         decosutils::{block_with_title, center_area},
-        narraverse::{Narraverse, NarraverseState},
+        narraverse::{Narraverse, NarraverseState}, verses::NarraverseVerses,
     },
 };
 
@@ -24,7 +25,7 @@ pub fn render_worldpick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
         );
         return;
     }
-    for verse in &nv.verses.verses {
+    for verse in nv.verses.verses.values() {
         verse_list.push(format!("Verse: {}", verse.name));
     }
     let list = List::new(verse_list).highlight_style(Modifier::REVERSED);
@@ -44,14 +45,20 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             let Some(selected_index) = nv.list_states.verse_pick_liststate.selected() else {
                 return;
             };
-            nv.verses.verse_index = selected_index;
+            let Some(uuid) = selected_verse_uuid(&nv.verses, selected_index) else {
+                return;
+            };
+            nv.verses.verse_uuid = uuid;
             nv.state = NarraverseState::VerseAreaPick;
         }
         KeyCode::Char('e') => {
             let Some(selected_index) = nv.list_states.verse_pick_liststate.selected() else {
                 return;
             };
-            let Some(verse_edit) = VerseEdit::edit(nv, selected_index) else {
+            let Some(uuid) = selected_verse_uuid(&nv.verses, selected_index) else {
+                return;
+            };
+            let Some(verse_edit) = VerseEdit::edit(&nv.verses, uuid) else {
                 return;
             };
             nv.verse_editor = verse_edit;
@@ -65,10 +72,18 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             let Some(selected_index) = nv.list_states.verse_pick_liststate.selected() else {
                 return;
             };
-            nv.verses.verse_index = selected_index;
+            let Some(uuid) = selected_verse_uuid(&nv.verses, selected_index) else {
+                return;
+            };
+            nv.verses.verse_uuid = uuid;
             nv.deletion_target = DeletionTarget::Verse;
             nv.state = NarraverseState::VerseDelete;
         }
         _ => {}
     }
+}
+
+fn selected_verse_uuid(verses: &NarraverseVerses, ind: usize) -> Option<Uuid> {
+    let verse = verses.verses.get_index(ind)?;
+    Some(*verse.0)
 }

@@ -12,7 +12,7 @@ use crate::nvcore::{
     narraverse::{Narraverse, NarraverseState},
     save::save_verses,
     textareautils::validate_length,
-    verses::Verse,
+    verses::{NarraverseVerses, Verse},
 };
 
 pub struct VerseEdit {
@@ -30,10 +30,10 @@ impl VerseEdit {
         }
     }
 
-    pub fn edit(nv: &Narraverse, ind: usize) -> Option<Self> {
-        let verse = nv.verses.verses.get(ind)?;
+    pub fn edit(verses: &NarraverseVerses, uuid: Uuid) -> Option<Self> {
+        let verse = verses.verses.get(&uuid)?;
         Some(Self {
-            mode: VerseEditMode::Existing(ind),
+            mode: VerseEditMode::Existing(uuid),
             verse_name_textarea: TextArea::new(vec![verse.name.clone()]),
             verse_name_valid: true,
         })
@@ -42,7 +42,7 @@ impl VerseEdit {
 
 enum VerseEditMode {
     New,
-    Existing(usize),
+    Existing(Uuid),
 }
 
 pub fn render_verse_edit(nv: &Narraverse, frame: &mut Frame, area: Rect) {
@@ -83,15 +83,14 @@ fn confirm_edit(nv: &mut Narraverse) {
     }
     match nv.verse_editor.mode {
         VerseEditMode::New => {
-            nv.verses.verses.push(Verse {
+            nv.verses.verses.insert(Uuid::now_v7(), Verse {
                 name: nv.verse_editor.verse_name_textarea.lines()[0].clone(),
-                uuid: Uuid::now_v7(),
                 ..Default::default()
             });
             nv.state = NarraverseState::VersePick;
         }
-        VerseEditMode::Existing(index) => {
-            let Some(verse) = nv.verses.verses.get_mut(index) else {
+        VerseEditMode::Existing(uuid) => {
+            let Some(verse) = nv.verses.verses.get_mut(&uuid) else {
                 nv.send_error(
                     String::from("No Verse at this index."),
                     NarraverseState::VersePick,

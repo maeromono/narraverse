@@ -7,16 +7,16 @@ use uuid::Uuid;
 #[derive(Serialize, Deserialize)]
 pub struct NarraverseVerses {
     #[serde(skip)]
-    pub verses: Vec<Verse>,
-    pub verse_files: Vec<String>,
-    pub verse_index: usize,
+    pub verses: IndexMap<Uuid, Verse>,
+    pub verse_files: IndexMap<Uuid, String>,
+    pub verse_uuid: Uuid,
 }
 
 impl NarraverseVerses {
     pub fn refresh_verse_files(&mut self) {
-        let mut files_list: Vec<String> = vec![];
+        let mut files_list: IndexMap<Uuid, String> = IndexMap::default();
         for verse in &self.verses {
-            files_list.push(format!("verse-{}", verse.uuid));
+            files_list.insert(*verse.0, format!("verse-{}", verse.0));
         }
         self.verse_files = files_list;
     }
@@ -25,9 +25,9 @@ impl NarraverseVerses {
 impl Default for NarraverseVerses {
     fn default() -> Self {
         Self {
-            verses: vec![],
-            verse_files: vec![],
-            verse_index: 0,
+            verses: IndexMap::default(),
+            verse_files: IndexMap::default(),
+            verse_uuid: Uuid::default(),
         }
     }
 }
@@ -35,7 +35,6 @@ impl Default for NarraverseVerses {
 #[derive(Clone, Serialize, Deserialize, Default)]
 pub struct Verse {
     pub name: String,
-    pub uuid: Uuid,
     pub narratives: IndexMap<Uuid, Narrative>,
     pub entities: IndexMap<Uuid, Entity>,
     pub timeline: Vec<TimelineItem>,

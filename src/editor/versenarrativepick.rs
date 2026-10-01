@@ -20,7 +20,7 @@ use crate::{
 };
 
 pub fn render_narrative_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
-    let Some(verse) = nv.verses.verses.get(nv.verses.verse_index) else {
+    let Some(verse) = nv.verses.verses.get(&nv.verses.verse_uuid) else {
         nv.send_error(
             String::from("No Verse at this index."),
             NarraverseState::VersePick,
@@ -75,10 +75,10 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             nv.state = NarraverseState::NarrativeModal;
         }
         KeyCode::Char('e') => {
-            let Some(index) = nv.list_states.verse_narrative_pick_liststate.selected() else {
+            let Some(uuid) = selected_narr_uuid(nv) else {
                 return;
             };
-            let Some(modal) = NarrativeEditModal::edit(nv, index) else {
+            let Some(modal) = NarrativeEditModal::edit(&nv.verses, uuid) else {
                 return;
             };
             nv.narrative_edit_modal = modal;
@@ -96,7 +96,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
 }
 
 fn selected_narr_uuid(nv: &Narraverse) -> Option<Uuid> {
-    let verse = nv.verses.verses.get(nv.verses.verse_index)?;
+    let verse = nv.verses.verses.get(&nv.verses.verse_uuid)?;
     let index = nv.list_states.verse_narrative_pick_liststate.selected()?;
     verse
         .narratives

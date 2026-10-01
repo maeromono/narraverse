@@ -14,7 +14,7 @@ use crate::nvcore::{
     narraverse::{Narraverse, NarraverseState},
     save::save_verse,
     textareautils::{validate_date, validate_length},
-    verses::Narrative,
+    verses::{Narrative, NarraverseVerses},
 };
 
 pub struct NarrativeEditModal {
@@ -44,17 +44,17 @@ impl NarrativeEditModal {
         }
     }
 
-    pub fn edit(nv: &Narraverse, ind: usize) -> Option<Self> {
-        let verse = nv.verses.verses.get(nv.verses.verse_index)?;
-        let narrative = verse.narratives.get_index(ind)?;
+    pub fn edit(verses: &NarraverseVerses, uuid: Uuid) -> Option<Self> {
+        let verse = verses.verses.get(&verses.verse_uuid)?;
+        let narrative = verse.narratives.get(&uuid)?;
         Some(Self {
-            mode: NarrativeEditModalMode::Existing(ind),
+            mode: NarrativeEditModalMode::Existing(uuid),
             current_focus: CurrentFocus::Title,
-            narrative_name_textarea: TextArea::new(vec![narrative.1.title.clone()]),
-            narrative_writtenby_textarea: TextArea::new(vec![narrative.1.written_by.clone()]),
-            narrative_date_textarea: TextArea::new(vec![narrative.1.date.to_string()]),
+            narrative_name_textarea: TextArea::new(vec![narrative.title.clone()]),
+            narrative_writtenby_textarea: TextArea::new(vec![narrative.written_by.clone()]),
+            narrative_date_textarea: TextArea::new(vec![narrative.date.to_string()]),
             narrative_summary_textarea: TextArea::new(vec![
-                narrative.1.summary.clone().unwrap_or_default(),
+                narrative.summary.clone().unwrap_or_default(),
             ]),
             narrative_name_valid: true,
             narrative_writtenby_valid: true,
@@ -73,7 +73,7 @@ impl NarrativeEditModal {
 
 enum NarrativeEditModalMode {
     New,
-    Existing(usize),
+    Existing(Uuid),
 }
 
 #[derive(Sequence)]
@@ -189,7 +189,7 @@ fn confirm_edit(nv: &mut Narraverse) {
     {
         return;
     }
-    let Some(verse) = nv.verses.verses.get_mut(nv.verses.verse_index) else {
+    let Some(verse) = nv.verses.verses.get_key_value_mut(&nv.verses.verse_uuid) else {
         nv.send_error(
             String::from("No Verse at this index."),
             NarraverseState::VersePick,
@@ -200,7 +200,7 @@ fn confirm_edit(nv: &mut Narraverse) {
     let summary = if sum.is_empty() { None } else { Some(sum) };
     match nv.narrative_edit_modal.mode {
         NarrativeEditModalMode::New => {
-            verse.narratives.insert(
+            verse.1.narratives.insert(
                 Uuid::now_v7(),
                 Narrative {
                     title: nv.narrative_edit_modal.narrative_name_textarea.lines()[0].clone(),
@@ -216,26 +216,26 @@ fn confirm_edit(nv: &mut Narraverse) {
             );
             nv.state = NarraverseState::NarrativePick;
         }
-        NarrativeEditModalMode::Existing(index) => {
-            let Some(narrative) = verse.narratives.get_index_mut(index) else {
+        NarrativeEditModalMode::Existing(uuid) => {
+            let Some(narrative) = verse.1.narratives.get_mut(&uuid) else {
                 nv.send_error(
                     String::from("No narrative at this index."),
                     NarraverseState::VersePick,
                 );
                 return;
             };
-            narrative.1.title = nv.narrative_edit_modal.narrative_name_textarea.lines()[0].clone();
-            narrative.1.written_by =
+            narrative.title = nv.narrative_edit_modal.narrative_name_textarea.lines()[0].clone();
+            narrative.written_by =
                 nv.narrative_edit_modal.narrative_writtenby_textarea.lines()[0].clone();
-            narrative.1.date = nv.narrative_edit_modal.narrative_date_textarea.lines()[0]
+            narrative.date = nv.narrative_edit_modal.narrative_date_textarea.lines()[0]
                 .clone()
                 .parse::<NaiveDate>()
                 .unwrap();
-            narrative.1.summary = summary;
+            narrative.summary = summary;
             nv.state = NarraverseState::NarrativePick;
         }
     }
-    if let Err(err) = save_verse(&verse, format!("verse-{}", verse.uuid).as_str()) {
+    if let Err(err) = save_verse(&verse.1, format!("verse-{}", verse.0).as_str()) {
         nv.send_error(
             format!("Narrative edited, but won't save:\n{}", err),
             NarraverseState::NarrativePick,

@@ -32,8 +32,8 @@ pub fn save_verses(nv: &mut NarraverseVerses) -> Result<()> {
             ),
         ));
     }
-    for (verse, file) in nv.verses.iter().zip(nv.verse_files.iter()) {
-        let path = save_path(file.as_str())?;
+    for (verse, file) in nv.verses.values().zip(nv.verse_files.iter()) {
+        let path = save_path(file.1.as_str())?;
         let contents = to_string(verse).map_err(|err| Error::new(ErrorKind::InvalidData, err))?;
         write(&path, &contents)?;
     }
@@ -81,7 +81,7 @@ pub fn load_verses() -> Result<NarraverseVerses> {
         }
     }?;
     for file in &nv.verse_files {
-        let path = save_path(file)?;
+        let path = save_path(file.1)?;
         let contents = match read_to_string(&path) {
             Ok(contents) => contents,
             Err(err) if err.kind() == ErrorKind::NotFound => continue,
@@ -94,7 +94,7 @@ pub fn load_verses() -> Result<NarraverseVerses> {
                 continue;
             }
         };
-        nv.verses.push(verse_itself);
+        nv.verses.insert(*file.0, verse_itself);
     }
     let verses_len = nv.verses.len();
     if verses_len != nv.verse_files.len() {

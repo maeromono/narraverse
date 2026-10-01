@@ -36,7 +36,7 @@ impl Default for NarraverseEditor {
 
 impl NarraverseEditor {
     pub fn edit(verses: &NarraverseVerses, mode: EditorMode, uuid: Uuid) -> Option<Self> {
-        let verse = verses.verses.get(verses.verse_index)?;
+        let verse = verses.verses.get(&verses.verse_uuid)?;
         let (mut textarea, cached_name) = match mode {
             EditorMode::Narrative => {
                 let narr = verse.narratives.get(&uuid)?;
@@ -101,7 +101,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
 }
 
 fn save_narrative(nv: &mut Narraverse) {
-    let Some(verse) = nv.verses.verses.get_mut(nv.verses.verse_index) else {
+    let Some(verse) = nv.verses.verses.get_key_value_mut(&nv.verses.verse_uuid) else {
         nv.send_error(
             String::from("No Verse at this index."),
             NarraverseState::VersePick,
@@ -110,7 +110,7 @@ fn save_narrative(nv: &mut Narraverse) {
     };
     match nv.editor.mode {
         EditorMode::Narrative => {
-            let Some(narrative) = verse.narratives.get_mut(&nv.editor.editing_uuid) else {
+            let Some(narrative) = verse.1.narratives.get_mut(&nv.editor.editing_uuid) else {
                 nv.send_error(
                     format!(
                         "No narrative with this UUID ({}) exists.",
@@ -123,7 +123,7 @@ fn save_narrative(nv: &mut Narraverse) {
             narrative.narrative = nv.editor.editor_textarea.lines().join("\n");
         }
         EditorMode::Entity => {
-            let Some(entity) = verse.entities.get_mut(&nv.editor.editing_uuid) else {
+            let Some(entity) = verse.1.entities.get_mut(&nv.editor.editing_uuid) else {
                 nv.send_error(
                     format!(
                         "No entity with this UUID ({}) exists.",
@@ -136,7 +136,7 @@ fn save_narrative(nv: &mut Narraverse) {
             entity.details = nv.editor.editor_textarea.lines().join("\n");
         }
     }
-    if let Err(err) = save_verse(&verse, format!("verse-{}", verse.uuid).as_str()) {
+    if let Err(err) = save_verse(&verse.1, format!("verse-{}", verse.0).as_str()) {
         nv.send_error(
             format!("Cannot perform the save:\n{}", err),
             NarraverseState::Editor,

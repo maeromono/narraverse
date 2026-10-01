@@ -13,7 +13,7 @@ use crate::nvcore::{
     narraverse::{Narraverse, NarraverseState},
     save::save_verse,
     textareautils::validate_length,
-    verses::{Entity, EntityType},
+    verses::{Entity, EntityType, NarraverseVerses},
 };
 
 pub struct EntityEditModal {
@@ -35,8 +35,8 @@ impl EntityEditModal {
         }
     }
 
-    pub fn edit(nv: &Narraverse, ind: usize) -> Option<Self> {
-        let verse = nv.verses.verses.get(nv.verses.verse_index)?;
+    pub fn edit(verses: &NarraverseVerses, ind: usize) -> Option<Self> {
+        let verse = verses.verses.get(&verses.verse_uuid)?;
         let entity = verse.entities.get_index(ind)?;
         Some(Self {
             mode: EntityEditMode::Existing(ind),
@@ -139,7 +139,7 @@ fn confirm_edit(nv: &mut Narraverse) {
     if !nv.entity_edit_modal.entity_name_valid {
         return;
     }
-    let Some(verse) = nv.verses.verses.get_mut(nv.verses.verse_index) else {
+    let Some(verse) = nv.verses.verses.get_key_value_mut(&nv.verses.verse_uuid) else {
         nv.send_error(
             String::from("No Verse at this index."),
             NarraverseState::VersePick,
@@ -148,7 +148,7 @@ fn confirm_edit(nv: &mut Narraverse) {
     };
     match nv.entity_edit_modal.mode {
         EntityEditMode::New => {
-            verse.entities.insert(
+            verse.1.entities.insert(
                 Uuid::now_v7(),
                 Entity {
                     name: nv.entity_edit_modal.entity_name_textarea.lines()[0].clone(),
@@ -159,7 +159,7 @@ fn confirm_edit(nv: &mut Narraverse) {
             nv.state = NarraverseState::EntityPick;
         }
         EntityEditMode::Existing(index) => {
-            let Some(entity) = verse.entities.get_index_mut(index) else {
+            let Some(entity) = verse.1.entities.get_index_mut(index) else {
                 nv.send_error(
                     String::from("No entity at this index."),
                     NarraverseState::EntityPick,
@@ -171,7 +171,7 @@ fn confirm_edit(nv: &mut Narraverse) {
             nv.state = NarraverseState::EntityPick;
         }
     }
-    if let Err(err) = save_verse(&verse, format!("verse-{}", verse.uuid).as_str()) {
+    if let Err(err) = save_verse(&verse.1, format!("verse-{}", verse.0).as_str()) {
         nv.send_error(
             format!("Entity edited, but won't save:\n{}", err),
             NarraverseState::EntityPick,

@@ -10,7 +10,7 @@ use crate::{
 };
 
 pub fn render_area_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
-    let Some(verse) = nv.verses.verses.get(nv.verses.verse_index) else {
+    let Some(verse) = nv.verses.verses.get(&nv.verses.verse_uuid) else {
         nv.send_error(
             String::from("No Verse at this index."),
             NarraverseState::VersePick,
@@ -48,7 +48,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             let Some(selected_index) = nv.list_states.verse_area_pick_liststate.selected() else {
                 return;
             };
-            let Some(verse_edit) = VerseEdit::edit(nv, nv.verses.verse_index) else {
+            let Some(verse_edit) = VerseEdit::edit(&nv.verses, nv.verses.verse_uuid) else {
                 return;
             };
             nv.verse_editor = verse_edit;

@@ -17,10 +17,12 @@ pub enum DeletionTarget {
     Verse,
     Narrative,
     Entity,
+    Timeline,
+    Artifact
 }
 
 pub fn render_delete_screen(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
-    let Some(verse) = nv.verses.verses.get(nv.verses.verse_index) else {
+    let Some(verse) = nv.verses.verses.get(&nv.verses.verse_uuid) else {
         nv.send_error(
             String::from("No Verse at this index."),
             NarraverseState::VersePick,
@@ -76,6 +78,7 @@ pub fn render_delete_screen(nv: &mut Narraverse, frame: &mut Frame, area: Rect) 
             .yellow()
             .bold()
         }
+        _ => todo!()
     };
     frame.render_widget(delete_confirmation_message, center_area(area));
 }
@@ -87,6 +90,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
                 DeletionTarget::Verse => NarraverseState::VersePick,
                 DeletionTarget::Narrative => NarraverseState::NarrativePick,
                 DeletionTarget::Entity => NarraverseState::EntityPick,
+                _ => todo!()
             };
         }
         KeyCode::Char('y') => {
@@ -97,7 +101,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
 }
 
 fn confirm_delete(nv: &mut Narraverse) {
-    let Some(verse) = nv.verses.verses.get_mut(nv.verses.verse_index) else {
+    let Some(verse) = nv.verses.verses.get_mut(&nv.verses.verse_uuid) else {
         nv.send_error(
             String::from("No Verse at this index."),
             NarraverseState::VersePick,
@@ -106,14 +110,9 @@ fn confirm_delete(nv: &mut Narraverse) {
     };
     match nv.deletion_target {
         DeletionTarget::Verse => {
-            let mut verse_index = nv.verses.verse_index;
-            nv.verses.verses.remove(verse_index);
-            if nv.verses.verses.len() == 0 {
-                nv.list_states.verse_pick_liststate.select(None);
-            } else if verse_index >= nv.verses.verses.len() {
-                verse_index -= 1;
-                nv.verses.verse_index = verse_index;
-            }
+            let verse_uuid = nv.verses.verse_uuid;
+            nv.verses.verses.shift_remove(&verse_uuid);
+            nv.list_states.verse_pick_liststate.select(None);
             nv.state = NarraverseState::VersePick;
         }
         DeletionTarget::Narrative => {
@@ -135,6 +134,7 @@ fn confirm_delete(nv: &mut Narraverse) {
             nv.list_states.verse_entity_pick_liststate.select(None);
             nv.state = NarraverseState::EntityPick;
         }
+        _ => todo!()
     }
     if let Err(err) = save_verses(&mut nv.verses) {
         nv.send_error(
