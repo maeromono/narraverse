@@ -46,6 +46,10 @@ impl NarraverseEditor {
                 let ent = verse.entities.get(&uuid)?;
                 (TextArea::from(ent.details.lines()), ent.name.clone())
             }
+            EditorMode::Artifact => {
+                let art = verse.artifacts.get(&uuid)?;
+                (TextArea::from(art.details.lines()), art.name.clone())
+            }
         };
         textarea.set_wrap_mode(WrapMode::WordOrGlyph);
         Some(Self {
@@ -60,13 +64,15 @@ impl NarraverseEditor {
 pub enum EditorMode {
     Narrative,
     Entity,
+    Artifact
 }
 
 impl Display for EditorMode {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", match self {
-            EditorMode::Narrative => "Narrative",
-            EditorMode::Entity => "Entity"
+            EditorMode::Narrative => "a narrative",
+            EditorMode::Entity => "an entity",
+            EditorMode::Artifact => "an artifact"
         })
     }
 }
@@ -91,6 +97,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             nv.state = match nv.editor.mode {
                 EditorMode::Narrative => NarraverseState::NarrativePick,
                 EditorMode::Entity => NarraverseState::EntityPick,
+                EditorMode::Artifact => NarraverseState::ArtifactPick,
             }
         }
         (KeyCode::Char('w'), KeyModifiers::ALT) => save_narrative(nv),
@@ -134,6 +141,19 @@ fn save_narrative(nv: &mut Narraverse) {
                 return;
             };
             entity.details = nv.editor.editor_textarea.lines().join("\n");
+        }
+        EditorMode::Artifact => {
+            let Some(artifact) = verse.1.artifacts.get_mut(&nv.editor.editing_uuid) else {
+                nv.send_error(
+                    format!(
+                        "No artifact with this UUID ({}) exists.",
+                        nv.editor.editing_uuid
+                    ),
+                    NarraverseState::ArtifactPick,
+                );
+                return;
+            };
+            artifact.details = nv.editor.editor_textarea.lines().join("\n");
         }
     }
     if let Err(err) = save_verse(&verse.1, format!("verse-{}", verse.0).as_str()) {

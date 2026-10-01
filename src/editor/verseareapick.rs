@@ -55,6 +55,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             nv.state = match selected_index {
                 0 => NarraverseState::NarrativePick,
                 1 => NarraverseState::EntityPick,
+                3 => NarraverseState::ArtifactPick,
                 4 => NarraverseState::VerseEdit,
                 _ => todo!(),
             }

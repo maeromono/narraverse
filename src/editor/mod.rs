@@ -1,3 +1,4 @@
+pub mod artifactpick;
 pub mod entityedit;
 pub mod entitypick;
 pub mod narrativeeditmodal;

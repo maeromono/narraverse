@@ -10,15 +10,7 @@ use ratatui::{
 
 use crate::{
     editor::{
-        entityedit::{self, EntityEditModal, render_entity_edit},
-        entitypick::{self, render_entity_pick},
-        narrativeeditmodal::{self, NarrativeEditModal, render_narrative_edit_modal},
-        nveditor::{self, NarraverseEditor, render_editor},
-        verseareapick::{self, render_area_pick},
-        versedelete::{self, DeletionTarget, render_delete_screen},
-        verseedit::{self, VerseEdit, render_verse_edit},
-        versenarrativepick::{self, render_narrative_pick},
-        versepick::{self, render_worldpick},
+        artifactpick::{self, render_artifact_pick}, entityedit::{self, EntityEditModal, render_entity_edit}, entitypick::{self, render_entity_pick}, narrativeeditmodal::{self, NarrativeEditModal, render_narrative_edit_modal}, nveditor::{self, NarraverseEditor, render_editor}, verseareapick::{self, render_area_pick}, versedelete::{self, DeletionTarget, render_delete_screen}, verseedit::{self, VerseEdit, render_verse_edit}, versenarrativepick::{self, render_narrative_pick}, versepick::{self, render_worldpick}
     },
     nvcore::{
         config::NarraverseConfig,
@@ -104,6 +96,7 @@ impl Narraverse {
             NarraverseState::Editor => render_editor(self, frame, main_layout[1]),
             NarraverseState::EntityPick => render_entity_pick(self, frame, main_layout[1]),
             NarraverseState::EntityModal => render_entity_edit(self, frame, main_layout[1]),
+            NarraverseState::ArtifactPick => render_artifact_pick(self, frame, main_layout[1]),
             NarraverseState::VerseDelete => render_delete_screen(self, frame, main_layout[1]),
             NarraverseState::Error => render_error_screen(self, frame, main_layout[1]),
             _ => todo!(),
@@ -130,6 +123,7 @@ impl Narraverse {
             NarraverseState::Editor => nveditor::handle_keys(self, key),
             NarraverseState::EntityPick => entitypick::handle_keys(self, key),
             NarraverseState::EntityModal => entityedit::handle_keys(self, key),
+            NarraverseState::ArtifactPick => artifactpick::handle_keys(self, key),
             NarraverseState::VerseDelete => versedelete::handle_keys(self, key),
             NarraverseState::Error => error::handle_keys(self, key),
             _ => {}
@@ -171,16 +165,17 @@ pub struct NarraverseListStates {
     pub verse_area_pick_liststate: ListState,
     pub verse_narrative_pick_liststate: ListState,
     pub verse_entity_pick_liststate: ListState,
+    pub verse_artifact_pick_liststate: ListState,
 }
 
 impl Default for NarraverseListStates {
     fn default() -> Self {
-        let ls = ListState::default();
         Self {
-            verse_pick_liststate: ls.clone(),
-            verse_area_pick_liststate: ls.clone(),
-            verse_narrative_pick_liststate: ls.clone(),
-            verse_entity_pick_liststate: ls.clone(),
+            verse_pick_liststate: ListState::default(),
+            verse_area_pick_liststate: ListState::default(),
+            verse_narrative_pick_liststate: ListState::default(),
+            verse_entity_pick_liststate: ListState::default(),
+            verse_artifact_pick_liststate: ListState::default()
         }
     }
 }

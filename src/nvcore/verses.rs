@@ -109,3 +109,12 @@ pub enum ArtifactType {
     Item,
     Concept
 }
+
+impl ArtifactType {
+    pub fn name(&self) -> &'static str {
+        match self {
+            ArtifactType::Item => "Item",
+            ArtifactType::Concept => "Concept",
+        }
+    }
+}
