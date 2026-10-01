@@ -53,6 +53,7 @@ pub struct Narrative {
 pub struct Entity {
     pub name: String,
     pub entity_type: EntityType,
+    pub details: String,
 }
 
 #[derive(Clone, Serialize, Deserialize, Sequence)]

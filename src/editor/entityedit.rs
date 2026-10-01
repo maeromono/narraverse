@@ -148,6 +148,7 @@ fn confirm_edit(nv: &mut Narraverse) {
             verse.entities.insert(Uuid::now_v7(), Entity {
                 name: nv.entity_edit_modal.entity_name_textarea.lines()[0].clone(),
                 entity_type: nv.entity_edit_modal.entity_type.clone(),
+                details: String::new()
             });
             nv.state = NarraverseState::EntityPick;
         }

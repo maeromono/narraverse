@@ -10,13 +10,15 @@ use uuid::Uuid;
 
 use crate::nvcore::{
     narraverse::{Narraverse, NarraverseState},
-    save::save_verse, verses::NarraverseVerses,
+    save::save_verse,
+    verses::{NarraverseVerses, Verse},
 };
 
 pub struct NarraverseEditor {
     pub mode: EditorMode,
     pub editing_uuid: Uuid,
     pub editor_textarea: TextArea<'static>,
+    pub cached_name: String,
 }
 
 impl Default for NarraverseEditor {
@@ -25,6 +27,7 @@ impl Default for NarraverseEditor {
             mode: EditorMode::Narrative,
             editing_uuid: Uuid::default(),
             editor_textarea: TextArea::default(),
+            cached_name: String::from("Unknown"),
         }
     }
 }
@@ -32,13 +35,22 @@ impl Default for NarraverseEditor {
 impl NarraverseEditor {
     pub fn edit(verses: &NarraverseVerses, mode: EditorMode, uuid: Uuid) -> Option<Self> {
         let verse = verses.verses.get(verses.verse_index)?;
-        let narrative = verse.narratives.get(&uuid)?;
-        let mut textarea = TextArea::from(narrative.narrative.lines());
+        let (mut textarea, cached_name) = match mode {
+            EditorMode::Narrative => {
+                let narr = verse.narratives.get(&uuid)?;
+                (TextArea::from(narr.narrative.lines()), narr.title.clone())
+            }
+            EditorMode::Entity => {
+                let ent = verse.entities.get(&uuid)?;
+                (TextArea::from(ent.details.lines()), ent.name.clone())
+            }
+        };
         textarea.set_wrap_mode(WrapMode::WordOrGlyph);
         Some(Self {
             mode,
             editing_uuid: uuid,
             editor_textarea: textarea,
+            cached_name,
         })
     }
 }
@@ -49,20 +61,6 @@ pub enum EditorMode {
 }
 
 pub fn render_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
-    let Some(verse) = nv.verses.verses.get(nv.verses.verse_index) else {
-        nv.send_error(
-            String::from("No Verse at this index."),
-            NarraverseState::VersePick,
-        );
-        return;
-    };
-    let Some(narrative) = verse.narratives.get(&nv.editor.editing_uuid) else {
-        nv.send_error(
-            String::from("No narrative at this index."),
-            NarraverseState::NarrativePick,
-        );
-        return;
-    };
     let editor_layout = Layout::vertical([
         Constraint::Length(1),
         Constraint::Fill(1),
@@ -70,7 +68,7 @@ pub fn render_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     ])
     .split(area);
     frame.render_widget(
-        Paragraph::new(format!("Editing: {}", narrative.title)).bold(),
+        Paragraph::new(format!("Editing: {}", nv.editor.cached_name)).bold(),
         editor_layout[0],
     );
     frame.render_widget(&nv.editor.editor_textarea, editor_layout[1]);
@@ -94,17 +92,34 @@ fn save_narrative(nv: &mut Narraverse) {
         );
         return;
     };
-    let Some(narrative) = verse
-        .narratives
-        .get_mut(&nv.editor.editing_uuid)
-    else {
-        nv.send_error(
-            String::from("No narrative at this index."),
-            NarraverseState::NarrativePick,
-        );
-        return;
-    };
-    narrative.narrative = nv.editor.editor_textarea.lines().join("\n");
+    match nv.editor.mode {
+        EditorMode::Narrative => {
+            let Some(narrative) = verse.narratives.get_mut(&nv.editor.editing_uuid) else {
+                nv.send_error(
+                    format!(
+                        "No narrative with this UUID ({}) exists.",
+                        nv.editor.editing_uuid
+                    ),
+                    NarraverseState::NarrativePick,
+                );
+                return;
+            };
+            narrative.narrative = nv.editor.editor_textarea.lines().join("\n");
+        }
+        EditorMode::Entity => {
+            let Some(entity) = verse.entities.get_mut(&nv.editor.editing_uuid) else {
+                nv.send_error(
+                    format!(
+                        "No entity with this UUID ({}) exists.",
+                        nv.editor.editing_uuid
+                    ),
+                    NarraverseState::EntityPick,
+                );
+                return;
+            };
+            entity.details = nv.editor.editor_textarea.lines().join("\n");
+        }
+    }
     if let Err(err) = save_verse(&verse, format!("verse-{}", verse.uuid).as_str()) {
         nv.send_error(
             format!("Cannot save the narrative:\n{}", err),

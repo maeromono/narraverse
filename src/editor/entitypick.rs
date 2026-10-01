@@ -5,9 +5,10 @@ use ratatui::{
     style::Modifier,
     widgets::{List, Paragraph},
 };
+use uuid::Uuid;
 
 use crate::{
-    editor::{entityedit::EntityEditModal, versedelete::DeletionTarget},
+    editor::{entityedit::EntityEditModal, nveditor::{EditorMode, NarraverseEditor}, versedelete::DeletionTarget},
     nvcore::{
         decosutils::{block_with_title, center_area},
         narraverse::{Narraverse, NarraverseState},
@@ -53,6 +54,16 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
         KeyCode::Char('k') | KeyCode::Up => {
             nv.list_states.verse_entity_pick_liststate.select_previous()
         }
+        KeyCode::Enter => {
+            let Some(uuid) = selected_ent_uuid(nv) else {
+                return;
+            };
+            let Some(nar_ed) = NarraverseEditor::edit(&nv.verses, EditorMode::Entity, uuid) else {
+                return;
+            };
+            nv.editor = nar_ed;
+            nv.state = NarraverseState::NarrativeEdit;
+        }
         KeyCode::Char('n') => {
             nv.entity_edit_modal = EntityEditModal::default();
             nv.state = NarraverseState::EntityModal;
@@ -76,4 +87,10 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
         }
         _ => {}
     }
+}
+
+fn selected_ent_uuid(nv: &Narraverse) -> Option<Uuid> {
+    let verse = nv.verses.verses.get(nv.verses.verse_index)?;
+    let index = nv.list_states.verse_entity_pick_liststate.selected()?;
+    verse.entities.get_index(index).map(|(uuid, _)| uuid).copied()
 }
