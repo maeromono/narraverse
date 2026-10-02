@@ -7,9 +7,7 @@ use ratatui::{
 };
 
 use crate::nvcore::{
-    decosutils::center_area,
-    narraverse::{Narraverse, NarraverseState},
-    save::save_verses,
+    cacheutils::rebuild_narr_list_cache, decosutils::center_area, narraverse::{Narraverse, NarraverseState}, save::save_verses
 };
 
 #[derive(PartialEq, Eq)]
@@ -123,6 +121,7 @@ fn confirm_delete(nv: &mut Narraverse) {
             };
             verse.narratives.shift_remove_index(narrative_index);
             nv.list_states.verse_narrative_pick_liststate.select(None);
+            rebuild_narr_list_cache(nv);
             nv.state = NarraverseState::NarrativePick;
         }
         DeletionTarget::Entity => {

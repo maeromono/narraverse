@@ -38,7 +38,7 @@ pub fn render_narrative_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect)
     }
     let narr_pick_layout =
         Layout::vertical([Constraint::Fill(1), Constraint::Length(7)]).split(center_area(area));
-    let list = List::new(nv.cache.narrative_list_cache.clone())
+    let list = List::new(nv.cache.narrative_list_cache.iter().map(String::as_str))
         .highlight_style(Modifier::REVERSED)
         .block(block_with_title("Pick a narrative:"));
     frame.render_stateful_widget(
