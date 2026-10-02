@@ -51,7 +51,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             let Some(verse_edit) = VerseEdit::edit(&nv.verses, nv.verses.verse_uuid) else {
                 return;
             };
-            nv.verse_editor = verse_edit;
+            nv.verse_edit_modal = verse_edit;
             nv.state = match selected_index {
                 0 => NarraverseState::NarrativePick,
                 1 => NarraverseState::EntityPick,

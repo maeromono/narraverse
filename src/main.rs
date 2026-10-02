@@ -7,6 +7,7 @@ use ratatui::run;
 use uuid::Uuid;
 
 use crate::nvcore::{
+    cacheutils::{rebuild_art_list_cache, rebuild_ent_list_cache, rebuild_narr_list_cache},
     config::{NarraverseConfig, load_config},
     narraverse::{Narraverse, NarraverseState},
     save::load_verses,
@@ -31,6 +32,9 @@ fn main() {
     });
     if nv.verses.verse_uuid != Uuid::default() {
         nv.state = NarraverseState::VerseAreaPick;
+        rebuild_narr_list_cache(&mut nv);
+        rebuild_ent_list_cache(&mut nv);
+        rebuild_art_list_cache(&mut nv);
     }
     if let Err(err) = run(|term| nv.run(term)) {
         eprintln!("!! Terminal error: {}", err);

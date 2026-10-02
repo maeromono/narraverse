@@ -8,7 +8,7 @@ use ratatui::{
 use uuid::Uuid;
 
 use crate::{
-    editor::{versedelete::DeletionTarget, verseedit::VerseEdit},
+    editor::{configeditmodal::ConfigEditModal, versedelete::DeletionTarget, verseedit::VerseEdit},
     nvcore::{
         cacheutils::{rebuild_art_list_cache, rebuild_ent_list_cache, rebuild_narr_list_cache}, decosutils::{block_with_title, center_area}, narraverse::{Narraverse, NarraverseState}, verses::NarraverseVerses
     },
@@ -63,11 +63,11 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             let Some(verse_edit) = VerseEdit::edit(&nv.verses, uuid) else {
                 return;
             };
-            nv.verse_editor = verse_edit;
+            nv.verse_edit_modal = verse_edit;
             nv.state = NarraverseState::VerseEdit;
         }
         KeyCode::Char('n') => {
-            nv.verse_editor = VerseEdit::default();
+            nv.verse_edit_modal = VerseEdit::default();
             nv.state = NarraverseState::VerseEdit;
         }
         KeyCode::Char('d') => {
@@ -80,6 +80,10 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             nv.verses.verse_uuid = uuid;
             nv.deletion_target = DeletionTarget::Verse;
             nv.state = NarraverseState::VerseDelete;
+        }
+        KeyCode::Char('c') => {
+            nv.config_edit_modal = ConfigEditModal::edit(&nv.config);
+            nv.state = NarraverseState::ConfigModal;
         }
         _ => {}
     }

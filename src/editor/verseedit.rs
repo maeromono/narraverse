@@ -58,7 +58,7 @@ pub fn render_verse_edit(nv: &Narraverse, frame: &mut Frame, area: Rect) {
         .constraints([Constraint::Fill(1), Constraint::Fill(2)]);
     let name_field_layout = field_layout.clone().split(ve_layout[0]);
     frame.render_widget(Paragraph::new("Verse name"), name_field_layout[0]);
-    frame.render_widget(&nv.verse_editor.verse_name_textarea, name_field_layout[1]);
+    frame.render_widget(&nv.verse_edit_modal.verse_name_textarea, name_field_layout[1]);
 }
 
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
@@ -69,22 +69,22 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
         }
         KeyCode::Enter => confirm_edit(nv),
         _ => {
-            let textarea = &mut nv.verse_editor.verse_name_textarea;
+            let textarea = &mut nv.verse_edit_modal.verse_name_textarea;
             if textarea.input(*key) {
-                nv.verse_editor.verse_name_valid = validate_length(textarea, 1, 50);
+                nv.verse_edit_modal.verse_name_valid = validate_length(textarea, 1, 50);
             }
         }
     }
 }
 
 fn confirm_edit(nv: &mut Narraverse) {
-    if !nv.verse_editor.verse_name_valid {
+    if !nv.verse_edit_modal.verse_name_valid {
         return;
     }
-    match nv.verse_editor.mode {
+    match nv.verse_edit_modal.mode {
         VerseEditMode::New => {
             nv.verses.verses.insert(Uuid::now_v7(), Verse {
-                name: nv.verse_editor.verse_name_textarea.lines()[0].clone(),
+                name: nv.verse_edit_modal.verse_name_textarea.lines()[0].clone(),
                 ..Default::default()
             });
             nv.state = NarraverseState::VersePick;
@@ -97,7 +97,7 @@ fn confirm_edit(nv: &mut Narraverse) {
                 );
                 return;
             };
-            verse.name = nv.verse_editor.verse_name_textarea.lines()[0].clone();
+            verse.name = nv.verse_edit_modal.verse_name_textarea.lines()[0].clone();
             nv.state = NarraverseState::VersePick;
         }
     }
@@ -111,5 +111,5 @@ fn confirm_edit(nv: &mut Narraverse) {
 }
 
 fn reset_textareas(nv: &mut Narraverse) {
-    nv.verse_editor.verse_name_textarea = TextArea::default();
+    nv.verse_edit_modal.verse_name_textarea = TextArea::default();
 }
