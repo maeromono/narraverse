@@ -36,6 +36,7 @@ pub fn render_area_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
 
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
+        KeyCode::Char('q') => nv.state = NarraverseState::Quit,
         KeyCode::Esc => nv.state = NarraverseState::VersePick,
         KeyCode::Char('j') | KeyCode::Down => {
             nv.list_states.verse_area_pick_liststate.select_next()

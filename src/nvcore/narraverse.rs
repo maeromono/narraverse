@@ -10,7 +10,17 @@ use ratatui::{
 
 use crate::{
     editor::{
-        artifacteditmodal::{self, ArtifactEditModal, render_artifact_edit}, artifactpick::{self, render_artifact_pick}, entityedit::{self, EntityEditModal, render_entity_edit}, entitypick::{self, render_entity_pick}, narrativeeditmodal::{self, NarrativeEditModal, render_narrative_edit_modal}, nveditor::{self, NarraverseEditor, render_editor}, verseareapick::{self, render_area_pick}, versedelete::{self, DeletionTarget, render_delete_screen}, verseedit::{self, VerseEdit, render_verse_edit}, versenarrativepick::{self, render_narrative_pick}, versepick::{self, render_worldpick}
+        artifacteditmodal::{self, ArtifactEditModal, render_artifact_edit},
+        artifactpick::{self, render_artifact_pick},
+        entityedit::{self, EntityEditModal, render_entity_edit},
+        entitypick::{self, render_entity_pick},
+        narrativeeditmodal::{self, NarrativeEditModal, render_narrative_edit_modal},
+        nveditor::{self, NarraverseEditor, render_editor},
+        verseareapick::{self, render_area_pick},
+        versedelete::{self, DeletionTarget, render_delete_screen},
+        verseedit::{self, VerseEdit, render_verse_edit},
+        versenarrativepick::{self, render_narrative_pick},
+        versepick::{self, render_worldpick},
     },
     nvcore::{
         config::NarraverseConfig,
@@ -159,18 +169,29 @@ impl Default for Narraverse {
             deletion_target: DeletionTarget::Verse,
             errors: (String::new(), NarraverseState::VersePick),
             footer_notification: None,
-            cache: NarraverseCaches::default()
+            cache: NarraverseCaches::default(),
         }
     }
 }
 
-#[derive(Default)]
 pub struct NarraverseListStates {
     pub verse_pick_liststate: ListState,
     pub verse_area_pick_liststate: ListState,
     pub verse_narrative_pick_liststate: ListState,
     pub verse_entity_pick_liststate: ListState,
     pub verse_artifact_pick_liststate: ListState,
+}
+
+impl Default for NarraverseListStates {
+    fn default() -> Self {
+        Self {
+            verse_pick_liststate: ListState::default(),
+            verse_area_pick_liststate: ListState::default().with_selected(Some(0)),
+            verse_narrative_pick_liststate: ListState::default(),
+            verse_entity_pick_liststate: ListState::default(),
+            verse_artifact_pick_liststate: ListState::default(),
+        }
+    }
 }
 
 #[derive(Default)]

@@ -4,6 +4,7 @@ mod nvcore;
 use std::process::exit;
 
 use ratatui::run;
+use uuid::Uuid;
 
 use crate::nvcore::{
     config::{NarraverseConfig, load_config},
@@ -28,6 +29,9 @@ fn main() {
         );
         NarraverseVerses::default()
     });
+    if nv.verses.verse_uuid != Uuid::default() {
+        nv.state = NarraverseState::VerseAreaPick;
+    }
     if let Err(err) = run(|term| nv.run(term)) {
         eprintln!("!! Terminal error: {}", err);
         exit(1);
