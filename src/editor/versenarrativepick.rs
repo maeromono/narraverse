@@ -1,9 +1,9 @@
 use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{
     Frame,
-    layout::Rect,
+    layout::{Constraint, Layout, Rect},
     style::Modifier,
-    widgets::{List, Paragraph},
+    widgets::{List, Paragraph, Wrap},
 };
 use uuid::Uuid;
 
@@ -16,6 +16,7 @@ use crate::{
     nvcore::{
         decosutils::{block_with_title, center_area},
         narraverse::{Narraverse, NarraverseState},
+        verses::Verse,
     },
 };
 
@@ -35,18 +36,25 @@ pub fn render_narrative_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect)
         );
         return;
     }
+    let narr_pick_layout =
+        Layout::vertical([Constraint::Fill(1), Constraint::Length(7)]).split(center_area(area));
     let mut narrative_list: Vec<String> = vec![];
     for narr in verse.narratives.values() {
-        narrative_list.push(narr.title.clone());
+        narrative_list.push(format!(
+            "[{}] {}",
+            narr.date,
+            narr.title.clone(),
+        ));
     }
     let list = List::new(narrative_list)
         .highlight_style(Modifier::REVERSED)
         .block(block_with_title("Pick a narrative:"));
     frame.render_stateful_widget(
         list,
-        center_area(area),
+        narr_pick_layout[0],
         &mut nv.list_states.verse_narrative_pick_liststate,
     );
+    display_narr_info(&nv, verse, frame, narr_pick_layout[1]);
 }
 
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
@@ -93,6 +101,32 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
         }
         _ => {}
     }
+}
+
+fn display_narr_info(nv: &Narraverse, verse: &Verse, frame: &mut Frame, area: Rect) {
+    let Some(uuid) = selected_narr_uuid(nv) else {
+        frame.render_widget(
+            Paragraph::new("Pick a narrative to display its info here."),
+            area,
+        );
+        return;
+    };
+    let Some(narr) = verse.narratives.get(&uuid) else {
+        return;
+    };
+    frame.render_widget(
+        Paragraph::new(format!(
+            "{}\nWritten by: {}\nDate: {}\n{}",
+            narr.title,
+            narr.written_by,
+            narr.date,
+            narr.summary
+                .clone()
+                .unwrap_or(String::from("Narrative has no summary."))
+        ))
+        .wrap(Wrap { trim: true }),
+        area,
+    );
 }
 
 fn selected_narr_uuid(nv: &Narraverse) -> Option<Uuid> {
