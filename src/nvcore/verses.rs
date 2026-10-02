@@ -107,7 +107,8 @@ pub struct Artifact {
 #[derive(Clone, Serialize, Deserialize, Sequence)]
 pub enum ArtifactType {
     Item,
-    Concept
+    Concept,
+    Note
 }
 
 impl ArtifactType {
@@ -115,6 +116,7 @@ impl ArtifactType {
         match self {
             ArtifactType::Item => "Item",
             ArtifactType::Concept => "Concept",
+            ArtifactType::Note => "Note"
         }
     }
 }

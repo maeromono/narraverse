@@ -35,15 +35,7 @@ pub fn render_entity_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
         );
         return;
     }
-    let mut entity_list: Vec<String> = vec![];
-    for entity in verse.entities.values() {
-        entity_list.push(format!(
-            "[{}] {}",
-            entity.entity_type.short_name(),
-            entity.name
-        ));
-    }
-    let list = List::new(entity_list)
+    let list = List::new(nv.cache.entity_list_cache.iter().map(String::as_str))
         .highlight_style(Modifier::REVERSED)
         .block(block_with_title("Pick an entity:"));
     frame.render_stateful_widget(

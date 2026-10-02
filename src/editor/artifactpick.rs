@@ -33,15 +33,7 @@ pub fn render_artifact_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) 
         );
         return;
     }
-    let mut artifact_list: Vec<String> = vec![];
-    for artif in verse.artifacts.values() {
-        artifact_list.push(format!(
-            "[{}] {}",
-            artif.artifact_type.name(),
-            artif.name
-        ));
-    }
-    let list = List::new(artifact_list)
+    let list = List::new(nv.cache.artifact_list_cache.iter().map(String::as_str))
         .highlight_style(Modifier::REVERSED)
         .block(block_with_title("Pick an artifact:"));
     frame.render_stateful_widget(

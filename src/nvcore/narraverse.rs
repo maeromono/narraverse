@@ -176,4 +176,6 @@ pub struct NarraverseListStates {
 #[derive(Default)]
 pub struct NarraverseCaches {
     pub narrative_list_cache: Vec<String>,
+    pub entity_list_cache: Vec<String>,
+    pub artifact_list_cache: Vec<String>,
 }

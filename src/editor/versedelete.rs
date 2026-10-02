@@ -8,7 +8,7 @@ use ratatui::{
 use uuid::Uuid;
 
 use crate::nvcore::{
-    cacheutils::rebuild_narr_list_cache,
+    cacheutils::{rebuild_art_list_cache, rebuild_ent_list_cache, rebuild_narr_list_cache},
     decosutils::center_area,
     narraverse::{Narraverse, NarraverseState},
     save::save_verses,
@@ -153,6 +153,7 @@ fn confirm_delete(nv: &mut Narraverse) {
             }
             verse.entities.shift_remove(&uuid);
             nv.list_states.verse_entity_pick_liststate.select(None);
+            rebuild_ent_list_cache(nv);
             nv.state = NarraverseState::EntityPick;
             nv.send_footer_notification(String::from("Entity deleted"));
         }
@@ -169,6 +170,7 @@ fn confirm_delete(nv: &mut Narraverse) {
             }
             verse.artifacts.shift_remove(&uuid);
             nv.list_states.verse_artifact_pick_liststate.select(None);
+            rebuild_art_list_cache(nv);
             nv.state = NarraverseState::ArtifactPick;
             nv.send_footer_notification(String::from("Artifact deleted"));
         }

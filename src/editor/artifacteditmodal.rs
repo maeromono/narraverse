@@ -9,11 +9,7 @@ use ratatui_textarea::TextArea;
 use uuid::Uuid;
 
 use crate::nvcore::{
-    decosutils::{center_area, focus_highlight},
-    narraverse::{Narraverse, NarraverseState},
-    save::save_verse,
-    textareautils::validate_length,
-    verses::{Artifact, ArtifactType, NarraverseVerses},
+    cacheutils::rebuild_art_list_cache, decosutils::{center_area, focus_highlight}, narraverse::{Narraverse, NarraverseState}, save::save_verse, textareautils::validate_length, verses::{Artifact, ArtifactType, NarraverseVerses}
 };
 
 pub struct ArtifactEditModal {
@@ -182,6 +178,7 @@ fn confirm_edit(nv: &mut Narraverse) {
         nv.send_footer_notification(String::from("Artifact edited"));
     }
     reset_textareas(nv);
+    rebuild_art_list_cache(nv);
 }
 
 fn reset_textareas(nv: &mut Narraverse) {
