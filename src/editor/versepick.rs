@@ -10,8 +10,7 @@ use uuid::Uuid;
 use crate::{
     editor::{versedelete::DeletionTarget, verseedit::VerseEdit},
     nvcore::{
-        decosutils::{block_with_title, center_area},
-        narraverse::{Narraverse, NarraverseState}, verses::NarraverseVerses,
+        cacheutils::rebuild_narr_list_cache, decosutils::{block_with_title, center_area}, narraverse::{Narraverse, NarraverseState}, verses::NarraverseVerses
     },
 };
 
@@ -50,6 +49,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             };
             nv.verses.verse_uuid = uuid;
             nv.state = NarraverseState::VerseAreaPick;
+            rebuild_narr_list_cache(nv);
         }
         KeyCode::Char('e') => {
             let Some(selected_index) = nv.list_states.verse_pick_liststate.selected() else {

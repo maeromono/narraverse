@@ -34,6 +34,7 @@ pub struct Narraverse {
     pub deletion_target: DeletionTarget,
     pub errors: (String, NarraverseState),
     pub footer_notification: Option<String>,
+    pub cache: NarraverseCaches,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -160,10 +161,12 @@ impl Default for Narraverse {
             deletion_target: DeletionTarget::Verse,
             errors: (String::new(), NarraverseState::VersePick),
             footer_notification: None,
+            cache: NarraverseCaches::default()
         }
     }
 }
 
+#[derive(Default)]
 pub struct NarraverseListStates {
     pub verse_pick_liststate: ListState,
     pub verse_area_pick_liststate: ListState,
@@ -172,14 +175,7 @@ pub struct NarraverseListStates {
     pub verse_artifact_pick_liststate: ListState,
 }
 
-impl Default for NarraverseListStates {
-    fn default() -> Self {
-        Self {
-            verse_pick_liststate: ListState::default(),
-            verse_area_pick_liststate: ListState::default(),
-            verse_narrative_pick_liststate: ListState::default(),
-            verse_entity_pick_liststate: ListState::default(),
-            verse_artifact_pick_liststate: ListState::default()
-        }
-    }
+#[derive(Default)]
+pub struct NarraverseCaches {
+    pub narrative_list_cache: Vec<String>,
 }

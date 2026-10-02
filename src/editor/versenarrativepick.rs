@@ -38,15 +38,7 @@ pub fn render_narrative_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect)
     }
     let narr_pick_layout =
         Layout::vertical([Constraint::Fill(1), Constraint::Length(7)]).split(center_area(area));
-    let mut narrative_list: Vec<String> = vec![];
-    for narr in verse.narratives.values() {
-        narrative_list.push(format!(
-            "[{}] {}",
-            narr.date,
-            narr.title.clone(),
-        ));
-    }
-    let list = List::new(narrative_list)
+    let list = List::new(nv.cache.narrative_list_cache.clone())
         .highlight_style(Modifier::REVERSED)
         .block(block_with_title("Pick a narrative:"));
     frame.render_stateful_widget(
