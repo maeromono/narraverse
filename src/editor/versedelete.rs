@@ -125,7 +125,13 @@ fn confirm_delete(nv: &mut Narraverse) {
         }
         DeletionTarget::Narrative(uuid) => {
             if !verse.narratives.contains_key(&uuid) {
-                nv.state = NarraverseState::NarrativePick;
+                nv.send_error(
+                    format!(
+                        "Couldn't delete narrative with UUID {}.\nPerhaps it was already deleted.",
+                        uuid
+                    ),
+                    NarraverseState::NarrativePick,
+                );
                 return;
             }
             verse.narratives.shift_remove(&uuid);
@@ -136,7 +142,13 @@ fn confirm_delete(nv: &mut Narraverse) {
         }
         DeletionTarget::Entity(uuid) => {
             if !verse.entities.contains_key(&uuid) {
-                nv.state = NarraverseState::EntityPick;
+                nv.send_error(
+                    format!(
+                        "Couldn't delete entity with UUID {}.\nPerhaps it was already deleted.",
+                        uuid
+                    ),
+                    NarraverseState::EntityPick,
+                );
                 return;
             }
             verse.entities.shift_remove(&uuid);
@@ -146,7 +158,13 @@ fn confirm_delete(nv: &mut Narraverse) {
         }
         DeletionTarget::Artifact(uuid) => {
             if !verse.artifacts.contains_key(&uuid) {
-                nv.state = NarraverseState::ArtifactPick;
+                nv.send_error(
+                    format!(
+                        "Couldn't delete artifact with UUID {}.\nPerhaps it was already deleted.",
+                        uuid
+                    ),
+                    NarraverseState::ArtifactPick,
+                );
                 return;
             }
             verse.artifacts.shift_remove(&uuid);
