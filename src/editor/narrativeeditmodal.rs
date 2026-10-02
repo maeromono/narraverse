@@ -235,6 +235,7 @@ fn confirm_edit(nv: &mut Narraverse) {
             nv.state = NarraverseState::NarrativePick;
         }
     }
+    verse.1.narratives.sort_by(|_, narr1, _, narr2| narr1.date.cmp(&narr2.date));
     if let Err(err) = save_verse(&verse.1, format!("verse-{}", verse.0).as_str()) {
         nv.send_error(
             format!("Narrative edited, but won't save:\n{}", err),
