@@ -108,10 +108,9 @@ fn display_narr_info(nv: &Narraverse, verse: &Verse, frame: &mut Frame, area: Re
     };
     frame.render_widget(
         Paragraph::new(format!(
-            "{}\nWritten by: {}\nDate: {}\n{}",
+            "{}\nWritten by: {}\n{}",
             narr.title,
             narr.written_by,
-            narr.date,
             narr.summary
                 .clone()
                 .unwrap_or(String::from("Narrative has no summary."))
