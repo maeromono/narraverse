@@ -20,13 +20,8 @@ pub fn render_area_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     if nv.cached_verse_name != verse.name {
         nv.cached_verse_name = verse.name.clone();
     }
-    let list = List::new(vec![
-        "Narrative",
-        "Entities",
-        "Artifacts",
-        "Edit Verse",
-    ])
-    .highlight_style(Modifier::REVERSED);
+    let list = List::new(vec!["Narrative", "Entities", "Artifacts", "Edit Verse"])
+        .highlight_style(Modifier::REVERSED);
     frame.render_stateful_widget(
         list.block(block_with_title("Select area to edit:")),
         center_area(area),

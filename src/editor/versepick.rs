@@ -10,7 +10,10 @@ use uuid::Uuid;
 use crate::{
     editor::{configeditmodal::ConfigEditModal, versedelete::DeletionTarget, verseedit::VerseEdit},
     nvcore::{
-        cacheutils::{rebuild_art_list_cache, rebuild_ent_list_cache, rebuild_narr_list_cache}, decosutils::{block_with_title, center_area}, narraverse::{Narraverse, NarraverseState}, verses::NarraverseVerses
+        cacheutils::{rebuild_art_list_cache, rebuild_ent_list_cache, rebuild_narr_list_cache},
+        decosutils::{block_with_title, center_area},
+        narraverse::{Narraverse, NarraverseState},
+        verses::NarraverseVerses,
     },
 };
 

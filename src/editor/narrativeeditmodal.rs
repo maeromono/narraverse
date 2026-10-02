@@ -10,7 +10,12 @@ use ratatui_textarea::TextArea;
 use uuid::Uuid;
 
 use crate::nvcore::{
-    cacheutils::rebuild_narr_list_cache, decosutils::{center_area, focus_highlight}, narraverse::{Narraverse, NarraverseState}, save::save_verse, textareautils::{validate_date, validate_length}, verses::{Narrative, NarraverseVerses}
+    cacheutils::rebuild_narr_list_cache,
+    decosutils::{center_area, focus_highlight},
+    narraverse::{Narraverse, NarraverseState},
+    save::save_verse,
+    textareautils::{validate_date, validate_length},
+    verses::{Narrative, NarraverseVerses},
 };
 
 pub struct NarrativeEditModal {
@@ -231,7 +236,10 @@ fn confirm_edit(nv: &mut Narraverse) {
             nv.state = NarraverseState::NarrativePick;
         }
     }
-    verse.1.narratives.sort_by(|_, narr1, _, narr2| narr1.date.cmp(&narr2.date));
+    verse
+        .1
+        .narratives
+        .sort_by(|_, narr1, _, narr2| narr1.date.cmp(&narr2.date));
     if let Err(err) = save_verse(&verse.1, format!("verse-{}", verse.0).as_str()) {
         nv.send_error(
             format!("Narrative edited, but won't save:\n{}", err),

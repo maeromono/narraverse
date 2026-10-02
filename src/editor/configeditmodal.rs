@@ -1,22 +1,16 @@
-use chrono::NaiveDate;
 use crossterm::event::{KeyCode, KeyEvent};
-use enum_iterator::{Sequence, next_cycle, previous_cycle};
 use ratatui::{
     Frame,
     layout::{Constraint, Direction, Layout, Rect},
     widgets::Paragraph,
 };
 use ratatui_textarea::TextArea;
-use uuid::Uuid;
 
 use crate::nvcore::{
-    cacheutils::rebuild_narr_list_cache,
     config::{NarraverseConfig, save_config},
-    decosutils::{center_area, focus_highlight},
+    decosutils::center_area,
     narraverse::{Narraverse, NarraverseState},
-    save::save_verse,
-    textareautils::{validate_date, validate_length},
-    verses::{Narrative, NarraverseVerses},
+    textareautils::validate_length,
 };
 
 pub struct ConfigEditModal {

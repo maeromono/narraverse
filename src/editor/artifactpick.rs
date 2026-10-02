@@ -9,7 +9,9 @@ use uuid::Uuid;
 
 use crate::{
     editor::{
-        artifacteditmodal::ArtifactEditModal, nveditor::{EditorMode, NarraverseEditor}, versedelete::DeletionTarget
+        artifacteditmodal::ArtifactEditModal,
+        nveditor::{EditorMode, NarraverseEditor},
+        versedelete::DeletionTarget,
     },
     nvcore::{
         decosutils::{block_with_title, center_area},
@@ -20,7 +22,10 @@ use crate::{
 pub fn render_artifact_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     let Some(verse) = nv.verses.verses.get(&nv.verses.verse_uuid) else {
         nv.send_error(
-            format!("Verse with this UUID ({}) doesn't exist.", nv.verses.verse_uuid),
+            format!(
+                "Verse with this UUID ({}) doesn't exist.",
+                nv.verses.verse_uuid
+            ),
             NarraverseState::VersePick,
         );
         return;
@@ -49,14 +54,16 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
         KeyCode::Char('j') | KeyCode::Down => {
             nv.list_states.verse_artifact_pick_liststate.select_next()
         }
-        KeyCode::Char('k') | KeyCode::Up => {
-            nv.list_states.verse_artifact_pick_liststate.select_previous()
-        }
+        KeyCode::Char('k') | KeyCode::Up => nv
+            .list_states
+            .verse_artifact_pick_liststate
+            .select_previous(),
         KeyCode::Enter => {
             let Some(uuid) = selected_art_uuid(nv) else {
                 return;
             };
-            let Some(nar_ed) = NarraverseEditor::edit(&nv.verses, EditorMode::Artifact, uuid) else {
+            let Some(nar_ed) = NarraverseEditor::edit(&nv.verses, EditorMode::Artifact, uuid)
+            else {
                 return;
             };
             nv.editor = nar_ed;

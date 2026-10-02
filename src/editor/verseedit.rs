@@ -58,7 +58,10 @@ pub fn render_verse_edit(nv: &Narraverse, frame: &mut Frame, area: Rect) {
         .constraints([Constraint::Fill(1), Constraint::Fill(2)]);
     let name_field_layout = field_layout.clone().split(ve_layout[0]);
     frame.render_widget(Paragraph::new("Verse name"), name_field_layout[0]);
-    frame.render_widget(&nv.verse_edit_modal.verse_name_textarea, name_field_layout[1]);
+    frame.render_widget(
+        &nv.verse_edit_modal.verse_name_textarea,
+        name_field_layout[1],
+    );
 }
 
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
@@ -83,10 +86,13 @@ fn confirm_edit(nv: &mut Narraverse) {
     }
     match nv.verse_edit_modal.mode {
         VerseEditMode::New => {
-            nv.verses.verses.insert(Uuid::now_v7(), Verse {
-                name: nv.verse_edit_modal.verse_name_textarea.lines()[0].clone(),
-                ..Default::default()
-            });
+            nv.verses.verses.insert(
+                Uuid::now_v7(),
+                Verse {
+                    name: nv.verse_edit_modal.verse_name_textarea.lines()[0].clone(),
+                    ..Default::default()
+                },
+            );
             nv.state = NarraverseState::VersePick;
         }
         VerseEditMode::Existing(uuid) => {

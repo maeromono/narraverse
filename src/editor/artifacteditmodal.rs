@@ -9,7 +9,12 @@ use ratatui_textarea::TextArea;
 use uuid::Uuid;
 
 use crate::nvcore::{
-    cacheutils::rebuild_art_list_cache, decosutils::{center_area, focus_highlight}, narraverse::{Narraverse, NarraverseState}, save::save_verse, textareautils::validate_length, verses::{Artifact, ArtifactType, NarraverseVerses}
+    cacheutils::rebuild_art_list_cache,
+    decosutils::{center_area, focus_highlight},
+    narraverse::{Narraverse, NarraverseState},
+    save::save_verse,
+    textareautils::validate_length,
+    verses::{Artifact, ArtifactType, NarraverseVerses},
 };
 
 pub struct ArtifactEditModal {
@@ -81,7 +86,10 @@ pub fn render_artifact_edit(nv: &Narraverse, frame: &mut Frame, area: Rect) {
         type_field_layout[0],
     );
     frame.render_widget(
-        Paragraph::new(format!("< {} >", nv.artifact_edit_modal.artifact_type.name())),
+        Paragraph::new(format!(
+            "< {} >",
+            nv.artifact_edit_modal.artifact_type.name()
+        )),
         type_field_layout[1],
     );
 }

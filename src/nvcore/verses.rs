@@ -38,7 +38,7 @@ pub struct Verse {
     pub narratives: IndexMap<Uuid, Narrative>,
     pub entities: IndexMap<Uuid, Entity>,
     pub timeline: Vec<TimelineItem>,
-    pub artifacts: IndexMap<Uuid, Artifact>
+    pub artifacts: IndexMap<Uuid, Artifact>,
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -94,21 +94,21 @@ impl EntityType {
 #[derive(Clone, Serialize, Deserialize)]
 pub struct TimelineItem {
     pub details: String,
-    pub narrative_tie: Uuid
+    pub narrative_tie: Uuid,
 }
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Artifact {
     pub name: String,
     pub artifact_type: ArtifactType,
-    pub details: String
+    pub details: String,
 }
 
 #[derive(Clone, Serialize, Deserialize, Sequence)]
 pub enum ArtifactType {
     Item,
     Concept,
-    Note
+    Note,
 }
 
 impl ArtifactType {
@@ -116,7 +116,7 @@ impl ArtifactType {
         match self {
             ArtifactType::Item => "Item",
             ArtifactType::Concept => "Concept",
-            ArtifactType::Note => "Note"
+            ArtifactType::Note => "Note",
         }
     }
 }

@@ -64,16 +64,20 @@ impl NarraverseEditor {
 pub enum EditorMode {
     Narrative,
     Entity,
-    Artifact
+    Artifact,
 }
 
 impl Display for EditorMode {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", match self {
-            EditorMode::Narrative => "a narrative",
-            EditorMode::Entity => "an entity",
-            EditorMode::Artifact => "an artifact"
-        })
+        write!(
+            f,
+            "{}",
+            match self {
+                EditorMode::Narrative => "a narrative",
+                EditorMode::Entity => "an entity",
+                EditorMode::Artifact => "an artifact",
+            }
+        )
     }
 }
 
@@ -85,7 +89,11 @@ pub fn render_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     ])
     .split(area);
     frame.render_widget(
-        Paragraph::new(format!("Editing {}: {}", nv.editor.mode, nv.editor.cached_name)).bold(),
+        Paragraph::new(format!(
+            "Editing {}: {}",
+            nv.editor.mode, nv.editor.cached_name
+        ))
+        .bold(),
         editor_layout[0],
     );
     frame.render_widget(&nv.editor.editor_textarea, editor_layout[1]);
