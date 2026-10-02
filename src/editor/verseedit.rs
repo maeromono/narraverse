@@ -92,7 +92,7 @@ fn confirm_edit(nv: &mut Narraverse) {
         VerseEditMode::Existing(uuid) => {
             let Some(verse) = nv.verses.verses.get_mut(&uuid) else {
                 nv.send_error(
-                    String::from("No Verse at this index."),
+                    format!("No Verse with this UUID ({}) exists.", nv.verses.verse_uuid),
                     NarraverseState::VersePick,
                 );
                 return;

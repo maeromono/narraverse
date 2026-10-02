@@ -141,7 +141,7 @@ fn confirm_edit(nv: &mut Narraverse) {
     }
     let Some(verse) = nv.verses.verses.get_key_value_mut(&nv.verses.verse_uuid) else {
         nv.send_error(
-            String::from("No Verse at this index."),
+            format!("No Verse with this UUID ({}) exists.", nv.verses.verse_uuid),
             NarraverseState::VersePick,
         );
         return;
@@ -161,7 +161,7 @@ fn confirm_edit(nv: &mut Narraverse) {
         EntityEditMode::Existing(uuid) => {
             let Some(entity) = verse.1.entities.get_mut(&uuid) else {
                 nv.send_error(
-                    String::from("No entity at this index."),
+                    format!("No entity with this UUID ({}) exists.", uuid),
                     NarraverseState::EntityPick,
                 );
                 return;

@@ -25,7 +25,7 @@ pub enum DeletionTarget {
 pub fn render_delete_screen(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     let Some(verse) = nv.verses.verses.get(&nv.verses.verse_uuid) else {
         nv.send_error(
-            String::from("No Verse at this index."),
+            format!("No Verse with this UUID ({}) exists.", nv.verses.verse_uuid),
             NarraverseState::VersePick,
         );
         return;
@@ -110,7 +110,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
 fn confirm_delete(nv: &mut Narraverse) {
     let Some(verse) = nv.verses.verses.get_mut(&nv.verses.verse_uuid) else {
         nv.send_error(
-            String::from("No Verse at this index."),
+            format!("No Verse with this UUID ({}) exists.", nv.verses.verse_uuid),
             NarraverseState::VersePick,
         );
         return;

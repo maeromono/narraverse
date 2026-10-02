@@ -23,7 +23,7 @@ use crate::{
 pub fn render_narrative_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     let Some(verse) = nv.verses.verses.get(&nv.verses.verse_uuid) else {
         nv.send_error(
-            String::from("No Verse at this index."),
+            format!("No Verse with this UUID ({}) exists.", nv.verses.verse_uuid),
             NarraverseState::VersePick,
         );
         return;
