@@ -85,7 +85,7 @@ pub fn render_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     ])
     .split(area);
     frame.render_widget(
-        Paragraph::new(format!("Editing: {} ({})", nv.editor.cached_name, nv.editor.mode)).bold(),
+        Paragraph::new(format!("Editing {}: {}", nv.editor.mode, nv.editor.cached_name)).bold(),
         editor_layout[0],
     );
     frame.render_widget(&nv.editor.editor_textarea, editor_layout[1]);
