@@ -9,9 +9,10 @@ use crate::nvcore::narraverse::{Narraverse, NarraverseState};
 pub fn render_header(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     let header_layout =
         Layout::horizontal([Constraint::Length(20), Constraint::Fill(1)]).split(area);
-    let name_ver = Paragraph::new("narraverse v0.2.1");
+    let name_ver = Paragraph::new("narraverse v0.3.0");
     let right_thing = Paragraph::new(match nv.state {
-        NarraverseState::VersePick => "enmkdev.neocities.org",
+        NarraverseState::VersePick
+        | NarraverseState::ConfigModal => "enmkdev.neocities.org",
         _ => &nv.cached_verse_name,
     })
     .right_aligned();
