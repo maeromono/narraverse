@@ -5,18 +5,21 @@ use ratatui::{
     style::Stylize,
     widgets::{Paragraph, Wrap},
 };
+use uuid::Uuid;
 
 use crate::nvcore::{
-    cacheutils::rebuild_narr_list_cache, decosutils::center_area, narraverse::{Narraverse, NarraverseState}, save::save_verses
+    cacheutils::rebuild_narr_list_cache,
+    decosutils::center_area,
+    narraverse::{Narraverse, NarraverseState},
+    save::save_verses,
 };
 
 #[derive(PartialEq, Eq)]
 pub enum DeletionTarget {
     Verse,
-    Narrative,
-    Entity,
-    Timeline,
-    Artifact
+    Narrative(Uuid),
+    Entity(Uuid),
+    Artifact(Uuid),
 }
 
 pub fn render_delete_screen(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
@@ -35,48 +38,54 @@ pub fn render_delete_screen(nv: &mut Narraverse, frame: &mut Frame, area: Rect) 
         .wrap(Wrap { trim: false })
         .yellow()
         .bold(),
-        DeletionTarget::Narrative => {
-            let Some(narrative_index) = nv.list_states.verse_narrative_pick_liststate.selected()
-            else {
-                nv.state = NarraverseState::NarrativePick;
-                return;
-            };
-            let Some(narrative) = verse.narratives.get_index(narrative_index) else {
+        DeletionTarget::Narrative(uuid) => {
+            let Some(narrative) = verse.narratives.get(&uuid) else {
                 nv.send_error(
-                    String::from("No narrative at this index."),
+                    format!("Narrative with this UUID ({}) doesn't exist.", uuid),
                     NarraverseState::NarrativePick,
                 );
                 return;
             };
             Paragraph::new(format!(
                 "Delete narrative \"{}\"?\nYou cannot revert this.",
-                narrative.1.title
+                narrative.title
             ))
             .wrap(Wrap { trim: false })
             .yellow()
             .bold()
         }
-        DeletionTarget::Entity => {
-            let Some(entity_index) = nv.list_states.verse_entity_pick_liststate.selected() else {
-                nv.state = NarraverseState::EntityPick;
-                return;
-            };
-            let Some(entity) = verse.entities.get_index(entity_index) else {
+        DeletionTarget::Entity(uuid) => {
+            let Some(entity) = verse.entities.get(&uuid) else {
                 nv.send_error(
-                    String::from("No entity at this index."),
+                    format!("Entity with this UUID ({}) doesn't exist.", uuid),
                     NarraverseState::EntityPick,
                 );
                 return;
             };
             Paragraph::new(format!(
                 "Delete entity \"{}\"?\nYou cannot revert this.",
-                entity.1.name
+                entity.name
             ))
             .wrap(Wrap { trim: false })
             .yellow()
             .bold()
         }
-        _ => todo!()
+        DeletionTarget::Artifact(uuid) => {
+            let Some(artifact) = verse.artifacts.get(&uuid) else {
+                nv.send_error(
+                    format!("Artifact with this UUID ({}) doesn't exist.", uuid),
+                    NarraverseState::ArtifactPick,
+                );
+                return;
+            };
+            Paragraph::new(format!(
+                "Delete artifact \"{}\"?\nYou cannot revert this.",
+                artifact.name
+            ))
+            .wrap(Wrap { trim: false })
+            .yellow()
+            .bold()
+        }
     };
     frame.render_widget(delete_confirmation_message, center_area(area));
 }
@@ -86,9 +95,9 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
         KeyCode::Char('n') => {
             nv.state = match nv.deletion_target {
                 DeletionTarget::Verse => NarraverseState::VersePick,
-                DeletionTarget::Narrative => NarraverseState::NarrativePick,
-                DeletionTarget::Entity => NarraverseState::EntityPick,
-                _ => todo!()
+                DeletionTarget::Narrative(_) => NarraverseState::NarrativePick,
+                DeletionTarget::Entity(_) => NarraverseState::EntityPick,
+                _ => todo!(),
             };
         }
         KeyCode::Char('y') => {
@@ -112,28 +121,39 @@ fn confirm_delete(nv: &mut Narraverse) {
             nv.verses.verses.shift_remove(&verse_uuid);
             nv.list_states.verse_pick_liststate.select(None);
             nv.state = NarraverseState::VersePick;
+            nv.send_footer_notification(String::from("Verse deleted"));
         }
-        DeletionTarget::Narrative => {
-            let Some(narrative_index) = nv.list_states.verse_narrative_pick_liststate.selected()
-            else {
+        DeletionTarget::Narrative(uuid) => {
+            if !verse.narratives.contains_key(&uuid) {
                 nv.state = NarraverseState::NarrativePick;
                 return;
-            };
-            verse.narratives.shift_remove_index(narrative_index);
+            }
+            verse.narratives.shift_remove(&uuid);
             nv.list_states.verse_narrative_pick_liststate.select(None);
             rebuild_narr_list_cache(nv);
             nv.state = NarraverseState::NarrativePick;
+            nv.send_footer_notification(String::from("Narrative deleted"));
         }
-        DeletionTarget::Entity => {
-            let Some(entity_index) = nv.list_states.verse_entity_pick_liststate.selected() else {
+        DeletionTarget::Entity(uuid) => {
+            if !verse.entities.contains_key(&uuid) {
                 nv.state = NarraverseState::EntityPick;
                 return;
-            };
-            verse.entities.shift_remove_index(entity_index);
+            }
+            verse.entities.shift_remove(&uuid);
             nv.list_states.verse_entity_pick_liststate.select(None);
             nv.state = NarraverseState::EntityPick;
+            nv.send_footer_notification(String::from("Entity deleted"));
         }
-        _ => todo!()
+        DeletionTarget::Artifact(uuid) => {
+            if !verse.artifacts.contains_key(&uuid) {
+                nv.state = NarraverseState::ArtifactPick;
+                return;
+            }
+            verse.artifacts.shift_remove(&uuid);
+            nv.list_states.verse_artifact_pick_liststate.select(None);
+            nv.state = NarraverseState::ArtifactPick;
+            nv.send_footer_notification(String::from("Artifact deleted"));
+        }
     }
     if let Err(err) = save_verses(&mut nv.verses) {
         nv.send_error(

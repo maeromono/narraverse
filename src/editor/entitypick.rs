@@ -87,10 +87,10 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             nv.state = NarraverseState::EntityModal;
         }
         KeyCode::Char('d') => {
-            let Some(_) = nv.list_states.verse_entity_pick_liststate.selected() else {
+            let Some(uuid) = selected_ent_uuid(nv) else {
                 return;
             };
-            nv.deletion_target = DeletionTarget::Entity;
+            nv.deletion_target = DeletionTarget::Entity(uuid);
             nv.state = NarraverseState::VerseDelete;
         }
         _ => {}

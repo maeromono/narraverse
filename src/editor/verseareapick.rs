@@ -23,7 +23,6 @@ pub fn render_area_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     let list = List::new(vec![
         "Narrative",
         "Entities",
-        "Timeline",
         "Artifacts",
         "Edit 'Verse",
     ])
@@ -55,8 +54,8 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             nv.state = match selected_index {
                 0 => NarraverseState::NarrativePick,
                 1 => NarraverseState::EntityPick,
-                3 => NarraverseState::ArtifactPick,
-                4 => NarraverseState::VerseEdit,
+                2 => NarraverseState::ArtifactPick,
+                3 => NarraverseState::VerseEdit,
                 _ => todo!(),
             }
         }

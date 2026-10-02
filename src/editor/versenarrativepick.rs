@@ -85,10 +85,10 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             nv.state = NarraverseState::NarrativeModal;
         }
         KeyCode::Char('d') => {
-            let Some(_) = nv.list_states.verse_narrative_pick_liststate.selected() else {
+            let Some(uuid) = selected_narr_uuid(nv) else {
                 return;
             };
-            nv.deletion_target = DeletionTarget::Narrative;
+            nv.deletion_target = DeletionTarget::Narrative(uuid);
             nv.state = NarraverseState::VerseDelete;
         }
         _ => {}

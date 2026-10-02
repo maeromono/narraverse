@@ -46,8 +46,6 @@ pub enum NarraverseState {
     NarrativeModal,
     EntityPick,
     EntityModal,
-    TimelinePick,
-    TimelineModal,
     ArtifactPick,
     ArtifactModal,
     Editor,
