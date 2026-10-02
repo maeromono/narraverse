@@ -97,7 +97,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
                 DeletionTarget::Verse => NarraverseState::VersePick,
                 DeletionTarget::Narrative(_) => NarraverseState::NarrativePick,
                 DeletionTarget::Entity(_) => NarraverseState::EntityPick,
-                _ => todo!(),
+                DeletionTarget::Artifact(_) => NarraverseState::ArtifactPick,
             };
         }
         KeyCode::Char('y') => {
