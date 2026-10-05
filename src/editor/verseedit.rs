@@ -8,7 +8,7 @@ use ratatui_textarea::TextArea;
 use uuid::Uuid;
 
 use crate::nvcore::{
-    decosutils::center_area,
+    decosutils::{center_area, field_layout, fields_responsive},
     narraverse::{Narraverse, NarraverseState},
     save::save_verses,
     textareautils::validate_length,
@@ -46,17 +46,11 @@ enum VerseEditMode {
 }
 
 pub fn render_verse_edit(nv: &Narraverse, frame: &mut Frame, area: Rect) {
-    let (direction, vert_constraint) = if area.width > 50 {
-        (Direction::Horizontal, Constraint::Length(1))
-    } else {
-        (Direction::Vertical, Constraint::Length(2))
-    };
+    let (direction, vert_constraint) = fields_responsive(area.width);
     let ve_layout = Layout::vertical([vert_constraint; 1]) // bcuz more coming soon
         .split(center_area(area));
-    let field_layout = Layout::default()
-        .direction(direction)
-        .constraints([Constraint::Fill(1), Constraint::Fill(2)]);
-    let name_field_layout = field_layout.clone().split(ve_layout[0]);
+    let field_layout = field_layout(direction);
+    let name_field_layout = field_layout.split(ve_layout[0]);
     frame.render_widget(Paragraph::new("Verse name"), name_field_layout[0]);
     frame.render_widget(
         &nv.verse_edit_modal.verse_name_textarea,

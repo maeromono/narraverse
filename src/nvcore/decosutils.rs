@@ -1,5 +1,5 @@
 use ratatui::{
-    layout::{Constraint, Rect},
+    layout::{Constraint, Direction, Layout, Rect},
     style::{Modifier, Style},
     widgets::Block,
 };
@@ -18,4 +18,19 @@ pub fn focus_highlight(focused: bool) -> Style {
     } else {
         Style::default()
     }
+}
+
+// can't put the layout construction here bcuz non constant in a supposed constant field
+pub fn fields_responsive(width: u16) -> (Direction, Constraint) {
+    if width > 50 {
+        (Direction::Horizontal, Constraint::Length(1))
+    } else {
+        (Direction::Vertical, Constraint::Length(2))
+    }
+}
+
+pub fn field_layout(direction: Direction) -> Layout {
+    Layout::default()
+        .direction(direction)
+        .constraints([Constraint::Fill(1), Constraint::Fill(2)])
 }

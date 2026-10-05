@@ -8,7 +8,7 @@ use ratatui_textarea::TextArea;
 
 use crate::nvcore::{
     config::{NarraverseConfig, save_config},
-    decosutils::center_area,
+    decosutils::{center_area, field_layout, fields_responsive},
     narraverse::{Narraverse, NarraverseState},
     textareautils::validate_length,
 };
@@ -35,16 +35,10 @@ impl ConfigEditModal {
 }
 
 pub fn render_config_edit_modal(nv: &Narraverse, frame: &mut Frame, area: Rect) {
-    let (direction, vert_constraint) = if area.width > 50 {
-        (Direction::Horizontal, Constraint::Length(1))
-    } else {
-        (Direction::Vertical, Constraint::Length(2))
-    };
+    let (direction, vert_constraint) = fields_responsive(area.width);
     let cem_layout = Layout::vertical([vert_constraint; 1]).split(center_area(area));
-    let field_layout = Layout::default()
-        .direction(direction)
-        .constraints([Constraint::Fill(1), Constraint::Fill(2)]);
-    let title_field_layout = field_layout.clone().split(cem_layout[0]);
+    let field_layout = field_layout(direction);
+    let title_field_layout = field_layout.split(cem_layout[0]);
     frame.render_widget(Paragraph::new("'Written by' name"), title_field_layout[0]);
     frame.render_widget(
         &nv.config_edit_modal.writtenby_prefill_textarea,

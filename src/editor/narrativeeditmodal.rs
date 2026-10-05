@@ -11,7 +11,7 @@ use uuid::Uuid;
 
 use crate::nvcore::{
     cacheutils::rebuild_narr_list_cache,
-    decosutils::{center_area, focus_highlight},
+    decosutils::{center_area, field_layout, fields_responsive, focus_highlight},
     narraverse::{Narraverse, NarraverseState},
     save::save_verse,
     textareautils::{validate_date, validate_length},
@@ -86,19 +86,13 @@ pub enum CurrentFocus {
 }
 
 pub fn render_narrative_edit_modal(nv: &Narraverse, frame: &mut Frame, area: Rect) {
-    let (direction, vert_constraint) = if area.width > 50 {
-        (Direction::Horizontal, Constraint::Length(1))
-    } else {
-        (Direction::Vertical, Constraint::Length(2))
-    };
+    let (direction, vert_constraint) = fields_responsive(area.width);
     let nem_layout = Layout::vertical([vert_constraint; 4]).split(center_area(area));
-    let field_layout = Layout::default()
-        .direction(direction)
-        .constraints([Constraint::Fill(1), Constraint::Fill(2)]);
+    let field_layout = field_layout(direction);
     let title_field_layout = field_layout.clone().split(nem_layout[0]);
     let writtenby_field_layout = field_layout.clone().split(nem_layout[1]);
     let date_field_layout = field_layout.clone().split(nem_layout[2]);
-    let summary_field_layout = field_layout.clone().split(nem_layout[3]);
+    let summary_field_layout = field_layout.split(nem_layout[3]);
     let focus = &nv.narrative_edit_modal.current_focus;
     frame.render_widget(
         Paragraph::new("Narrative title")
