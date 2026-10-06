@@ -17,27 +17,31 @@ use crate::nvcore::{
 };
 
 pub struct NarraverseEditor {
-    pub mode: EditorTarget,
-    pub editing_uuid: Uuid,
-    pub editor_textarea: TextArea<'static>,
-    pub cached_name: String,
+    target: EditorTarget,
+    editing_uuid: Uuid,
+    editor_textarea: TextArea<'static>,
+    cached_name: String,
+    modified: bool,
+    unsaved_warned: bool,
 }
 
 impl Default for NarraverseEditor {
     fn default() -> Self {
         Self {
-            mode: EditorTarget::Narrative,
+            target: EditorTarget::Narrative,
             editing_uuid: Uuid::default(),
             editor_textarea: TextArea::default(),
             cached_name: String::from("Unknown"),
+            modified: false,
+            unsaved_warned: false,
         }
     }
 }
 
 impl NarraverseEditor {
-    pub fn edit(verses: &NarraverseVerses, mode: EditorTarget, uuid: Uuid) -> Option<Self> {
+    pub fn edit(verses: &NarraverseVerses, target: EditorTarget, uuid: Uuid) -> Option<Self> {
         let verse = verses.verses.get(&verses.verse_uuid)?;
-        let (mut textarea, cached_name) = match mode {
+        let (mut textarea, cached_name) = match target {
             EditorTarget::Narrative => {
                 let narr = verse.narratives.get(&uuid)?;
                 (TextArea::from(narr.narrative.lines()), narr.title.clone())
@@ -54,10 +58,12 @@ impl NarraverseEditor {
         textarea.set_wrap_mode(WrapMode::WordOrGlyph);
         textarea.set_line_number_style(Style::default().fg(Color::Gray));
         Some(Self {
-            mode,
+            target,
             editing_uuid: uuid,
             editor_textarea: textarea,
             cached_name,
+            modified: false,
+            unsaved_warned: false,
         })
     }
 }
@@ -92,18 +98,32 @@ pub fn render_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     frame.render_widget(
         Paragraph::new(format!(
             "Editing {}: {}",
-            nv.editor.mode, nv.editor.cached_name
+            nv.editor.target, nv.editor.cached_name
         ))
         .bold(),
         editor_layout[0],
     );
     frame.render_widget(&nv.editor.editor_textarea, editor_layout[1]);
+    if nv.editor.unsaved_warned {
+        frame.render_widget(
+            Paragraph::new("Unsaved changes, press Esc to discard")
+                .centered()
+                .red()
+                .bold()
+                .reversed(),
+            editor_layout[2],
+        );
+    }
 }
 
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match (key.code, key.modifiers) {
         (KeyCode::Esc, KeyModifiers::NONE) => {
-            nv.state = match nv.editor.mode {
+            if nv.editor.modified && !nv.editor.unsaved_warned {
+                nv.editor.unsaved_warned = true;
+                return;
+            }
+            nv.state = match nv.editor.target {
                 EditorTarget::Narrative => NarraverseState::NarrativePick,
                 EditorTarget::Entity => NarraverseState::EntityPick,
                 EditorTarget::Artifact => NarraverseState::ArtifactPick,
@@ -117,24 +137,25 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
         }
         (KeyCode::Char('v'), KeyModifiers::CONTROL) => {
             nv.editor.editor_textarea.paste();
-            return;
         }
         (KeyCode::Char('y'), KeyModifiers::CONTROL) => {
             nv.editor.editor_textarea.copy();
-            return;
         }
         (KeyCode::Delete, KeyModifiers::CONTROL) => {
             nv.editor.editor_textarea.delete_next_word();
-            return;
         }
         (KeyCode::Char('w'), KeyModifiers::ALT) => save_narrative(nv),
         _ => {
-            nv.editor.editor_textarea.input(*key);
+            nv.editor.modified |= nv.editor.editor_textarea.input(*key);
+            nv.editor.unsaved_warned = false;
         }
     }
 }
 
 fn save_narrative(nv: &mut Narraverse) {
+    if nv.editor.modified {
+        return;
+    }
     let Some(verse) = nv.verses.verses.get_key_value_mut(&nv.verses.verse_uuid) else {
         nv.send_error(
             format!("No Verse with this UUID ({}) exists.", nv.verses.verse_uuid),
@@ -142,7 +163,7 @@ fn save_narrative(nv: &mut Narraverse) {
         );
         return;
     };
-    match nv.editor.mode {
+    match nv.editor.target {
         EditorTarget::Narrative => {
             let Some(narrative) = verse.1.narratives.get_mut(&nv.editor.editing_uuid) else {
                 nv.send_error(
@@ -190,5 +211,6 @@ fn save_narrative(nv: &mut Narraverse) {
         );
     } else {
         nv.send_footer_notification(String::from("Saved successfully"));
+        nv.editor.modified = false;
     }
 }
