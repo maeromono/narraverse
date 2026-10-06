@@ -1,7 +1,7 @@
 use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{
     Frame,
-    layout::{Constraint, Direction, Layout, Rect},
+    layout::{Layout, Rect},
     widgets::Paragraph,
 };
 use ratatui_textarea::TextArea;

@@ -11,8 +11,7 @@ pub fn render_header(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
         Layout::horizontal([Constraint::Length(20), Constraint::Fill(1)]).split(area);
     let name_ver = Paragraph::new("narraverse v0.3.0");
     let right_thing = Paragraph::new(match nv.state {
-        NarraverseState::VersePick
-        | NarraverseState::ConfigModal => "enmkdev.neocities.org",
+        NarraverseState::VersePick | NarraverseState::ConfigModal => "enmkdev.neocities.org",
         _ => &nv.cached_verse_name,
     })
     .right_aligned();
@@ -26,8 +25,7 @@ pub fn render_footer(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
         NarraverseState::NarrativeModal
         | NarraverseState::EntityModal
         | NarraverseState::ArtifactModal => "Esc cancel, Tab cycle, Enter confirm",
-        NarraverseState::VerseEdit
-        | NarraverseState::ConfigModal => "Esc cancel, Enter confirm",
+        NarraverseState::VerseEdit | NarraverseState::ConfigModal => "Esc cancel, Enter confirm",
         NarraverseState::VerseAreaPick => "j/k navigate, Enter select",
         NarraverseState::NarrativePick
         | NarraverseState::EntityPick

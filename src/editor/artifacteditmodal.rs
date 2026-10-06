@@ -2,7 +2,7 @@ use crossterm::event::{KeyCode, KeyEvent};
 use enum_iterator::{Sequence, next_cycle, previous_cycle};
 use ratatui::{
     Frame,
-    layout::{Constraint, Layout, Rect},
+    layout::{Layout, Rect},
     widgets::Paragraph,
 };
 use ratatui_textarea::TextArea;
