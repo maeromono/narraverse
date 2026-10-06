@@ -108,7 +108,7 @@ pub fn render_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
         frame.render_widget(
             Paragraph::new("Unsaved changes, press Esc again to discard")
                 .centered()
-                .red()
+                .yellow()
                 .bold()
                 .reversed(),
             editor_layout[2],
@@ -153,7 +153,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
 }
 
 fn save_narrative(nv: &mut Narraverse) {
-    if nv.editor.modified {
+    if !nv.editor.modified {
         return;
     }
     let Some(verse) = nv.verses.verses.get_key_value_mut(&nv.verses.verse_uuid) else {
