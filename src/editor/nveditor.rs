@@ -7,7 +7,7 @@ use ratatui::{
     style::Stylize,
     widgets::Paragraph,
 };
-use ratatui_textarea::{TextArea, WrapMode};
+use ratatui_textarea::{CursorMove, TextArea, WrapMode};
 use uuid::Uuid;
 
 use crate::nvcore::{
@@ -107,6 +107,12 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
                 EditorTarget::Entity => NarraverseState::EntityPick,
                 EditorTarget::Artifact => NarraverseState::ArtifactPick,
             }
+        }
+        (KeyCode::Home, KeyModifiers::CONTROL) => {
+            nv.editor.editor_textarea.move_cursor(CursorMove::Top)
+        }
+        (KeyCode::End, KeyModifiers::CONTROL) => {
+            nv.editor.editor_textarea.move_cursor(CursorMove::Bottom)
         }
         (KeyCode::Char('w'), KeyModifiers::ALT) => save_narrative(nv),
         _ => {
