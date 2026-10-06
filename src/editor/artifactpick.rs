@@ -10,7 +10,7 @@ use uuid::Uuid;
 use crate::{
     editor::{
         artifacteditmodal::ArtifactEditModal,
-        nveditor::{EditorMode, NarraverseEditor},
+        nveditor::{EditorTarget, NarraverseEditor},
         versedelete::DeletionTarget,
     },
     nvcore::{
@@ -62,7 +62,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             let Some(uuid) = selected_art_uuid(nv) else {
                 return;
             };
-            let Some(nar_ed) = NarraverseEditor::edit(&nv.verses, EditorMode::Artifact, uuid)
+            let Some(nar_ed) = NarraverseEditor::edit(&nv.verses, EditorTarget::Artifact, uuid)
             else {
                 return;
             };

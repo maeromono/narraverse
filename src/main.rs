@@ -30,7 +30,9 @@ fn main() {
         );
         NarraverseVerses::default()
     });
-    if nv.verses.verse_uuid != Uuid::default() {
+    if nv.verses.verse_uuid != Uuid::default()
+        && nv.verses.verses.contains_key(&nv.verses.verse_uuid)
+    {
         nv.state = NarraverseState::VerseAreaPick;
         rebuild_narr_list_cache(&mut nv);
         rebuild_ent_list_cache(&mut nv);

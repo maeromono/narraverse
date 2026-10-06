@@ -17,7 +17,7 @@ use crate::nvcore::{
 };
 
 pub struct NarraverseEditor {
-    pub mode: EditorMode,
+    pub mode: EditorTarget,
     pub editing_uuid: Uuid,
     pub editor_textarea: TextArea<'static>,
     pub cached_name: String,
@@ -26,7 +26,7 @@ pub struct NarraverseEditor {
 impl Default for NarraverseEditor {
     fn default() -> Self {
         Self {
-            mode: EditorMode::Narrative,
+            mode: EditorTarget::Narrative,
             editing_uuid: Uuid::default(),
             editor_textarea: TextArea::default(),
             cached_name: String::from("Unknown"),
@@ -35,18 +35,18 @@ impl Default for NarraverseEditor {
 }
 
 impl NarraverseEditor {
-    pub fn edit(verses: &NarraverseVerses, mode: EditorMode, uuid: Uuid) -> Option<Self> {
+    pub fn edit(verses: &NarraverseVerses, mode: EditorTarget, uuid: Uuid) -> Option<Self> {
         let verse = verses.verses.get(&verses.verse_uuid)?;
         let (mut textarea, cached_name) = match mode {
-            EditorMode::Narrative => {
+            EditorTarget::Narrative => {
                 let narr = verse.narratives.get(&uuid)?;
                 (TextArea::from(narr.narrative.lines()), narr.title.clone())
             }
-            EditorMode::Entity => {
+            EditorTarget::Entity => {
                 let ent = verse.entities.get(&uuid)?;
                 (TextArea::from(ent.details.lines()), ent.name.clone())
             }
-            EditorMode::Artifact => {
+            EditorTarget::Artifact => {
                 let art = verse.artifacts.get(&uuid)?;
                 (TextArea::from(art.details.lines()), art.name.clone())
             }
@@ -61,21 +61,21 @@ impl NarraverseEditor {
     }
 }
 
-pub enum EditorMode {
+pub enum EditorTarget {
     Narrative,
     Entity,
     Artifact,
 }
 
-impl Display for EditorMode {
+impl Display for EditorTarget {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
             "{}",
             match self {
-                EditorMode::Narrative => "a narrative",
-                EditorMode::Entity => "an entity",
-                EditorMode::Artifact => "an artifact",
+                EditorTarget::Narrative => "a narrative",
+                EditorTarget::Entity => "an entity",
+                EditorTarget::Artifact => "an artifact",
             }
         )
     }
@@ -103,9 +103,9 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match (key.code, key.modifiers) {
         (KeyCode::Esc, KeyModifiers::NONE) => {
             nv.state = match nv.editor.mode {
-                EditorMode::Narrative => NarraverseState::NarrativePick,
-                EditorMode::Entity => NarraverseState::EntityPick,
-                EditorMode::Artifact => NarraverseState::ArtifactPick,
+                EditorTarget::Narrative => NarraverseState::NarrativePick,
+                EditorTarget::Entity => NarraverseState::EntityPick,
+                EditorTarget::Artifact => NarraverseState::ArtifactPick,
             }
         }
         (KeyCode::Char('w'), KeyModifiers::ALT) => save_narrative(nv),
@@ -124,7 +124,7 @@ fn save_narrative(nv: &mut Narraverse) {
         return;
     };
     match nv.editor.mode {
-        EditorMode::Narrative => {
+        EditorTarget::Narrative => {
             let Some(narrative) = verse.1.narratives.get_mut(&nv.editor.editing_uuid) else {
                 nv.send_error(
                     format!(
@@ -137,7 +137,7 @@ fn save_narrative(nv: &mut Narraverse) {
             };
             narrative.narrative = nv.editor.editor_textarea.lines().join("\n");
         }
-        EditorMode::Entity => {
+        EditorTarget::Entity => {
             let Some(entity) = verse.1.entities.get_mut(&nv.editor.editing_uuid) else {
                 nv.send_error(
                     format!(
@@ -150,7 +150,7 @@ fn save_narrative(nv: &mut Narraverse) {
             };
             entity.details = nv.editor.editor_textarea.lines().join("\n");
         }
-        EditorMode::Artifact => {
+        EditorTarget::Artifact => {
             let Some(artifact) = verse.1.artifacts.get_mut(&nv.editor.editing_uuid) else {
                 nv.send_error(
                     format!(
