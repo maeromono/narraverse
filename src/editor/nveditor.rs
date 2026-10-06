@@ -106,7 +106,7 @@ pub fn render_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     frame.render_widget(&nv.editor.editor_textarea, editor_layout[1]);
     if nv.editor.unsaved_warned {
         frame.render_widget(
-            Paragraph::new("Unsaved changes, press Esc to discard")
+            Paragraph::new("Unsaved changes, press Esc again to discard")
                 .centered()
                 .red()
                 .bold()
