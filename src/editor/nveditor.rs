@@ -4,7 +4,7 @@ use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use ratatui::{
     Frame,
     layout::{Constraint, Layout, Rect},
-    style::Stylize,
+    style::{Color, Style, Stylize},
     widgets::Paragraph,
 };
 use ratatui_textarea::{CursorMove, TextArea, WrapMode};
@@ -52,6 +52,7 @@ impl NarraverseEditor {
             }
         };
         textarea.set_wrap_mode(WrapMode::WordOrGlyph);
+        textarea.set_line_number_style(Style::default().fg(Color::Gray));
         Some(Self {
             mode,
             editing_uuid: uuid,
@@ -113,6 +114,18 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
         }
         (KeyCode::End, KeyModifiers::CONTROL) => {
             nv.editor.editor_textarea.move_cursor(CursorMove::Bottom)
+        }
+        (KeyCode::Char('v'), KeyModifiers::CONTROL) => {
+            nv.editor.editor_textarea.paste();
+            return;
+        }
+        (KeyCode::Char('y'), KeyModifiers::CONTROL) => {
+            nv.editor.editor_textarea.copy();
+            return;
+        }
+        (KeyCode::Delete, KeyModifiers::CONTROL) => {
+            nv.editor.editor_textarea.delete_next_word();
+            return;
         }
         (KeyCode::Char('w'), KeyModifiers::ALT) => save_narrative(nv),
         _ => {
