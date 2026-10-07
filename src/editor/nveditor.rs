@@ -95,6 +95,26 @@ impl NarraverseEditor {
         }
     }
 
+    pub fn remove_current_buffer(&mut self) -> bool {
+        let index = self.buffer_index;
+        let Some((uuid, modified, unsaved_warned)) = self
+            .buffers
+            .get_index(index)
+            .map(|(uuid, buffer)| (*uuid, buffer.modified, buffer.unsaved_warned))
+        else {
+            return false;
+        };
+        if modified && !unsaved_warned {
+            let Some((_, buffer)) = self.buffers.get_index_mut(index) else {
+                return false;
+            };
+            buffer.unsaved_warned = true;
+            return false;
+        }
+        self.remove_buffer_uuid(&uuid);
+        true
+    }
+
     pub fn purge_all_buffers(&mut self) {
         self.buffers = IndexMap::default();
         self.buffer_index = 0;
@@ -150,7 +170,7 @@ pub fn render_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     frame.render_widget(&buffer.textarea, editor_layout[1]);
     if buffer.unsaved_warned {
         frame.render_widget(
-            Paragraph::new("Unsaved changes, press Esc again to discard")
+            Paragraph::new("Unsaved changes, press Alt+x again to discard")
                 .centered()
                 .yellow()
                 .bold()
@@ -161,6 +181,12 @@ pub fn render_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
 }
 
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
+    if (key.code, key.modifiers) == (KeyCode::Char('x'), KeyModifiers::ALT) {
+        if nv.editor.remove_current_buffer() && nv.editor.buffers.is_empty() {
+            nv.state = NarraverseState::VerseAreaPick;
+        }
+        return;
+    }
     let Some((_, buffer)) = nv.editor.buffers.get_index_mut(nv.editor.buffer_index) else {
         nv.send_error(
             String::from("Invalid buffer"),
@@ -170,10 +196,6 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     };
     match (key.code, key.modifiers) {
         (KeyCode::Esc, KeyModifiers::NONE) => {
-            // if buffer.modified && !buffer.unsaved_warned {
-            //     buffer.unsaved_warned = true;
-            //     return;
-            // }
             nv.state = match buffer.target {
                 EditorTarget::Narrative => NarraverseState::NarrativePick,
                 EditorTarget::Entity => NarraverseState::EntityPick,
