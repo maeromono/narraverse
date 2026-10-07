@@ -109,7 +109,7 @@ impl Display for EditorTarget {
 }
 
 pub fn render_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
-    let Some(buffer) = nv.editor.buffers.get_index(nv.editor.buffer_index) else {
+    let Some((_, buffer)) = nv.editor.buffers.get_index(nv.editor.buffer_index) else {
         nv.send_error(
             String::from("Invalid buffer"),
             NarraverseState::VerseAreaPick,
@@ -123,11 +123,11 @@ pub fn render_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     ])
     .split(area);
     frame.render_widget(
-        Paragraph::new(format!("({}) {}", buffer.1.target, buffer.1.cached_name)).bold(),
+        Paragraph::new(format!("({}) {}", buffer.target, buffer.cached_name)).bold(),
         editor_layout[0],
     );
-    frame.render_widget(&buffer.1.textarea, editor_layout[1]);
-    if buffer.1.unsaved_warned {
+    frame.render_widget(&buffer.textarea, editor_layout[1]);
+    if buffer.unsaved_warned {
         frame.render_widget(
             Paragraph::new("Unsaved changes, press Esc again to discard")
                 .centered()
@@ -140,7 +140,7 @@ pub fn render_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
 }
 
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
-    let Some(buffer) = nv.editor.buffers.get_index_mut(nv.editor.buffer_index) else {
+    let Some((_, buffer)) = nv.editor.buffers.get_index_mut(nv.editor.buffer_index) else {
         nv.send_error(
             String::from("Invalid buffer"),
             NarraverseState::VerseAreaPick,
@@ -149,33 +149,45 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     };
     match (key.code, key.modifiers) {
         (KeyCode::Esc, KeyModifiers::NONE) => {
-            // if buffer.1.modified && !buffer.1.unsaved_warned {
-            //     buffer.1.unsaved_warned = true;
+            // if buffer.modified && !buffer.unsaved_warned {
+            //     buffer.unsaved_warned = true;
             //     return;
             // }
-            nv.state = match buffer.1.target {
+            nv.state = match buffer.target {
                 EditorTarget::Narrative => NarraverseState::NarrativePick,
                 EditorTarget::Entity => NarraverseState::EntityPick,
                 EditorTarget::Artifact => NarraverseState::ArtifactPick,
             }
         }
-        (KeyCode::PageDown, KeyModifiers::CONTROL) => nv.editor.buffer_index += 1,
-        (KeyCode::PageUp, KeyModifiers::CONTROL) => nv.editor.buffer_index -= 1,
-        (KeyCode::Home, KeyModifiers::CONTROL) => buffer.1.textarea.move_cursor(CursorMove::Top),
-        (KeyCode::End, KeyModifiers::CONTROL) => buffer.1.textarea.move_cursor(CursorMove::Bottom),
+        (KeyCode::PageDown, KeyModifiers::CONTROL) => {
+            let len = nv.editor.buffers.len();
+            if len == 0 {
+                return;
+            }
+            nv.editor.buffer_index = (nv.editor.buffer_index + 1) % len;
+        }
+        (KeyCode::PageUp, KeyModifiers::CONTROL) => {
+            let len = nv.editor.buffers.len();
+            if len == 0 {
+                return;
+            }
+            nv.editor.buffer_index = (nv.editor.buffer_index + len - 1) % len;
+        }
+        (KeyCode::Home, KeyModifiers::CONTROL) => buffer.textarea.move_cursor(CursorMove::Top),
+        (KeyCode::End, KeyModifiers::CONTROL) => buffer.textarea.move_cursor(CursorMove::Bottom),
         (KeyCode::Char('v'), KeyModifiers::CONTROL) => {
-            buffer.1.textarea.paste();
+            buffer.textarea.paste();
         }
         (KeyCode::Char('y'), KeyModifiers::CONTROL) => {
-            buffer.1.textarea.copy();
+            buffer.textarea.copy();
         }
         (KeyCode::Delete, KeyModifiers::CONTROL) => {
-            buffer.1.textarea.delete_next_word();
+            buffer.textarea.delete_next_word();
         }
         (KeyCode::Char('w'), KeyModifiers::ALT) => save_buffer(nv),
         _ => {
-            buffer.1.modified |= buffer.1.textarea.input(*key);
-            buffer.1.unsaved_warned = false;
+            buffer.modified |= buffer.textarea.input(*key);
+            buffer.unsaved_warned = false;
         }
     }
 }
