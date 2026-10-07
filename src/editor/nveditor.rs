@@ -96,7 +96,8 @@ impl NarraverseEditor {
     }
 
     pub fn purge_all_buffers(&mut self) {
-        self.buffers.clear();
+        self.buffers = IndexMap::default();
+        self.buffer_index = 0;
     }
 }
 

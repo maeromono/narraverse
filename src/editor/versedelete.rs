@@ -118,6 +118,7 @@ fn confirm_delete(nv: &mut Narraverse) {
     match nv.deletion_target {
         DeletionTarget::Verse => {
             let verse_uuid = nv.verses.verse_uuid;
+            nv.editor.purge_all_buffers();
             nv.verses.verses.shift_remove(&verse_uuid);
             nv.list_states.verse_pick_liststate.select(None);
             nv.state = NarraverseState::VersePick;
@@ -137,9 +138,9 @@ fn confirm_delete(nv: &mut Narraverse) {
             verse.narratives.shift_remove(&uuid);
             nv.list_states.verse_narrative_pick_liststate.select(None);
             rebuild_narr_list_cache(nv);
+            nv.editor.remove_buffer_uuid(&uuid);
             nv.state = NarraverseState::NarrativePick;
             nv.send_footer_notification(String::from("Narrative deleted"));
-            nv.editor.remove_buffer_uuid(&uuid);
         }
         DeletionTarget::Entity(uuid) => {
             if !verse.entities.contains_key(&uuid) {
@@ -155,9 +156,9 @@ fn confirm_delete(nv: &mut Narraverse) {
             verse.entities.shift_remove(&uuid);
             nv.list_states.verse_entity_pick_liststate.select(None);
             rebuild_ent_list_cache(nv);
+            nv.editor.remove_buffer_uuid(&uuid);
             nv.state = NarraverseState::EntityPick;
             nv.send_footer_notification(String::from("Entity deleted"));
-            nv.editor.remove_buffer_uuid(&uuid);
         }
         DeletionTarget::Artifact(uuid) => {
             if !verse.artifacts.contains_key(&uuid) {
@@ -173,9 +174,9 @@ fn confirm_delete(nv: &mut Narraverse) {
             verse.artifacts.shift_remove(&uuid);
             nv.list_states.verse_artifact_pick_liststate.select(None);
             rebuild_art_list_cache(nv);
+            nv.editor.remove_buffer_uuid(&uuid);
             nv.state = NarraverseState::ArtifactPick;
             nv.send_footer_notification(String::from("Artifact deleted"));
-            nv.editor.remove_buffer_uuid(&uuid);
         }
     }
     if let Err(err) = save_verses(&mut nv.verses) {
