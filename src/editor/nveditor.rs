@@ -149,10 +149,10 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     };
     match (key.code, key.modifiers) {
         (KeyCode::Esc, KeyModifiers::NONE) => {
-            if buffer.1.modified && !buffer.1.unsaved_warned {
-                buffer.1.unsaved_warned = true;
-                return;
-            }
+            // if buffer.1.modified && !buffer.1.unsaved_warned {
+            //     buffer.1.unsaved_warned = true;
+            //     return;
+            // }
             nv.state = match buffer.1.target {
                 EditorTarget::Narrative => NarraverseState::NarrativePick,
                 EditorTarget::Entity => NarraverseState::EntityPick,

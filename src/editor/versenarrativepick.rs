@@ -63,7 +63,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             };
             if !nv
                 .editor
-                .add_buffer(&nv.verses, EditorTarget::Artifact, uuid)
+                .add_buffer(&nv.verses, EditorTarget::Narrative, uuid)
             {
                 return;
             };
