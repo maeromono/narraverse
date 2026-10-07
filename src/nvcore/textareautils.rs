@@ -23,3 +23,11 @@ pub fn validate_date(textarea: &mut TextArea) -> bool {
         true
     }
 }
+
+pub fn searchbox_style(textarea: &mut TextArea, res: Result<(), regex::Error>) {
+    if let Err(_) = res {
+        textarea.set_style(Style::default().red().reversed());
+    } else {
+        textarea.set_style(Style::default());
+    }
+}

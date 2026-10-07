@@ -14,19 +14,24 @@ use uuid::Uuid;
 use crate::nvcore::{
     narraverse::{Narraverse, NarraverseState},
     save::save_verse,
+    textareautils::searchbox_style,
     verses::{NarraverseVerses, Verse},
 };
 
 pub struct NarraverseEditor {
+    mode: EditorMode,
     buffers: IndexMap<Uuid, EditorBuffer>,
     buffer_index: usize,
+    searching_textarea: TextArea<'static>,
 }
 
 impl Default for NarraverseEditor {
     fn default() -> Self {
         Self {
+            mode: EditorMode::Editing,
             buffers: IndexMap::default(),
             buffer_index: 0,
+            searching_textarea: TextArea::default(),
         }
     }
 }
@@ -119,6 +124,23 @@ impl NarraverseEditor {
         self.buffers = IndexMap::default();
         self.buffer_index = 0;
     }
+
+    fn search_height_open(&self) -> (u16, bool) {
+        (
+            if self.mode == EditorMode::Searching {
+                1
+            } else {
+                0
+            },
+            self.mode == EditorMode::Searching,
+        )
+    }
+}
+
+#[derive(PartialEq, Eq)]
+enum EditorMode {
+    Editing,
+    Searching,
 }
 
 pub enum EditorTarget {
@@ -149,10 +171,12 @@ pub fn render_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
         );
         return;
     };
+    let (search_height, search_open) = nv.editor.search_height_open();
     let editor_layout = Layout::vertical([
         Constraint::Length(1),
         Constraint::Fill(1),
         Constraint::Length(1),
+        Constraint::Length(search_height),
     ])
     .split(area);
     frame.render_widget(
@@ -168,6 +192,9 @@ pub fn render_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
         editor_layout[0],
     );
     frame.render_widget(&buffer.textarea, editor_layout[1]);
+    if search_open {
+        frame.render_widget(&nv.editor.searching_textarea, editor_layout[3]);
+    }
     if buffer.unsaved_warned {
         frame.render_widget(
             Paragraph::new("Unsaved changes, press Alt+x again to discard")
@@ -181,6 +208,60 @@ pub fn render_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
 }
 
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
+    match nv.editor.mode {
+        EditorMode::Editing => handle_editing_keys(nv, key),
+        EditorMode::Searching => handle_searching_keys(nv, key),
+    }
+}
+
+pub fn handle_searching_keys(nv: &mut Narraverse, key: &KeyEvent) {
+    let Some((_, buffer)) = nv.editor.buffers.get_index_mut(nv.editor.buffer_index) else {
+        nv.send_error(
+            String::from("Invalid buffer"),
+            NarraverseState::VerseAreaPick,
+        );
+        return;
+    };
+    match key.code {
+        KeyCode::Esc => {
+            nv.editor.mode = EditorMode::Editing;
+            nv.editor.searching_textarea.clear();
+            buffer.textarea.set_search_pattern("").unwrap();
+        }
+        KeyCode::Down => {
+            if !buffer.textarea.search_forward(false) {
+                nv.send_footer_notification(String::from("No pattern found"));
+            }
+        }
+        KeyCode::Up => {
+            if !buffer.textarea.search_back(false) {
+                nv.send_footer_notification(String::from("No pattern found"));
+            }
+        }
+        KeyCode::Enter => {
+            let found = buffer.textarea.search_forward(true);
+            nv.editor.searching_textarea.clear();
+            buffer.textarea.set_search_pattern("").unwrap();
+            if !found {
+                nv.send_footer_notification(String::from("No pattern found"));
+            }
+            nv.editor.mode = EditorMode::Editing;
+        }
+        _ => {
+            let textarea = &mut nv.editor.searching_textarea;
+            if textarea.input(*key) {
+                searchbox_style(
+                    textarea,
+                    buffer
+                        .textarea
+                        .set_search_pattern(textarea.lines()[0].as_str()),
+                );
+            }
+        }
+    }
+}
+
+pub fn handle_editing_keys(nv: &mut Narraverse, key: &KeyEvent) {
     if (key.code, key.modifiers) == (KeyCode::Char('x'), KeyModifiers::ALT) {
         if nv.editor.remove_current_buffer() && nv.editor.buffers.is_empty() {
             nv.state = NarraverseState::VerseAreaPick;
@@ -231,6 +312,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             buffer.textarea.delete_next_word();
         }
         (KeyCode::Char('w'), KeyModifiers::ALT) => save_buffer(nv),
+        (KeyCode::Char('f'), KeyModifiers::ALT) => nv.editor.mode = EditorMode::Searching,
         _ => {
             buffer.modified |= buffer.textarea.input(*key);
             buffer.unsaved_warned = false;
