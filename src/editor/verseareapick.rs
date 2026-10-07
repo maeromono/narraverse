@@ -2,7 +2,7 @@ use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{Frame, layout::Rect, style::Modifier, widgets::List};
 
 use crate::{
-    editor::verseedit::VerseEdit,
+    editor::{nveditor::NarraverseEditor, verseedit::VerseEdit},
     nvcore::{
         decosutils::{block_with_title, center_area},
         narraverse::{Narraverse, NarraverseState},
@@ -32,7 +32,12 @@ pub fn render_area_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
         KeyCode::Char('q') => nv.state = NarraverseState::Quit,
-        KeyCode::Esc => nv.state = NarraverseState::VersePick,
+        KeyCode::Esc => {
+            // cross verse buffers probably won't be possible because of how narraverse is built.
+            nv.editor.purge_all_buffers();
+            nv.editor = NarraverseEditor::default();
+            nv.state = NarraverseState::VersePick;
+        },
         KeyCode::Char('j') | KeyCode::Down => {
             nv.list_states.verse_area_pick_liststate.select_next()
         }

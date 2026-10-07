@@ -139,6 +139,7 @@ fn confirm_delete(nv: &mut Narraverse) {
             rebuild_narr_list_cache(nv);
             nv.state = NarraverseState::NarrativePick;
             nv.send_footer_notification(String::from("Narrative deleted"));
+            nv.editor.remove_buffer_uuid(&uuid);
         }
         DeletionTarget::Entity(uuid) => {
             if !verse.entities.contains_key(&uuid) {
@@ -156,6 +157,7 @@ fn confirm_delete(nv: &mut Narraverse) {
             rebuild_ent_list_cache(nv);
             nv.state = NarraverseState::EntityPick;
             nv.send_footer_notification(String::from("Entity deleted"));
+            nv.editor.remove_buffer_uuid(&uuid);
         }
         DeletionTarget::Artifact(uuid) => {
             if !verse.artifacts.contains_key(&uuid) {
@@ -173,6 +175,7 @@ fn confirm_delete(nv: &mut Narraverse) {
             rebuild_art_list_cache(nv);
             nv.state = NarraverseState::ArtifactPick;
             nv.send_footer_notification(String::from("Artifact deleted"));
+            nv.editor.remove_buffer_uuid(&uuid);
         }
     }
     if let Err(err) = save_verses(&mut nv.verses) {

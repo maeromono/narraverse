@@ -86,6 +86,18 @@ impl NarraverseEditor {
         );
         true
     }
+
+    pub fn remove_buffer_uuid(&mut self, uuid: &Uuid) {
+        self.buffers.shift_remove(uuid);
+        let len = self.buffers.len();
+        if self.buffer_index >= len {
+            self.buffer_index = len.saturating_sub(1);
+        }
+    }
+
+    pub fn purge_all_buffers(&mut self) {
+        self.buffers.clear();
+    }
 }
 
 pub enum EditorTarget {
@@ -123,7 +135,15 @@ pub fn render_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     ])
     .split(area);
     frame.render_widget(
-        Paragraph::new(format!("({}) {}", buffer.target, buffer.cached_name)).bold(),
+        Paragraph::new(format!(
+            "[{}/{}] ({}) {}",
+            nv.editor.buffer_index + 1,
+            nv.editor.buffers.len(),
+            buffer.target,
+            buffer.cached_name
+        ))
+        .centered()
+        .bold(),
         editor_layout[0],
     );
     frame.render_widget(&buffer.textarea, editor_layout[1]);
