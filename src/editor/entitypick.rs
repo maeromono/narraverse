@@ -8,11 +8,7 @@ use ratatui::{
 use uuid::Uuid;
 
 use crate::{
-    editor::{
-        entityedit::EntityEditModal,
-        nveditor::{EditorTarget, NarraverseEditor},
-        versedelete::DeletionTarget,
-    },
+    editor::{entityedit::EntityEditModal, nveditor::EditorTarget, versedelete::DeletionTarget},
     nvcore::{
         decosutils::{block_with_title, center_area},
         narraverse::{Narraverse, NarraverseState},
@@ -58,11 +54,12 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             let Some(uuid) = selected_ent_uuid(nv) else {
                 return;
             };
-            let Some(nar_ed) = NarraverseEditor::edit(&nv.verses, EditorTarget::Entity, uuid)
-            else {
+            if !nv
+                .editor
+                .add_buffer(&nv.verses, EditorTarget::Entity, uuid)
+            {
                 return;
             };
-            nv.editor = nar_ed;
             nv.state = NarraverseState::Editor;
         }
         KeyCode::Char('n') => {
