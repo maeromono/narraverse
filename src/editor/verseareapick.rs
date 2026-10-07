@@ -36,7 +36,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             // cross verse buffers probably won't be possible because of how narraverse is built.
             nv.editor.purge_all_buffers();
             nv.state = NarraverseState::VersePick;
-        },
+        }
         KeyCode::Char('j') | KeyCode::Down => {
             nv.list_states.verse_area_pick_liststate.select_next()
         }

@@ -14,9 +14,9 @@ const EDITOR_BINDINGS: &[(&str, &str)] = &[
     ("Ctrl+u", "Undo"),
     ("Ctrl+r", "Redo"),
     ("Shift+(Ctrl+)arrow keys", "Select text"),
-    ("Ctrl+y", "Copy selected text"),
+    ("Ctrl+c", "Copy selected text"),
     ("Ctrl+x", "Cut selected text"),
-    ("Ctrl+v", "Paste text (not from system clipboard)"),
+    ("Ctrl+y", "Paste text (not from system clipboard)"),
     ("Ctrl+w", "Delete word before cursor"),
     ("Ctrl+Del", "Delete word AFTER cursor"),
 ];

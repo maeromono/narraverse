@@ -24,7 +24,11 @@ use crate::{
         versepick::{self, render_worldpick},
     },
     nvcore::{
-        config::NarraverseConfig, editorbindhelp::{self, render_bindhelp}, error::{self, render_error_screen}, narraversemain::{render_footer, render_header}, verses::NarraverseVerses
+        config::NarraverseConfig,
+        editorbindhelp::{self, render_bindhelp},
+        error::{self, render_error_screen},
+        narraversemain::{render_footer, render_header},
+        verses::NarraverseVerses,
     },
 };
 

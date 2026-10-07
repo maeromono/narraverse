@@ -219,11 +219,13 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
         }
         (KeyCode::Home, KeyModifiers::CONTROL) => buffer.textarea.move_cursor(CursorMove::Top),
         (KeyCode::End, KeyModifiers::CONTROL) => buffer.textarea.move_cursor(CursorMove::Bottom),
-        (KeyCode::Char('v'), KeyModifiers::CONTROL) => {
-            buffer.textarea.paste();
+        // vv these specific out of the box binds from the crate don't work for some reason so i
+        // had to bind them again
+        (KeyCode::Char('c'), KeyModifiers::CONTROL) => {
+            buffer.textarea.copy();
         }
         (KeyCode::Char('y'), KeyModifiers::CONTROL) => {
-            buffer.textarea.copy();
+            buffer.textarea.paste();
         }
         (KeyCode::Delete, KeyModifiers::CONTROL) => {
             buffer.textarea.delete_next_word();

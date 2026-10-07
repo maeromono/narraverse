@@ -54,10 +54,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             let Some(uuid) = selected_ent_uuid(nv) else {
                 return;
             };
-            if !nv
-                .editor
-                .add_buffer(&nv.verses, EditorTarget::Entity, uuid)
-            {
+            if !nv.editor.add_buffer(&nv.verses, EditorTarget::Entity, uuid) {
                 return;
             };
             nv.state = NarraverseState::Editor;
