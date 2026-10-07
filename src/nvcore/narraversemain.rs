@@ -30,8 +30,9 @@ pub fn render_footer(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
         NarraverseState::NarrativePick
         | NarraverseState::EntityPick
         | NarraverseState::ArtifactPick => "e edit, n new, j/k navigate, Enter select",
-        NarraverseState::Editor => "Esc back, Alt+x close, Alt+w save",
+        NarraverseState::Editor => "Esc back, Alt+x close, Alt+w save, F1 binds",
         NarraverseState::VerseDelete => "n cancel, y confirm",
+        NarraverseState::BindHelp => "Esc back",
         _ => "",
     };
     let bind_help = Paragraph::new(bind_help_string).centered();

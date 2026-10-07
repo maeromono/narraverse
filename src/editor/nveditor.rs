@@ -202,6 +202,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
                 EditorTarget::Artifact => NarraverseState::ArtifactPick,
             }
         }
+        (KeyCode::F(1), KeyModifiers::NONE) => nv.state = NarraverseState::BindHelp,
         (KeyCode::PageDown, KeyModifiers::CONTROL) => {
             let len = nv.editor.buffers.len();
             if len == 0 {

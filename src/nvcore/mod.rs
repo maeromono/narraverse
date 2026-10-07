@@ -1,6 +1,7 @@
 pub mod cacheutils;
 pub mod config;
 pub mod decosutils;
+pub mod editorbindhelp;
 pub mod error;
 pub mod narraverse;
 pub mod narraversemain;

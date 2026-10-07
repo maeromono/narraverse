@@ -24,10 +24,7 @@ use crate::{
         versepick::{self, render_worldpick},
     },
     nvcore::{
-        config::NarraverseConfig,
-        error::{self, render_error_screen},
-        narraversemain::{render_footer, render_header},
-        verses::NarraverseVerses,
+        config::NarraverseConfig, editorbindhelp::{self, render_bindhelp}, error::{self, render_error_screen}, narraversemain::{render_footer, render_header}, verses::NarraverseVerses
     },
 };
 
@@ -63,6 +60,7 @@ pub enum NarraverseState {
     ConfigModal,
     Editor,
     VerseDelete,
+    BindHelp,
     Error,
     Quit,
 }
@@ -113,6 +111,7 @@ impl Narraverse {
             NarraverseState::ConfigModal => render_config_edit_modal(self, frame, main_layout[1]),
             NarraverseState::Editor => render_editor(self, frame, main_layout[1]),
             NarraverseState::VerseDelete => render_delete_screen(self, frame, main_layout[1]),
+            NarraverseState::BindHelp => render_bindhelp(self, frame, main_layout[1]),
             NarraverseState::Error => render_error_screen(self, frame, main_layout[1]),
             _ => todo!(),
         }
@@ -142,6 +141,7 @@ impl Narraverse {
             NarraverseState::ConfigModal => configeditmodal::handle_keys(self, key),
             NarraverseState::Editor => nveditor::handle_keys(self, key),
             NarraverseState::VerseDelete => versedelete::handle_keys(self, key),
+            NarraverseState::BindHelp => editorbindhelp::handle_keys(self, key),
             NarraverseState::Error => error::handle_keys(self, key),
             _ => {}
         }
@@ -186,6 +186,7 @@ pub struct NarraverseListStates {
     pub verse_narrative_pick_liststate: ListState,
     pub verse_entity_pick_liststate: ListState,
     pub verse_artifact_pick_liststate: ListState,
+    pub bind_help_liststate: ListState,
 }
 
 impl Default for NarraverseListStates {
@@ -196,6 +197,7 @@ impl Default for NarraverseListStates {
             verse_narrative_pick_liststate: ListState::default(),
             verse_entity_pick_liststate: ListState::default(),
             verse_artifact_pick_liststate: ListState::default(),
+            bind_help_liststate: ListState::default().with_selected(Some(0)),
         }
     }
 }
