@@ -13,6 +13,8 @@ pub const PICKMENU_BINDINGS: &[(&str, &str)] = &[
     ("G", "Jump to bottom"),
     ("J", "Move selected entry down (entities, artifacts)"),
     ("K", "Move selected entry up (entities, artifacts)"),
+    ("n", "Create a new entry"),
+    ("e", "Edit selected entry"),
     ("Enter", "Enter editor"),
 ];
 

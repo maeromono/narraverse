@@ -1,20 +1,22 @@
+<strong>Another save file breaking change possible in the next update. Make regular backups!</strong>
 # narraverse
 
 narraverse is an experimental, plain text no-BS worldbuilding TUI.
 
-<strong>Another save file breaking change possible in the next update. Make regular backups!</strong>
-
 ## Features.
 - Single binary, no extra runtime dependencies
-- Create, edit and delete unlimited narratives, entities and artifacts
-- "Convenient" shortcuts and vim-like bindings
+- Create, edit, reorder* and delete unlimited narratives, entities and artifacts
+- Edit multiple narratives/entities/artifacts at once with multibuffers
+- "Convenient" shortcuts and vim-like bindings (there's a bind help (F1) in case you feel stuck)
 - Emacs-like shortcuts in the editor, which definitely won't clash with your vim muscle memory
+
+\* Only applies to entities & artifacts.
 
 ## Installation.
 Prerequisites:
 - Rust/Cargo installed on your system (preferrably latest possible version)
 
-### Through Cargo (recommended)
+### Latest release (recommended)
 ```bash
 cargo install --locked narraverse
 ```
@@ -22,6 +24,8 @@ cargo install --locked narraverse
 ### From source
 ```bash
 git clone https://codeberg.org/enmkdev/narraverse && cd narraverse && cargo install --path .
+or
+cargo install --git https://codeberg.org/enmkdev/narraverse --locked
 ```
 
 ## Configuration.
@@ -35,13 +39,16 @@ Press 'c' at the verse pick screen to enter config edit modal, or edit the confi
 default_written_by = "Me"
 ```
 
-## Roadmap.
+## Roadmap (in no particular order).
 - [X] Stabilize the thing a little bit
 - [X] Entity creation & modification
 - [X] Artifacts creation & modification
+- [X] Editor improvements (multibuffers, search, etc)
+- [ ] Narrative ordering by chapters & acts instead of dates
+- [ ] Referencing entities & artifacts from narrative
+- [ ] Entity relationships
 - [ ] Extra fields for entities
-- [ ] Verse export
-- [ ] Editor improvements (vim binds for editor, search, etc)
+- [ ] Verse export (MD or EPUB)
 
 ## License.
 GPL-3.0 only. Read more in [the license file](https://codeberg.org/enmkdev/narraverse/src/branch/main/LICENSE.md).
