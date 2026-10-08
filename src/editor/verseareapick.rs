@@ -47,15 +47,17 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             let Some(selected_index) = nv.list_states.verse_area_pick_liststate.selected() else {
                 return;
             };
-            let Some(verse_edit) = VerseEdit::edit(&nv.verses, nv.verses.verse_uuid) else {
-                return;
-            };
-            nv.verse_edit_modal = verse_edit;
             nv.state = match selected_index {
                 0 => NarraverseState::NarrativePick,
                 1 => NarraverseState::EntityPick,
                 2 => NarraverseState::ArtifactPick,
-                3 => NarraverseState::VerseEdit,
+                3 => {
+                    let Some(verse_edit) = VerseEdit::edit(&nv.verses, nv.verses.verse_uuid) else {
+                        return;
+                    };
+                    nv.verse_edit_modal = verse_edit;
+                    NarraverseState::VerseEdit
+                }
                 4 => {
                     nv.deletion_target = DeletionTarget::Verse;
                     NarraverseState::VerseDelete
