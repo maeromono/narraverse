@@ -12,7 +12,9 @@ use ratatui_textarea::{CursorMove, TextArea, WrapMode};
 use uuid::Uuid;
 
 use crate::nvcore::{
+    editorbindhelp::BindhelpMode,
     narraverse::{Narraverse, NarraverseState},
+    nvutils::enter_bindhelp,
     save::save_verse,
     textareautils::searchbox_style,
     verses::{NarraverseVerses, Verse},
@@ -283,7 +285,7 @@ pub fn handle_editing_keys(nv: &mut Narraverse, key: &KeyEvent) {
                 EditorTarget::Artifact => NarraverseState::ArtifactPick,
             }
         }
-        (KeyCode::F(1), KeyModifiers::NONE) => nv.state = NarraverseState::BindHelp,
+        (KeyCode::F(1), KeyModifiers::NONE) => enter_bindhelp(nv, BindhelpMode::Editor),
         (KeyCode::PageDown, KeyModifiers::CONTROL) => {
             let len = nv.editor.buffers.len();
             if len == 0 {

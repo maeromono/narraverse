@@ -25,7 +25,7 @@ use crate::{
     },
     nvcore::{
         config::NarraverseConfig,
-        editorbindhelp::{self, render_bindhelp},
+        editorbindhelp::{self, BindhelpMode, render_bindhelp},
         error::{self, render_error_screen},
         narraversemain::{render_footer, render_header},
         verses::NarraverseVerses,
@@ -47,6 +47,7 @@ pub struct Narraverse {
     pub deletion_target: DeletionTarget,
     pub errors: (String, NarraverseState),
     pub footer_notification: Option<String>,
+    pub bindhelp_mode: BindhelpMode,
     pub cache: NarraverseCaches,
 }
 
@@ -179,6 +180,7 @@ impl Default for Narraverse {
             deletion_target: DeletionTarget::Verse,
             errors: (String::new(), NarraverseState::VersePick),
             footer_notification: None,
+            bindhelp_mode: BindhelpMode::Editor,
             cache: NarraverseCaches::default(),
         }
     }
@@ -211,4 +213,5 @@ pub struct NarraverseCaches {
     pub narrative_list_cache: Vec<String>,
     pub entity_list_cache: Vec<String>,
     pub artifact_list_cache: Vec<String>,
+    pub bindhelp_bindings_cache: Vec<String>,
 }

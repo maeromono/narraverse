@@ -12,7 +12,7 @@ use crate::{
         artifacteditmodal::ArtifactEditModal, nveditor::EditorTarget, versedelete::DeletionTarget,
     },
     nvcore::{
-        cacheutils::rebuild_art_list_cache, decosutils::{block_with_title, center_area}, narraverse::{Narraverse, NarraverseState}
+        cacheutils::rebuild_art_list_cache, decosutils::{block_with_title, center_area}, editorbindhelp::BindhelpMode, narraverse::{Narraverse, NarraverseState}, nvutils::enter_bindhelp
     },
 };
 
@@ -48,6 +48,7 @@ pub fn render_artifact_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) 
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
         KeyCode::Esc => nv.state = NarraverseState::VerseAreaPick,
+        KeyCode::F(1) => enter_bindhelp(nv, BindhelpMode::Pickmenu),
         KeyCode::Char('j') | KeyCode::Down => {
             nv.list_states.verse_artifact_pick_liststate.select_next()
         }

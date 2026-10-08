@@ -1,4 +1,7 @@
-use crate::nvcore::narraverse::Narraverse;
+use crate::nvcore::{
+    editorbindhelp::{BindhelpMode, EDITOR_BINDINGS, PICKMENU_BINDINGS},
+    narraverse::Narraverse,
+};
 
 pub fn rebuild_narr_list_cache(nv: &mut Narraverse) {
     let Some(verse) = nv.verses.verses.get(&nv.verses.verse_uuid) else {
@@ -33,5 +36,18 @@ pub fn rebuild_art_list_cache(nv: &mut Narraverse) {
         nv.cache
             .artifact_list_cache
             .push(format!("[{}] {}", art.artifact_type.name(), art.name));
+    }
+}
+
+pub fn rebuild_bindhelp_cache(nv: &mut Narraverse) {
+    nv.cache.bindhelp_bindings_cache.clear();
+    let binds = match nv.bindhelp_mode {
+        BindhelpMode::Pickmenu => PICKMENU_BINDINGS,
+        BindhelpMode::Editor => EDITOR_BINDINGS,
+    };
+    for (bind, desc) in binds {
+        nv.cache
+            .bindhelp_bindings_cache
+            .push(format!("{}: {}", bind, desc));
     }
 }
