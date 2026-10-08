@@ -37,7 +37,6 @@ pub struct Verse {
     pub name: String,
     pub narratives: IndexMap<Uuid, Narrative>,
     pub entities: IndexMap<Uuid, Entity>,
-    pub timeline: Vec<TimelineItem>,
     pub artifacts: IndexMap<Uuid, Artifact>,
 }
 
@@ -89,12 +88,6 @@ impl EntityType {
             EntityType::Corporate => "Corporate",
         }
     }
-}
-
-#[derive(Clone, Serialize, Deserialize)]
-pub struct TimelineItem {
-    pub details: String,
-    pub narrative_tie: Uuid,
 }
 
 #[derive(Clone, Serialize, Deserialize)]
