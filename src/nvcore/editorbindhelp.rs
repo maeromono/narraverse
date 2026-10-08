@@ -25,6 +25,7 @@ pub const EDITOR_BINDINGS: &[(&str, &str)] = &[
     ("Alt+x", "Close buffer"),
     ("Ctrl+u", "Undo"),
     ("Ctrl+r", "Redo"),
+    ("Alt+f", "Search in current buffer (regex supported)"),
     ("Shift+(Ctrl+)arrow keys", "Select text"),
     ("Ctrl+c", "Copy selected text"),
     ("Ctrl+x", "Cut selected text"),
