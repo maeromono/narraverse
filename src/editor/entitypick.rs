@@ -10,8 +10,7 @@ use uuid::Uuid;
 use crate::{
     editor::{entityedit::EntityEditModal, nveditor::EditorTarget, versedelete::DeletionTarget},
     nvcore::{
-        decosutils::{block_with_title, center_area},
-        narraverse::{Narraverse, NarraverseState},
+        cacheutils::rebuild_ent_list_cache, decosutils::{block_with_title, center_area}, narraverse::{Narraverse, NarraverseState}
     },
 };
 
@@ -80,6 +79,18 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             nv.deletion_target = DeletionTarget::Entity(uuid);
             nv.state = NarraverseState::VerseDelete;
         }
+        KeyCode::Char('J') => {
+            let Some(ind) = nv.list_states.verse_entity_pick_liststate.selected() else {
+                return;
+            };
+            move_entity(nv, ind, false);
+        }
+        KeyCode::Char('K') => {
+            let Some(ind) = nv.list_states.verse_entity_pick_liststate.selected() else {
+                return;
+            };
+            move_entity(nv, ind, true);
+        }
         _ => {}
     }
 }
@@ -93,3 +104,16 @@ fn selected_ent_uuid(nv: &Narraverse) -> Option<Uuid> {
         .map(|(uuid, _)| uuid)
         .copied()
 }
+
+fn move_entity(nv: &mut Narraverse, ind: usize, up: bool) {
+    let Some(verse) = nv.verses.verses.get_mut(&nv.verses.verse_uuid) else {
+        return;
+    };
+    let target_ind = if up { ind.checked_sub(1) } else { ind.checked_add(1) };
+    let Some(target) = target_ind.filter(|&t| t < verse.entities.len()) else {
+        return;
+    };
+    verse.entities.swap_indices(ind, target);
+    rebuild_ent_list_cache(nv);
+    nv.list_states.verse_entity_pick_liststate.select(Some(target));
+}   

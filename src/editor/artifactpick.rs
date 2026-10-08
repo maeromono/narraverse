@@ -12,8 +12,7 @@ use crate::{
         artifacteditmodal::ArtifactEditModal, nveditor::EditorTarget, versedelete::DeletionTarget,
     },
     nvcore::{
-        decosutils::{block_with_title, center_area},
-        narraverse::{Narraverse, NarraverseState},
+        cacheutils::rebuild_art_list_cache, decosutils::{block_with_title, center_area}, narraverse::{Narraverse, NarraverseState}
     },
 };
 
@@ -89,6 +88,18 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             nv.deletion_target = DeletionTarget::Artifact(uuid);
             nv.state = NarraverseState::VerseDelete;
         }
+        KeyCode::Char('J') => {
+            let Some(ind) = nv.list_states.verse_artifact_pick_liststate.selected() else {
+                return;
+            };
+            move_artifact(nv, ind, false);
+        }
+        KeyCode::Char('K') => {
+            let Some(ind) = nv.list_states.verse_artifact_pick_liststate.selected() else {
+                return;
+            };
+            move_artifact(nv, ind, true);
+        }
         _ => {}
     }
 }
@@ -102,3 +113,16 @@ fn selected_art_uuid(nv: &Narraverse) -> Option<Uuid> {
         .map(|(uuid, _)| uuid)
         .copied()
 }
+
+fn move_artifact(nv: &mut Narraverse, ind: usize, up: bool) {
+    let Some(verse) = nv.verses.verses.get_mut(&nv.verses.verse_uuid) else {
+        return;
+    };
+    let target_ind = if up { ind.checked_sub(1) } else { ind.checked_add(1) };
+    let Some(target) = target_ind.filter(|&t| t < verse.artifacts.len()) else {
+        return;
+    };
+    verse.artifacts.swap_indices(ind, target);
+    rebuild_art_list_cache(nv);
+    nv.list_states.verse_artifact_pick_liststate.select(Some(target));
+}   
