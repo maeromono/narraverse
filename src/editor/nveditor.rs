@@ -128,6 +128,10 @@ impl NarraverseEditor {
         self.buffer_index = 0;
     }
 
+    pub fn unsaved_changes(&self) -> bool {
+        self.buffers.iter().any(|(_, buffer)| buffer.modified)
+    }
+
     fn search_height_open(&self) -> (u16, bool) {
         (
             if self.mode == EditorMode::Searching {

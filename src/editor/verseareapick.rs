@@ -20,8 +20,14 @@ pub fn render_area_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     if nv.cached_verse_name != verse.name {
         nv.cached_verse_name = verse.name.clone();
     }
-    let list = List::new(vec!["Narrative", "Entities", "Artifacts", "Edit Verse", "Delete Verse"])
-        .highlight_style(Modifier::REVERSED);
+    let list = List::new(vec![
+        "Narrative",
+        "Entities",
+        "Artifacts",
+        "Edit Verse",
+        "Delete Verse",
+    ])
+    .highlight_style(Modifier::REVERSED);
     frame.render_stateful_widget(
         list.block(block_with_title("Select an area:")),
         center_area(area),
@@ -33,6 +39,10 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
         KeyCode::Char('q') => nv.state = NarraverseState::Quit,
         KeyCode::Esc => {
+            if nv.editor.unsaved_changes() {
+                nv.send_error(String::from("There're unsaved changes in one or more buffers.\nSave or discard them before you can exit."), NarraverseState::VerseAreaPick);
+                return;
+            }
             // cross verse buffers probably won't be possible because of how narraverse is built.
             nv.editor.purge_all_buffers();
             nv.list_states.verse_narrative_pick_liststate.select(None);
