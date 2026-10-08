@@ -169,7 +169,7 @@ impl Default for Narraverse {
             config: NarraverseConfig::default(),
             state: NarraverseState::VersePick,
             verses: NarraverseVerses::default(),
-            cached_verse_name: String::from("enmkdev.neocities.org"),
+            cached_verse_name: String::from("enmkdev.codeberg.page"),
             list_states: NarraverseListStates::default(),
             editor: NarraverseEditor::default(),
             verse_edit_modal: VerseEdit::default(),
