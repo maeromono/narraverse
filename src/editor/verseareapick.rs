@@ -2,7 +2,7 @@ use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{Frame, layout::Rect, style::Modifier, widgets::List};
 
 use crate::{
-    editor::verseedit::VerseEdit,
+    editor::{versedelete::DeletionTarget, verseedit::VerseEdit},
     nvcore::{
         decosutils::{block_with_title, center_area},
         narraverse::{Narraverse, NarraverseState},
@@ -20,10 +20,10 @@ pub fn render_area_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     if nv.cached_verse_name != verse.name {
         nv.cached_verse_name = verse.name.clone();
     }
-    let list = List::new(vec!["Narrative", "Entities", "Artifacts", "Edit Verse"])
+    let list = List::new(vec!["Narrative", "Entities", "Artifacts", "Edit Verse", "Delete Verse"])
         .highlight_style(Modifier::REVERSED);
     frame.render_stateful_widget(
-        list.block(block_with_title("Select area to edit:")),
+        list.block(block_with_title("Select an area:")),
         center_area(area),
         &mut nv.list_states.verse_area_pick_liststate,
     );
@@ -56,6 +56,10 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
                 1 => NarraverseState::EntityPick,
                 2 => NarraverseState::ArtifactPick,
                 3 => NarraverseState::VerseEdit,
+                4 => {
+                    nv.deletion_target = DeletionTarget::Verse;
+                    NarraverseState::VerseDelete
+                }
                 _ => todo!(),
             }
         }
