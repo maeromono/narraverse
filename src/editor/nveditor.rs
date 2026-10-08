@@ -91,6 +91,7 @@ impl NarraverseEditor {
                 unsaved_warned: false,
             },
         );
+        self.buffer_index = self.buffers.len().saturating_sub(1);
         true
     }
 
