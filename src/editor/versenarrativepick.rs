@@ -57,6 +57,12 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             .list_states
             .verse_narrative_pick_liststate
             .select_previous(),
+        KeyCode::Char('g') | KeyCode::Home => {
+            nv.list_states.verse_narrative_pick_liststate.select_first()
+        }
+        KeyCode::Char('G') | KeyCode::End => {
+            nv.list_states.verse_narrative_pick_liststate.select_last()
+        }
         KeyCode::Enter => {
             let Some(uuid) = selected_narr_uuid(nv) else {
                 return;
