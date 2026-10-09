@@ -32,14 +32,14 @@ impl ConfigEditModal {
     }
 }
 
-pub fn render_config_edit_modal(nv: &Narraverse, frame: &mut Frame, area: Rect) {
+pub fn render_config_edit_modal(modal: &ConfigEditModal, frame: &mut Frame, area: Rect) {
     let (direction, vert_constraint) = fields_responsive(area.width);
     let cem_layout = Layout::vertical([vert_constraint; 1]).split(center_area(area));
     let field_layout = field_layout(direction);
     let title_field_layout = field_layout.split(cem_layout[0]);
     frame.render_widget(Paragraph::new("'Written by' name"), title_field_layout[0]);
     frame.render_widget(
-        &nv.config_edit_modal.writtenby_prefill_textarea,
+        &modal.writtenby_prefill_textarea,
         title_field_layout[1],
     );
 }

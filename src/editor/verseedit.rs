@@ -43,7 +43,7 @@ enum VerseEditMode {
     Existing(Uuid),
 }
 
-pub fn render_verse_edit(nv: &Narraverse, frame: &mut Frame, area: Rect) {
+pub fn render_verse_edit(modal: &VerseEdit, frame: &mut Frame, area: Rect) {
     let (direction, vert_constraint) = fields_responsive(area.width);
     let ve_layout = Layout::vertical([vert_constraint; 1]) // bcuz more coming soon
         .split(center_area(area));
@@ -51,7 +51,7 @@ pub fn render_verse_edit(nv: &Narraverse, frame: &mut Frame, area: Rect) {
     let name_field_layout = field_layout.split(ve_layout[0]);
     frame.render_widget(Paragraph::new("Verse name"), name_field_layout[0]);
     frame.render_widget(
-        &nv.verse_edit_modal.verse_name_textarea,
+        &modal.verse_name_textarea,
         name_field_layout[1],
     );
 }

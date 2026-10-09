@@ -82,7 +82,7 @@ pub enum CurrentFocus {
     Summary,
 }
 
-pub fn render_narrative_edit_modal(nv: &Narraverse, frame: &mut Frame, area: Rect) {
+pub fn render_narrative_edit_modal(modal: &NarrativeEditModal, frame: &mut Frame, area: Rect) {
     let (direction, vert_constraint) = fields_responsive(area.width);
     let nem_layout = Layout::vertical([vert_constraint; 4]).split(center_area(area));
     let field_layout = field_layout(direction);
@@ -90,14 +90,14 @@ pub fn render_narrative_edit_modal(nv: &Narraverse, frame: &mut Frame, area: Rec
     let writtenby_field_layout = field_layout.clone().split(nem_layout[1]);
     let date_field_layout = field_layout.clone().split(nem_layout[2]);
     let summary_field_layout = field_layout.split(nem_layout[3]);
-    let focus = &nv.narrative_edit_modal.current_focus;
+    let focus = &modal.current_focus;
     frame.render_widget(
         Paragraph::new("Narrative title")
             .style(focus_highlight(matches!(focus, CurrentFocus::Title))),
         title_field_layout[0],
     );
     frame.render_widget(
-        &nv.narrative_edit_modal.narrative_name_textarea,
+        &modal.narrative_name_textarea,
         title_field_layout[1],
     );
     frame.render_widget(
@@ -106,7 +106,7 @@ pub fn render_narrative_edit_modal(nv: &Narraverse, frame: &mut Frame, area: Rec
         writtenby_field_layout[0],
     );
     frame.render_widget(
-        &nv.narrative_edit_modal.narrative_writtenby_textarea,
+        &modal.narrative_writtenby_textarea,
         writtenby_field_layout[1],
     );
     frame.render_widget(
@@ -115,7 +115,7 @@ pub fn render_narrative_edit_modal(nv: &Narraverse, frame: &mut Frame, area: Rec
         date_field_layout[0],
     );
     frame.render_widget(
-        &nv.narrative_edit_modal.narrative_date_textarea,
+        &modal.narrative_date_textarea,
         date_field_layout[1],
     );
     frame.render_widget(
@@ -124,7 +124,7 @@ pub fn render_narrative_edit_modal(nv: &Narraverse, frame: &mut Frame, area: Rec
         summary_field_layout[0],
     );
     frame.render_widget(
-        &nv.narrative_edit_modal.narrative_summary_textarea,
+        &modal.narrative_summary_textarea,
         summary_field_layout[1],
     );
 }

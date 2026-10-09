@@ -57,19 +57,19 @@ enum CurrentFocus {
     Type,
 }
 
-pub fn render_artifact_edit(nv: &Narraverse, frame: &mut Frame, area: Rect) {
+pub fn render_artifact_edit(modal: &ArtifactEditModal, frame: &mut Frame, area: Rect) {
     let (direction, vert_constraint) = fields_responsive(area.width);
     let ve_layout = Layout::vertical([vert_constraint; 2]).split(center_area(area));
     let field_layout = field_layout(direction);
     let name_field_layout = field_layout.clone().split(ve_layout[0]);
     let type_field_layout = field_layout.split(ve_layout[1]);
-    let focus = &nv.artifact_edit_modal.current_focus;
+    let focus = &modal.current_focus;
     frame.render_widget(
         Paragraph::new("Artifact name").style(focus_highlight(matches!(focus, CurrentFocus::Name))),
         name_field_layout[0],
     );
     frame.render_widget(
-        &nv.artifact_edit_modal.artifact_name_textarea,
+        &modal.artifact_name_textarea,
         name_field_layout[1],
     );
     frame.render_widget(
@@ -79,7 +79,7 @@ pub fn render_artifact_edit(nv: &Narraverse, frame: &mut Frame, area: Rect) {
     frame.render_widget(
         Paragraph::new(format!(
             "< {} >",
-            nv.artifact_edit_modal.artifact_type.name()
+            modal.artifact_type.name()
         )),
         type_field_layout[1],
     );

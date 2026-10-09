@@ -14,13 +14,13 @@ use crate::{
         artifactpick::{self, render_artifact_pick},
         bindhelp::{self, BindhelpMode, render_bindhelp},
         configeditmodal::{self, ConfigEditModal, render_config_edit_modal},
+        delete::{self, DeletionTarget, render_delete_screen},
         entityedit::{self, EntityEditModal, render_entity_edit},
         entitypick::{self, render_entity_pick},
         narrativeeditmodal::{self, NarrativeEditModal, render_narrative_edit_modal},
         narrativepick::{self, render_narrative_pick},
         nveditor::{self, NarraverseEditor, render_editor},
         verseareapick::{self, render_area_pick},
-        delete::{self, DeletionTarget, render_delete_screen},
         verseedit::{self, VerseEdit, render_verse_edit},
         versepick::{self, render_worldpick},
     },
@@ -103,17 +103,25 @@ impl Narraverse {
         .split(area.centered_horizontally(Constraint::Max(100)));
         match self.state {
             NarraverseState::VersePick => render_worldpick(self, frame, main_layout[1]),
-            NarraverseState::VerseEdit => render_verse_edit(self, frame, main_layout[1]),
+            NarraverseState::VerseEdit => {
+                render_verse_edit(&self.verse_edit_modal, frame, main_layout[1])
+            }
             NarraverseState::VerseAreaPick => render_area_pick(self, frame, main_layout[1]),
             NarraverseState::NarrativePick => render_narrative_pick(self, frame, main_layout[1]),
             NarraverseState::NarrativeModal => {
-                render_narrative_edit_modal(self, frame, main_layout[1])
+                render_narrative_edit_modal(&self.narrative_edit_modal, frame, main_layout[1])
             }
             NarraverseState::EntityPick => render_entity_pick(self, frame, main_layout[1]),
-            NarraverseState::EntityModal => render_entity_edit(self, frame, main_layout[1]),
+            NarraverseState::EntityModal => {
+                render_entity_edit(&self.entity_edit_modal, frame, main_layout[1])
+            }
             NarraverseState::ArtifactPick => render_artifact_pick(self, frame, main_layout[1]),
-            NarraverseState::ArtifactModal => render_artifact_edit(self, frame, main_layout[1]),
-            NarraverseState::ConfigModal => render_config_edit_modal(self, frame, main_layout[1]),
+            NarraverseState::ArtifactModal => {
+                render_artifact_edit(&self.artifact_edit_modal, frame, main_layout[1])
+            }
+            NarraverseState::ConfigModal => {
+                render_config_edit_modal(&self.config_edit_modal, frame, main_layout[1])
+            }
             NarraverseState::Editor => render_editor(self, frame, main_layout[1]),
             NarraverseState::VerseDelete => render_delete_screen(self, frame, main_layout[1]),
             NarraverseState::BindHelp => render_bindhelp(self, frame, main_layout[1]),
