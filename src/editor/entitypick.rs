@@ -2,14 +2,13 @@ use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{
     Frame,
     layout::Rect,
-    style::Modifier,
     widgets::{List, Paragraph},
 };
 use uuid::Uuid;
 
 use crate::{
-    editor::{bindhelp::BindhelpMode, entityedit::EntityEditModal, nveditor::EditorTarget, delete::DeletionTarget},
-    nvcore::narraverse::{Narraverse, NarraverseState}, utils::{cacheutils::rebuild_ent_list_cache, decosutils::{block_with_title, center_area}, nvutils::enter_bindhelp},
+    editor::{bindhelp::BindhelpMode, delete::DeletionTarget, entityedit::EntityEditModal, nveditor::EditorTarget},
+    nvcore::narraverse::{Narraverse, NarraverseState}, utils::{cacheutils::rebuild_ent_list_cache, decosutils::{block_with_title, center_area, list_highlight}, nvutils::enter_bindhelp},
 };
 
 pub fn render_entity_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
@@ -28,9 +27,10 @@ pub fn render_entity_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
         );
         return;
     }
-    let list = List::new(nv.cache.entity_list_cache.iter().map(String::as_str))
-        .highlight_style(Modifier::REVERSED)
-        .block(block_with_title("Pick an entity:"));
+    let list = list_highlight(List::new(
+        nv.cache.entity_list_cache.iter().map(String::as_str),
+    ))
+    .block(block_with_title("Pick an entity:"));
     frame.render_stateful_widget(
         list,
         center_area(area),

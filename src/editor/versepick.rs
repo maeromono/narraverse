@@ -2,7 +2,6 @@ use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{
     Frame,
     layout::Rect,
-    style::Modifier,
     widgets::{List, Paragraph},
 };
 use uuid::Uuid;
@@ -12,7 +11,7 @@ use crate::{
     nvcore::{
         narraverse::{Narraverse, NarraverseState},
         verses::NarraverseVerses,
-    }, utils::{cacheutils::{rebuild_art_list_cache, rebuild_ent_list_cache, rebuild_narr_list_cache}, decosutils::{block_with_title, center_area}},
+    }, utils::{cacheutils::{rebuild_art_list_cache, rebuild_ent_list_cache, rebuild_narr_list_cache}, decosutils::{block_with_title, center_area, list_highlight}},
 };
 
 pub fn render_worldpick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
@@ -28,7 +27,7 @@ pub fn render_worldpick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     for verse in nv.verses.verses.values() {
         verse_list.push(format!("Verse: {}", verse.name));
     }
-    let list = List::new(verse_list).highlight_style(Modifier::REVERSED);
+    let list = list_highlight(List::new(verse_list));
     frame.render_stateful_widget(
         list.block(block_with_title("Pick a 'Verse:")),
         center_area(area),

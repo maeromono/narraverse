@@ -1,9 +1,9 @@
 use crossterm::event::{KeyCode, KeyEvent};
-use ratatui::{Frame, layout::Rect, style::Modifier, widgets::List};
+use ratatui::{Frame, layout::Rect, widgets::List};
 
 use crate::{
     editor::{delete::DeletionTarget, verseedit::VerseEdit},
-    nvcore::narraverse::{Narraverse, NarraverseState}, utils::decosutils::{block_with_title, center_area},
+    nvcore::narraverse::{Narraverse, NarraverseState}, utils::decosutils::{block_with_title, center_area, list_highlight},
 };
 
 pub fn render_area_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
@@ -17,14 +17,13 @@ pub fn render_area_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     if nv.cached_verse_name != verse.name {
         nv.cached_verse_name = verse.name.clone();
     }
-    let list = List::new(vec![
+    let list = list_highlight(List::new(vec![
         "Narrative",
         "Entities",
         "Artifacts",
         "Edit Verse",
         "Delete Verse",
-    ])
-    .highlight_style(Modifier::REVERSED);
+    ]));
     frame.render_stateful_widget(
         list.block(block_with_title("Select an area:")),
         center_area(area),

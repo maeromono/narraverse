@@ -1,7 +1,7 @@
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
     style::{Modifier, Style},
-    widgets::Block,
+    widgets::{Block, List},
 };
 
 pub fn block_with_title(title: &str) -> Block<'_> {
@@ -33,4 +33,8 @@ pub fn field_layout(direction: Direction) -> Layout {
     Layout::default()
         .direction(direction)
         .constraints([Constraint::Fill(1), Constraint::Fill(2)])
+}
+
+pub fn list_highlight(list: List) -> List {
+    list.highlight_style(Style::default().bold().reversed())
 }

@@ -2,18 +2,17 @@ use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{
     Frame,
     layout::{Constraint, Layout, Rect},
-    style::Modifier,
     widgets::{List, Paragraph, Wrap},
 };
 use uuid::Uuid;
 
 use crate::{
     editor::{
-        bindhelp::BindhelpMode, narrativeeditmodal::NarrativeEditModal, nveditor::EditorTarget, delete::DeletionTarget
+        bindhelp::BindhelpMode, delete::DeletionTarget, narrativeeditmodal::NarrativeEditModal, nveditor::EditorTarget
     },
     nvcore::{
         narraverse::{Narraverse, NarraverseState}, verses::Verse
-    }, utils::{decosutils::{block_with_title, center_area}, nvutils::enter_bindhelp},
+    }, utils::{decosutils::{block_with_title, center_area, list_highlight}, nvutils::enter_bindhelp},
 };
 
 pub fn render_narrative_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
@@ -34,9 +33,10 @@ pub fn render_narrative_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect)
     }
     let narr_pick_layout =
         Layout::vertical([Constraint::Fill(1), Constraint::Length(7)]).split(center_area(area));
-    let list = List::new(nv.cache.narrative_list_cache.iter().map(String::as_str))
-        .highlight_style(Modifier::REVERSED)
-        .block(block_with_title("Pick a narrative:"));
+    let list = list_highlight(List::new(
+        nv.cache.narrative_list_cache.iter().map(String::as_str),
+    ))
+    .block(block_with_title("Pick a narrative:"));
     frame.render_stateful_widget(
         list,
         narr_pick_layout[0],

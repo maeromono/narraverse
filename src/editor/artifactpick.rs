@@ -2,16 +2,21 @@ use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{
     Frame,
     layout::Rect,
-    style::Modifier,
     widgets::{List, Paragraph},
 };
 use uuid::Uuid;
 
 use crate::{
     editor::{
-        artifacteditmodal::ArtifactEditModal, bindhelp::BindhelpMode, nveditor::EditorTarget, delete::DeletionTarget
+        artifacteditmodal::ArtifactEditModal, bindhelp::BindhelpMode, delete::DeletionTarget,
+        nveditor::EditorTarget,
     },
-    nvcore::narraverse::{Narraverse, NarraverseState}, utils::{cacheutils::rebuild_art_list_cache, decosutils::{block_with_title, center_area}, nvutils::enter_bindhelp},
+    nvcore::narraverse::{Narraverse, NarraverseState},
+    utils::{
+        cacheutils::rebuild_art_list_cache,
+        decosutils::{block_with_title, center_area, list_highlight},
+        nvutils::enter_bindhelp,
+    },
 };
 
 pub fn render_artifact_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
@@ -33,9 +38,10 @@ pub fn render_artifact_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) 
         );
         return;
     }
-    let list = List::new(nv.cache.artifact_list_cache.iter().map(String::as_str))
-        .highlight_style(Modifier::REVERSED)
-        .block(block_with_title("Pick an artifact:"));
+    let list = list_highlight(List::new(
+        nv.cache.artifact_list_cache.iter().map(String::as_str),
+    ))
+    .block(block_with_title("Pick an artifact:"));
     frame.render_stateful_widget(
         list,
         center_area(area),
@@ -123,11 +129,17 @@ fn move_artifact(nv: &mut Narraverse, ind: usize, up: bool) {
     let Some(verse) = nv.verses.verses.get_mut(&nv.verses.verse_uuid) else {
         return;
     };
-    let target_ind = if up { ind.checked_sub(1) } else { ind.checked_add(1) };
+    let target_ind = if up {
+        ind.checked_sub(1)
+    } else {
+        ind.checked_add(1)
+    };
     let Some(target) = target_ind.filter(|&t| t < verse.artifacts.len()) else {
         return;
     };
     verse.artifacts.swap_indices(ind, target);
     rebuild_art_list_cache(nv);
-    nv.list_states.verse_artifact_pick_liststate.select(Some(target));
-}   
+    nv.list_states
+        .verse_artifact_pick_liststate
+        .select(Some(target));
+}
