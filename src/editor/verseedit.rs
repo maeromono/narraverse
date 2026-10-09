@@ -60,7 +60,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
         KeyCode::Esc => {
             nv.state = NarraverseState::VersePick;
-            reset_textareas(nv);
+            reset_textareas(&mut nv.verse_edit_modal);
         }
         KeyCode::Enter => confirm_edit(nv),
         _ => {
@@ -105,10 +105,10 @@ fn confirm_edit(nv: &mut Narraverse) {
             NarraverseState::VersePick,
         );
     }
-    reset_textareas(nv);
+    reset_textareas(&mut nv.verse_edit_modal);
     rebuild_verse_list_cache(&mut nv.cache, &nv.verses);
 }
 
-fn reset_textareas(nv: &mut Narraverse) {
-    nv.verse_edit_modal.verse_name_textarea = TextArea::default();
+fn reset_textareas(modal: &mut VerseEdit) {
+    modal.verse_name_textarea = TextArea::default();
 }

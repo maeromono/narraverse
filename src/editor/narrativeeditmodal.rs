@@ -133,7 +133,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
         KeyCode::Esc => {
             nv.state = NarraverseState::NarrativePick;
-            reset_textareas(nv);
+            reset_textareas(&mut nv.narrative_edit_modal);
         }
         KeyCode::Tab => {
             nv.narrative_edit_modal.current_focus =
@@ -239,10 +239,10 @@ fn confirm_edit(nv: &mut Narraverse) {
     } else {
         nv.send_footer_notification(String::from("Narrative edited"));
     }
-    reset_textareas(nv);
+    reset_textareas(&mut nv.narrative_edit_modal);
     rebuild_narr_list_cache(&mut nv.cache, &nv.verses);
 }
 
-fn reset_textareas(nv: &mut Narraverse) {
-    nv.narrative_edit_modal.narrative_name_textarea = TextArea::default();
+fn reset_textareas(modal: &mut NarrativeEditModal) {
+    modal.narrative_name_textarea = TextArea::default();
 }

@@ -48,7 +48,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
         KeyCode::Esc => {
             nv.state = NarraverseState::VersePick;
-            reset_textareas(nv);
+            reset_textareas(&mut nv.config_edit_modal);
         }
         KeyCode::Enter => confirm_edit(nv),
         _ => {
@@ -75,9 +75,9 @@ fn confirm_edit(nv: &mut Narraverse) {
         nv.send_footer_notification(String::from("Config edited"));
         nv.state = NarraverseState::VersePick;
     }
-    reset_textareas(nv);
+    reset_textareas(&mut nv.config_edit_modal);
 }
 
-fn reset_textareas(nv: &mut Narraverse) {
-    nv.config_edit_modal.writtenby_prefill_textarea = TextArea::default();
+fn reset_textareas(modal: &mut ConfigEditModal) {
+    modal.writtenby_prefill_textarea = TextArea::default();
 }

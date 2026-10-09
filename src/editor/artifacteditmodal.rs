@@ -89,7 +89,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
         KeyCode::Esc => {
             nv.state = NarraverseState::EntityPick;
-            reset_textareas(nv);
+            reset_textareas(&mut nv.artifact_edit_modal);
             return;
         }
         KeyCode::Tab => {
@@ -176,11 +176,11 @@ fn confirm_edit(nv: &mut Narraverse) {
     } else {
         nv.send_footer_notification(String::from("Artifact edited"));
     }
-    reset_textareas(nv);
+    reset_textareas(&mut nv.artifact_edit_modal);
     rebuild_art_list_cache(&mut nv.cache, &nv.verses);
 }
 
-fn reset_textareas(nv: &mut Narraverse) {
-    nv.artifact_edit_modal.artifact_name_textarea = TextArea::default();
-    nv.artifact_edit_modal.artifact_type = ArtifactType::Concept;
+fn reset_textareas(modal: &mut ArtifactEditModal) {
+    modal.artifact_name_textarea = TextArea::default();
+    modal.artifact_type = ArtifactType::Concept;
 }
