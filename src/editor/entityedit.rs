@@ -8,14 +8,11 @@ use ratatui::{
 use ratatui_textarea::TextArea;
 use uuid::Uuid;
 
-use crate::nvcore::{
-    cacheutils::rebuild_ent_list_cache,
-    decosutils::{center_area, field_layout, fields_responsive, focus_highlight},
+use crate::{nvcore::{
     narraverse::{Narraverse, NarraverseState},
     save::save_verse,
-    textareautils::validate_length,
     verses::{Entity, EntityType, NarraverseVerses},
-};
+}, utils::{cacheutils::rebuild_ent_list_cache, decosutils::{center_area, field_layout, fields_responsive, focus_highlight}, textareautils::validate_length}};
 
 pub struct EntityEditModal {
     mode: EntityEditMode,

@@ -1,18 +1,18 @@
 mod editor;
 mod nvcore;
+mod utils;
 
 use std::process::exit;
 
 use ratatui::run;
 use uuid::Uuid;
 
-use crate::nvcore::{
-    cacheutils::{rebuild_art_list_cache, rebuild_ent_list_cache, rebuild_narr_list_cache},
+use crate::{nvcore::{
     config::{NarraverseConfig, load_config},
     narraverse::{Narraverse, NarraverseState},
     save::load_verses,
     verses::NarraverseVerses,
-};
+}, utils::cacheutils::{rebuild_art_list_cache, rebuild_ent_list_cache, rebuild_narr_list_cache}};
 
 fn main() {
     let mut nv = Narraverse::default();

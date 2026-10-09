@@ -1,12 +1,13 @@
 pub mod artifacteditmodal;
 pub mod artifactpick;
+pub mod bindhelp;
 pub mod configeditmodal;
 pub mod entityedit;
 pub mod entitypick;
 pub mod narrativeeditmodal;
 pub mod nveditor;
 pub mod verseareapick;
-pub mod versedelete;
+pub mod delete;
 pub mod verseedit;
-pub mod versenarrativepick;
+pub mod narrativepick;
 pub mod versepick;

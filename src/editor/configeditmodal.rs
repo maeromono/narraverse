@@ -6,12 +6,10 @@ use ratatui::{
 };
 use ratatui_textarea::TextArea;
 
-use crate::nvcore::{
+use crate::{nvcore::{
     config::{NarraverseConfig, save_config},
-    decosutils::{center_area, field_layout, fields_responsive},
     narraverse::{Narraverse, NarraverseState},
-    textareautils::validate_length,
-};
+}, utils::{decosutils::{center_area, field_layout, fields_responsive}, textareautils::validate_length}};
 
 pub struct ConfigEditModal {
     writtenby_prefill_textarea: TextArea<'static>,

@@ -8,13 +8,11 @@ use ratatui::{
 use uuid::Uuid;
 
 use crate::{
-    editor::{configeditmodal::ConfigEditModal, versedelete::DeletionTarget, verseedit::VerseEdit},
+    editor::{configeditmodal::ConfigEditModal, delete::DeletionTarget, verseedit::VerseEdit},
     nvcore::{
-        cacheutils::{rebuild_art_list_cache, rebuild_ent_list_cache, rebuild_narr_list_cache},
-        decosutils::{block_with_title, center_area},
         narraverse::{Narraverse, NarraverseState},
         verses::NarraverseVerses,
-    },
+    }, utils::{cacheutils::{rebuild_art_list_cache, rebuild_ent_list_cache, rebuild_narr_list_cache}, decosutils::{block_with_title, center_area}},
 };
 
 pub fn render_worldpick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {

@@ -9,11 +9,9 @@ use uuid::Uuid;
 
 use crate::{
     editor::{
-        artifacteditmodal::ArtifactEditModal, nveditor::EditorTarget, versedelete::DeletionTarget,
+        artifacteditmodal::ArtifactEditModal, bindhelp::BindhelpMode, nveditor::EditorTarget, delete::DeletionTarget
     },
-    nvcore::{
-        cacheutils::rebuild_art_list_cache, decosutils::{block_with_title, center_area}, editorbindhelp::BindhelpMode, narraverse::{Narraverse, NarraverseState}, nvutils::enter_bindhelp
-    },
+    nvcore::narraverse::{Narraverse, NarraverseState}, utils::{cacheutils::rebuild_art_list_cache, decosutils::{block_with_title, center_area}, nvutils::enter_bindhelp},
 };
 
 pub fn render_artifact_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {

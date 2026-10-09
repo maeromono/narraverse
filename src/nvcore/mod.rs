@@ -1,11 +1,6 @@
-pub mod cacheutils;
 pub mod config;
-pub mod decosutils;
-pub mod editorbindhelp;
 pub mod error;
 pub mod narraverse;
 pub mod narraversemain;
-pub mod nvutils;
 pub mod save;
-pub mod textareautils;
 pub mod verses;

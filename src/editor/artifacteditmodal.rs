@@ -8,14 +8,11 @@ use ratatui::{
 use ratatui_textarea::TextArea;
 use uuid::Uuid;
 
-use crate::nvcore::{
-    cacheutils::rebuild_art_list_cache,
-    decosutils::{center_area, field_layout, fields_responsive, focus_highlight},
+use crate::{nvcore::{
     narraverse::{Narraverse, NarraverseState},
     save::save_verse,
-    textareautils::validate_length,
     verses::{Artifact, ArtifactType, NarraverseVerses},
-};
+}, utils::{cacheutils::rebuild_art_list_cache, decosutils::{center_area, field_layout, fields_responsive, focus_highlight}, textareautils::validate_length}};
 
 pub struct ArtifactEditModal {
     mode: ArtifactEditMode,

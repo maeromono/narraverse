@@ -9,11 +9,11 @@ use uuid::Uuid;
 
 use crate::{
     editor::{
-        narrativeeditmodal::NarrativeEditModal, nveditor::EditorTarget, versedelete::DeletionTarget,
+        bindhelp::BindhelpMode, narrativeeditmodal::NarrativeEditModal, nveditor::EditorTarget, delete::DeletionTarget
     },
     nvcore::{
-        decosutils::{block_with_title, center_area}, editorbindhelp::BindhelpMode, narraverse::{Narraverse, NarraverseState}, nvutils::enter_bindhelp, verses::Verse
-    },
+        narraverse::{Narraverse, NarraverseState}, verses::Verse
+    }, utils::{decosutils::{block_with_title, center_area}, nvutils::enter_bindhelp},
 };
 
 pub fn render_narrative_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {

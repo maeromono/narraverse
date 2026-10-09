@@ -9,14 +9,11 @@ use ratatui::{
 use ratatui_textarea::TextArea;
 use uuid::Uuid;
 
-use crate::nvcore::{
-    cacheutils::rebuild_narr_list_cache,
-    decosutils::{center_area, field_layout, fields_responsive, focus_highlight},
+use crate::{nvcore::{
     narraverse::{Narraverse, NarraverseState},
     save::save_verse,
-    textareautils::{validate_date, validate_length},
     verses::{Narrative, NarraverseVerses},
-};
+}, utils::{cacheutils::rebuild_narr_list_cache, decosutils::{center_area, field_layout, fields_responsive, focus_highlight}, textareautils::{validate_date, validate_length}}};
 
 pub struct NarrativeEditModal {
     mode: NarrativeEditModalMode,

@@ -7,13 +7,11 @@ use ratatui::{
 use ratatui_textarea::TextArea;
 use uuid::Uuid;
 
-use crate::nvcore::{
-    decosutils::{center_area, field_layout, fields_responsive},
+use crate::{nvcore::{
     narraverse::{Narraverse, NarraverseState},
     save::save_verses,
-    textareautils::validate_length,
     verses::{NarraverseVerses, Verse},
-};
+}, utils::{decosutils::{center_area, field_layout, fields_responsive}, textareautils::validate_length}};
 
 pub struct VerseEdit {
     mode: VerseEditMode,

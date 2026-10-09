@@ -1,8 +1,4 @@
-use crate::nvcore::{
-    cacheutils::rebuild_bindhelp_cache,
-    editorbindhelp::BindhelpMode,
-    narraverse::{Narraverse, NarraverseState},
-};
+use crate::{editor::bindhelp::BindhelpMode, nvcore::narraverse::{Narraverse, NarraverseState}, utils::cacheutils::rebuild_bindhelp_cache};
 
 pub fn enter_bindhelp(nv: &mut Narraverse, mode: BindhelpMode) {
     nv.bindhelp_mode = mode;

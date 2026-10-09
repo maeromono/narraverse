@@ -8,10 +8,8 @@ use ratatui::{
 use uuid::Uuid;
 
 use crate::{
-    editor::{entityedit::EntityEditModal, nveditor::EditorTarget, versedelete::DeletionTarget},
-    nvcore::{
-        cacheutils::rebuild_ent_list_cache, decosutils::{block_with_title, center_area}, editorbindhelp::BindhelpMode, narraverse::{Narraverse, NarraverseState}, nvutils::enter_bindhelp
-    },
+    editor::{bindhelp::BindhelpMode, entityedit::EntityEditModal, nveditor::EditorTarget, delete::DeletionTarget},
+    nvcore::narraverse::{Narraverse, NarraverseState}, utils::{cacheutils::rebuild_ent_list_cache, decosutils::{block_with_title, center_area}, nvutils::enter_bindhelp},
 };
 
 pub fn render_entity_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {

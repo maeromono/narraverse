@@ -1,10 +1,7 @@
 use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{Frame, layout::Rect, style::Modifier, widgets::List};
 
-use crate::nvcore::{
-    decosutils::{block_with_title, center_area},
-    narraverse::{Narraverse, NarraverseState},
-};
+use crate::{nvcore::narraverse::{Narraverse, NarraverseState}, utils::decosutils::{block_with_title, center_area}};
 
 pub const PICKMENU_BINDINGS: &[(&str, &str)] = &[
     ("j/Down", "Navigate down"),

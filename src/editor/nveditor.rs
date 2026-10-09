@@ -11,14 +11,11 @@ use ratatui::{
 use ratatui_textarea::{CursorMove, TextArea, WrapMode};
 use uuid::Uuid;
 
-use crate::nvcore::{
-    editorbindhelp::BindhelpMode,
+use crate::{editor::bindhelp::BindhelpMode, nvcore::{
     narraverse::{Narraverse, NarraverseState},
-    nvutils::enter_bindhelp,
     save::save_verse,
-    textareautils::searchbox_style,
     verses::{NarraverseVerses, Verse},
-};
+}, utils::{nvutils::enter_bindhelp, textareautils::searchbox_style}};
 
 pub struct NarraverseEditor {
     mode: EditorMode,

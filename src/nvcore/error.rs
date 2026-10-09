@@ -6,7 +6,7 @@ use ratatui::{
     widgets::{Paragraph, Wrap},
 };
 
-use crate::nvcore::{decosutils::center_area, narraverse::Narraverse};
+use crate::{nvcore::narraverse::Narraverse, utils::decosutils::center_area};
 
 pub fn render_error_screen(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     let error_layout =

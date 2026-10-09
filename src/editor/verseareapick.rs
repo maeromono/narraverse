@@ -2,11 +2,8 @@ use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{Frame, layout::Rect, style::Modifier, widgets::List};
 
 use crate::{
-    editor::{versedelete::DeletionTarget, verseedit::VerseEdit},
-    nvcore::{
-        decosutils::{block_with_title, center_area},
-        narraverse::{Narraverse, NarraverseState},
-    },
+    editor::{delete::DeletionTarget, verseedit::VerseEdit},
+    nvcore::narraverse::{Narraverse, NarraverseState}, utils::decosutils::{block_with_title, center_area},
 };
 
 pub fn render_area_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
