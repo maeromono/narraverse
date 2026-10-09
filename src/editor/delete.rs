@@ -10,7 +10,7 @@ use uuid::Uuid;
 use crate::{nvcore::{
     narraverse::{Narraverse, NarraverseState},
     save::save_verses,
-}, utils::{cacheutils::{rebuild_art_list_cache, rebuild_ent_list_cache, rebuild_narr_list_cache}, decosutils::center_area}};
+}, utils::{cacheutils::{rebuild_art_list_cache, rebuild_ent_list_cache, rebuild_narr_list_cache, rebuild_verse_list_cache}, decosutils::center_area}};
 
 #[derive(PartialEq, Eq)]
 pub enum DeletionTarget {
@@ -118,6 +118,7 @@ fn confirm_delete(nv: &mut Narraverse) {
             nv.editor.purge_all_buffers();
             nv.verses.verses.shift_remove(&nv.verses.verse_uuid);
             nv.list_states.verse_pick_liststate.select(None);
+            rebuild_verse_list_cache(&mut nv.cache, &nv.verses);
             nv.state = NarraverseState::VersePick;
             nv.send_footer_notification(String::from("Verse deleted"));
         }

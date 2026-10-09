@@ -210,6 +210,7 @@ impl Default for NarraverseListStates {
 
 #[derive(Default)]
 pub struct NarraverseCaches {
+    pub verse_list_cache: Vec<String>,
     pub narrative_list_cache: Vec<String>,
     pub entity_list_cache: Vec<String>,
     pub artifact_list_cache: Vec<String>,

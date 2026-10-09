@@ -12,7 +12,7 @@ use crate::{nvcore::{
     narraverse::{Narraverse, NarraverseState},
     save::load_verses,
     verses::NarraverseVerses,
-}, utils::cacheutils::{rebuild_art_list_cache, rebuild_ent_list_cache, rebuild_narr_list_cache}};
+}, utils::cacheutils::{rebuild_art_list_cache, rebuild_ent_list_cache, rebuild_narr_list_cache, rebuild_verse_list_cache}};
 
 fn main() {
     let mut nv = Narraverse::default();
@@ -30,6 +30,7 @@ fn main() {
         );
         NarraverseVerses::default()
     });
+    rebuild_verse_list_cache(&mut nv.cache, &nv.verses);
     if nv.verses.verse_uuid != Uuid::default()
         && nv.verses.verses.contains_key(&nv.verses.verse_uuid)
     {

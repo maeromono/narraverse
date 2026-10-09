@@ -15,7 +15,6 @@ use crate::{
 };
 
 pub fn render_worldpick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
-    let mut verse_list: Vec<String> = vec![];
     if nv.verses.verses.len() == 0 {
         frame.render_widget(
             Paragraph::new("Hit n to create a new one.")
@@ -24,12 +23,12 @@ pub fn render_worldpick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
         );
         return;
     }
-    for verse in nv.verses.verses.values() {
-        verse_list.push(format!("Verse: {}", verse.name));
-    }
-    let list = list_highlight(List::new(verse_list));
+    let list = list_highlight(List::new(
+        nv.cache.verse_list_cache.iter().map(String::as_str),
+    ))
+    .block(block_with_title("Pick a Verse:"));
     frame.render_stateful_widget(
-        list.block(block_with_title("Pick a 'Verse:")),
+        list,
         center_area(area),
         &mut nv.list_states.verse_pick_liststate,
     );

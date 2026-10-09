@@ -11,7 +11,7 @@ use crate::{nvcore::{
     narraverse::{Narraverse, NarraverseState},
     save::save_verses,
     verses::{NarraverseVerses, Verse},
-}, utils::{decosutils::{center_area, field_layout, fields_responsive}, textareautils::validate_length}};
+}, utils::{cacheutils::rebuild_verse_list_cache, decosutils::{center_area, field_layout, fields_responsive}, textareautils::validate_length}};
 
 pub struct VerseEdit {
     mode: VerseEditMode,
@@ -106,6 +106,7 @@ fn confirm_edit(nv: &mut Narraverse) {
         );
     }
     reset_textareas(nv);
+    rebuild_verse_list_cache(&mut nv.cache, &nv.verses);
 }
 
 fn reset_textareas(nv: &mut Narraverse) {

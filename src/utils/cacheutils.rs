@@ -3,6 +3,15 @@ use crate::{
     nvcore::{narraverse::NarraverseCaches, verses::NarraverseVerses},
 };
 
+pub fn rebuild_verse_list_cache(cache: &mut NarraverseCaches, verses: &NarraverseVerses) {
+    cache.verse_list_cache.clear();
+    for verse in verses.verses.values() {
+        cache
+            .verse_list_cache
+            .push(verse.name.to_string());
+    }
+}
+
 pub fn rebuild_narr_list_cache(cache: &mut NarraverseCaches, verses: &NarraverseVerses) {
     let Some(verse) = verses.verses.get(&verses.verse_uuid) else {
         return;
