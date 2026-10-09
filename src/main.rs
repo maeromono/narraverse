@@ -34,9 +34,9 @@ fn main() {
         && nv.verses.verses.contains_key(&nv.verses.verse_uuid)
     {
         nv.state = NarraverseState::VerseAreaPick;
-        rebuild_narr_list_cache(&mut nv);
-        rebuild_ent_list_cache(&mut nv);
-        rebuild_art_list_cache(&mut nv);
+        rebuild_narr_list_cache(&mut nv.cache, &nv.verses);
+        rebuild_ent_list_cache(&mut nv.cache, &nv.verses);
+        rebuild_art_list_cache(&mut nv.cache, &nv.verses);
     }
     if let Err(err) = run(|term| nv.run(term)) {
         eprintln!("!! Terminal error: {}", err);

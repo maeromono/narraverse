@@ -138,7 +138,7 @@ fn move_artifact(nv: &mut Narraverse, ind: usize, up: bool) {
         return;
     };
     verse.artifacts.swap_indices(ind, target);
-    rebuild_art_list_cache(nv);
+    rebuild_art_list_cache(&mut nv.cache, &nv.verses);
     nv.list_states
         .verse_artifact_pick_liststate
         .select(Some(target));

@@ -119,6 +119,6 @@ fn move_entity(nv: &mut Narraverse, ind: usize, up: bool) {
         return;
     };
     verse.entities.swap_indices(ind, target);
-    rebuild_ent_list_cache(nv);
+    rebuild_ent_list_cache(&mut nv.cache, &nv.verses);
     nv.list_states.verse_entity_pick_liststate.select(Some(target));
 }   

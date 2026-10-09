@@ -49,9 +49,9 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             };
             nv.verses.verse_uuid = uuid;
             nv.state = NarraverseState::VerseAreaPick;
-            rebuild_narr_list_cache(nv);
-            rebuild_ent_list_cache(nv);
-            rebuild_art_list_cache(nv);
+            rebuild_narr_list_cache(&mut nv.cache, &nv.verses);
+            rebuild_ent_list_cache(&mut nv.cache, &nv.verses);
+            rebuild_art_list_cache(&mut nv.cache, &nv.verses);
         }
         KeyCode::Char('e') => {
             let Some(selected_index) = nv.list_states.verse_pick_liststate.selected() else {

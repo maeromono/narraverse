@@ -172,7 +172,7 @@ fn confirm_edit(nv: &mut Narraverse) {
         nv.send_footer_notification(String::from("Entity edited"));
     }
     reset_textareas(nv);
-    rebuild_ent_list_cache(nv);
+    rebuild_ent_list_cache(&mut nv.cache, &nv.verses);
 }
 
 fn reset_textareas(nv: &mut Narraverse) {

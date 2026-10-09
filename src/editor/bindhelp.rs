@@ -31,6 +31,7 @@ pub const EDITOR_BINDINGS: &[(&str, &str)] = &[
     ("Ctrl+Del", "Delete word AFTER cursor"),
 ];
 
+#[derive(Clone, Copy)]
 pub enum BindhelpMode {
     Pickmenu,
     Editor,

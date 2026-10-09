@@ -134,7 +134,7 @@ fn confirm_delete(nv: &mut Narraverse) {
             }
             verse.narratives.shift_remove(&uuid);
             nv.list_states.verse_narrative_pick_liststate.select(None);
-            rebuild_narr_list_cache(nv);
+            rebuild_narr_list_cache(&mut nv.cache, &nv.verses);
             nv.editor.remove_buffer_uuid(&uuid);
             nv.state = NarraverseState::NarrativePick;
             nv.send_footer_notification(String::from("Narrative deleted"));
@@ -152,7 +152,7 @@ fn confirm_delete(nv: &mut Narraverse) {
             }
             verse.entities.shift_remove(&uuid);
             nv.list_states.verse_entity_pick_liststate.select(None);
-            rebuild_ent_list_cache(nv);
+            rebuild_ent_list_cache(&mut nv.cache, &nv.verses);
             nv.editor.remove_buffer_uuid(&uuid);
             nv.state = NarraverseState::EntityPick;
             nv.send_footer_notification(String::from("Entity deleted"));
@@ -170,7 +170,7 @@ fn confirm_delete(nv: &mut Narraverse) {
             }
             verse.artifacts.shift_remove(&uuid);
             nv.list_states.verse_artifact_pick_liststate.select(None);
-            rebuild_art_list_cache(nv);
+            rebuild_art_list_cache(&mut nv.cache, &nv.verses);
             nv.editor.remove_buffer_uuid(&uuid);
             nv.state = NarraverseState::ArtifactPick;
             nv.send_footer_notification(String::from("Artifact deleted"));
