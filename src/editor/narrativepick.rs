@@ -12,7 +12,7 @@ use crate::{
     },
     nvcore::{
         narraverse::{Narraverse, NarraverseState}, verses::Verse
-    }, utils::{decosutils::{block_with_title, center_area, list_highlight}, nvutils::enter_bindhelp, pickerutils::handle_list_keys},
+    }, utils::{decosutils::{block_with_title, center_area, list_highlight}, nvutils::enter_bindhelp, pickerutils::{handle_list_keys, render_list_empty_state}},
 };
 
 pub fn render_narrative_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
@@ -24,11 +24,7 @@ pub fn render_narrative_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect)
         return;
     };
     if verse.narratives.len() == 0 {
-        frame.render_widget(
-            Paragraph::new("Hit n to create a new one.")
-                .block(block_with_title("This Verse has no narrative.")),
-            center_area(area),
-        );
+        render_list_empty_state("narratives", frame, area);
         return;
     }
     let narr_pick_layout =

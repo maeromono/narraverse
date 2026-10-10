@@ -2,7 +2,7 @@ use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{
     Frame,
     layout::Rect,
-    widgets::{List, Paragraph},
+    widgets::List,
 };
 use uuid::Uuid;
 
@@ -11,16 +11,12 @@ use crate::{
     nvcore::{
         narraverse::{Narraverse, NarraverseState},
         verses::NarraverseVerses,
-    }, utils::{cacheutils::{rebuild_art_list_cache, rebuild_ent_list_cache, rebuild_narr_list_cache}, decosutils::{block_with_title, center_area, list_highlight}, pickerutils::handle_list_keys},
+    }, utils::{cacheutils::{rebuild_art_list_cache, rebuild_ent_list_cache, rebuild_narr_list_cache}, decosutils::{block_with_title, center_area, list_highlight}, pickerutils::{render_list_empty_state, handle_list_keys}},
 };
 
 pub fn render_worldpick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     if nv.verses.verses.len() == 0 {
-        frame.render_widget(
-            Paragraph::new("Hit n to create a new one.")
-                .block(block_with_title("You have no Verses.")),
-            center_area(area),
-        );
+        render_list_empty_state("verses", frame, area);
         return;
     }
     let list = list_highlight(List::new(

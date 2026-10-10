@@ -2,7 +2,7 @@ use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{
     Frame,
     layout::Rect,
-    widgets::{List, Paragraph},
+    widgets::List,
 };
 use uuid::Uuid;
 
@@ -15,7 +15,7 @@ use crate::{
     utils::{
         cacheutils::rebuild_art_list_cache,
         decosutils::{block_with_title, center_area, list_highlight},
-        nvutils::enter_bindhelp, pickerutils::handle_list_keys,
+        nvutils::enter_bindhelp, pickerutils::{handle_list_keys, render_list_empty_state},
     },
 };
 
@@ -31,11 +31,7 @@ pub fn render_artifact_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) 
         return;
     };
     if verse.artifacts.len() == 0 {
-        frame.render_widget(
-            Paragraph::new("Hit n to create a new one.")
-                .block(block_with_title("This Verse has no artifacts.")),
-            center_area(area),
-        );
+        render_list_empty_state("artifacts", frame, area);
         return;
     }
     let list = list_highlight(List::new(

@@ -1,5 +1,19 @@
 use crossterm::event::{KeyCode, KeyEvent};
-use ratatui::widgets::ListState;
+use ratatui::{
+    Frame,
+    layout::Rect,
+    widgets::{ListState, Paragraph},
+};
+
+use crate::utils::decosutils::{block_with_title, center_area};
+
+pub fn render_list_empty_state(section: &str, frame: &mut Frame, area: Rect) {
+    let title = format!("You have no {}.", section);
+    frame.render_widget(
+        Paragraph::new("Press n to create a new one.").block(block_with_title(&title)),
+        center_area(area),
+    );
+}
 
 pub fn handle_list_keys(list_state: &mut ListState, key: &KeyEvent) -> bool {
     match key.code {
@@ -19,6 +33,6 @@ pub fn handle_list_keys(list_state: &mut ListState, key: &KeyEvent) -> bool {
             list_state.select_last();
             true
         }
-        _ => false
+        _ => false,
     }
 }
