@@ -1,7 +1,7 @@
 use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{Frame, layout::Rect, style::Modifier, widgets::List};
 
-use crate::{nvcore::narraverse::{Narraverse, NarraverseState}, utils::decosutils::{block_with_title, center_area}};
+use crate::{nvcore::narraverse::{Narraverse, NarraverseState}, utils::{decosutils::{block_with_title, center_area}, pickerutils::handle_list_keys}};
 
 pub const PICKMENU_BINDINGS: &[(&str, &str)] = &[
     ("j/Down", "Navigate down"),
@@ -49,9 +49,10 @@ pub fn render_bindhelp(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
 }
 
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
+    if handle_list_keys(&mut nv.list_states.bind_help_liststate, key) {
+        return;
+    }
     match key.code {
-        KeyCode::Char('j') | KeyCode::Down => nv.list_states.bind_help_liststate.select_next(),
-        KeyCode::Char('k') | KeyCode::Up => nv.list_states.bind_help_liststate.select_previous(),
         KeyCode::F(1) | KeyCode::Esc => {
             nv.list_states.bind_help_liststate.select(Some(0));
             nv.state = match nv.bindhelp_mode {
