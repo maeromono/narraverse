@@ -79,7 +79,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             nv.state = NarraverseState::Editor;
         }
         KeyCode::Char('n') => {
-            nv.artifact_edit_modal = ArtifactEditModal::default();
+            nv.modals.artifact_edit_modal = ArtifactEditModal::default();
             nv.state = NarraverseState::ArtifactModal;
         }
         KeyCode::Char('e') => {
@@ -89,7 +89,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             let Some(art_mod) = ArtifactEditModal::edit(&nv.verses, uuid) else {
                 return;
             };
-            nv.artifact_edit_modal = art_mod;
+            nv.modals.artifact_edit_modal = art_mod;
             nv.state = NarraverseState::ArtifactModal;
         }
         KeyCode::Char('d') => {

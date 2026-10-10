@@ -37,22 +37,6 @@ pub struct NarrativeEditModal {
 }
 
 impl NarrativeEditModal {
-    pub fn default() -> Self {
-        Self {
-            mode: NarrativeEditModalMode::New,
-            current_focus: CurrentFocus::Title,
-            narrative_name_textarea: TextArea::default(),
-            narrative_chapter_textarea: TextArea::new(vec![String::from("1")]),
-            narrative_writtenby_textarea: TextArea::default(),
-            narrative_date_textarea: TextArea::default(),
-            narrative_summary_textarea: TextArea::default(),
-            narrative_name_valid: false,
-            narrative_chapter_valid: true,
-            narrative_writtenby_valid: false,
-            narrative_date_valid: false,
-        }
-    }
-
     pub fn edit(verses: &NarraverseVerses, uuid: Uuid) -> Option<Self> {
         let verse = verses.verses.get(&verses.verse_uuid)?;
         let narrative = verse.narratives.get(&uuid)?;
@@ -79,6 +63,24 @@ impl NarrativeEditModal {
         self.narrative_writtenby_valid =
             validate_length(&mut self.narrative_writtenby_textarea, 1, 100);
         self
+    }
+}
+
+impl Default for NarrativeEditModal {
+    fn default() -> Self {
+        Self {
+            mode: NarrativeEditModalMode::New,
+            current_focus: CurrentFocus::Title,
+            narrative_name_textarea: TextArea::default(),
+            narrative_chapter_textarea: TextArea::new(vec![String::from("1")]),
+            narrative_writtenby_textarea: TextArea::default(),
+            narrative_date_textarea: TextArea::default(),
+            narrative_summary_textarea: TextArea::default(),
+            narrative_name_valid: false,
+            narrative_chapter_valid: true,
+            narrative_writtenby_valid: false,
+            narrative_date_valid: false,
+        }
     }
 }
 
@@ -145,47 +147,47 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
         KeyCode::Esc => {
             nv.state = NarraverseState::NarrativePick;
-            reset_textareas(&mut nv.narrative_edit_modal);
+            reset_textareas(&mut nv.modals.narrative_edit_modal);
         }
         KeyCode::Tab => {
-            nv.narrative_edit_modal.current_focus =
-                next_cycle(&nv.narrative_edit_modal.current_focus)
+            nv.modals.narrative_edit_modal.current_focus =
+                next_cycle(&nv.modals.narrative_edit_modal.current_focus)
         }
         KeyCode::BackTab => {
-            nv.narrative_edit_modal.current_focus =
-                previous_cycle(&nv.narrative_edit_modal.current_focus)
+            nv.modals.narrative_edit_modal.current_focus =
+                previous_cycle(&nv.modals.narrative_edit_modal.current_focus)
         }
         KeyCode::Enter => confirm_edit(nv),
-        _ => match &nv.narrative_edit_modal.current_focus {
+        _ => match &nv.modals.narrative_edit_modal.current_focus {
             CurrentFocus::Title => {
-                let textarea = &mut nv.narrative_edit_modal.narrative_name_textarea;
+                let textarea = &mut nv.modals.narrative_edit_modal.narrative_name_textarea;
                 if textarea.input(*key) {
-                    nv.narrative_edit_modal.narrative_name_valid =
+                    nv.modals.narrative_edit_modal.narrative_name_valid =
                         validate_length(textarea, 1, 100);
                 }
             }
             CurrentFocus::Chapter => {
-                let textarea = &mut nv.narrative_edit_modal.narrative_chapter_textarea;
+                let textarea = &mut nv.modals.narrative_edit_modal.narrative_chapter_textarea;
                 if textarea.input(*key) {
-                    nv.narrative_edit_modal.narrative_chapter_valid =
-                        validate_int(textarea);
+                    nv.modals.narrative_edit_modal.narrative_chapter_valid = validate_int(textarea);
                 }
             }
             CurrentFocus::WrittenBy => {
-                let textarea = &mut nv.narrative_edit_modal.narrative_writtenby_textarea;
+                let textarea = &mut nv.modals.narrative_edit_modal.narrative_writtenby_textarea;
                 if textarea.input(*key) {
-                    nv.narrative_edit_modal.narrative_writtenby_valid =
+                    nv.modals.narrative_edit_modal.narrative_writtenby_valid =
                         validate_length(textarea, 1, 100);
                 }
             }
             CurrentFocus::Date => {
-                let textarea = &mut nv.narrative_edit_modal.narrative_date_textarea;
+                let textarea = &mut nv.modals.narrative_edit_modal.narrative_date_textarea;
                 if textarea.input(*key) {
-                    nv.narrative_edit_modal.narrative_date_valid = validate_date(textarea);
+                    nv.modals.narrative_edit_modal.narrative_date_valid = validate_date(textarea);
                 }
             }
             CurrentFocus::Summary => {
-                nv.narrative_edit_modal
+                nv.modals
+                    .narrative_edit_modal
                     .narrative_summary_textarea
                     .input(*key);
             }
@@ -194,10 +196,10 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
 }
 
 fn confirm_edit(nv: &mut Narraverse) {
-    if !(nv.narrative_edit_modal.narrative_name_valid
-        && nv.narrative_edit_modal.narrative_chapter_valid
-        && nv.narrative_edit_modal.narrative_writtenby_valid
-        && nv.narrative_edit_modal.narrative_date_valid)
+    if !(nv.modals.narrative_edit_modal.narrative_name_valid
+        && nv.modals.narrative_edit_modal.narrative_chapter_valid
+        && nv.modals.narrative_edit_modal.narrative_writtenby_valid
+        && nv.modals.narrative_edit_modal.narrative_date_valid)
     {
         return;
     }
@@ -208,20 +210,42 @@ fn confirm_edit(nv: &mut Narraverse) {
         );
         return;
     };
-    let sum = nv.narrative_edit_modal.narrative_summary_textarea.lines()[0].clone();
+    let sum = nv
+        .modals
+        .narrative_edit_modal
+        .narrative_summary_textarea
+        .lines()[0]
+        .clone();
     let summary = if sum.is_empty() { None } else { Some(sum) };
-    match nv.narrative_edit_modal.mode {
+    match nv.modals.narrative_edit_modal.mode {
         NarrativeEditModalMode::New => {
             verse.1.narratives.insert(
                 Uuid::now_v7(),
                 Narrative {
-                    title: nv.narrative_edit_modal.narrative_name_textarea.lines()[0].clone(),
-                    chapter: nv.narrative_edit_modal.narrative_chapter_textarea.lines()[0]
+                    title: nv
+                        .modals
+                        .narrative_edit_modal
+                        .narrative_name_textarea
+                        .lines()[0]
+                        .clone(),
+                    chapter: nv
+                        .modals
+                        .narrative_edit_modal
+                        .narrative_chapter_textarea
+                        .lines()[0]
                         .parse::<u8>()
                         .unwrap(),
-                    written_by: nv.narrative_edit_modal.narrative_writtenby_textarea.lines()[0]
+                    written_by: nv
+                        .modals
+                        .narrative_edit_modal
+                        .narrative_writtenby_textarea
+                        .lines()[0]
                         .clone(),
-                    date: nv.narrative_edit_modal.narrative_date_textarea.lines()[0]
+                    date: nv
+                        .modals
+                        .narrative_edit_modal
+                        .narrative_date_textarea
+                        .lines()[0]
                         .clone()
                         .parse::<NaiveDate>()
                         .unwrap(),
@@ -239,10 +263,23 @@ fn confirm_edit(nv: &mut Narraverse) {
                 );
                 return;
             };
-            narrative.title = nv.narrative_edit_modal.narrative_name_textarea.lines()[0].clone();
-            narrative.written_by =
-                nv.narrative_edit_modal.narrative_writtenby_textarea.lines()[0].clone();
-            narrative.date = nv.narrative_edit_modal.narrative_date_textarea.lines()[0]
+            narrative.title = nv
+                .modals
+                .narrative_edit_modal
+                .narrative_name_textarea
+                .lines()[0]
+                .clone();
+            narrative.written_by = nv
+                .modals
+                .narrative_edit_modal
+                .narrative_writtenby_textarea
+                .lines()[0]
+                .clone();
+            narrative.date = nv
+                .modals
+                .narrative_edit_modal
+                .narrative_date_textarea
+                .lines()[0]
                 .clone()
                 .parse::<NaiveDate>()
                 .unwrap();
@@ -262,7 +299,7 @@ fn confirm_edit(nv: &mut Narraverse) {
     } else {
         nv.send_footer_notification(String::from("Narrative edited"));
     }
-    reset_textareas(&mut nv.narrative_edit_modal);
+    reset_textareas(&mut nv.modals.narrative_edit_modal);
     rebuild_narr_list_cache(&mut nv.cache, &nv.verses);
 }
 

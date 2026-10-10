@@ -17,17 +17,19 @@ pub struct ConfigEditModal {
 }
 
 impl ConfigEditModal {
-    pub fn default() -> Self {
-        Self {
-            writtenby_prefill_textarea: TextArea::default(),
-            writtenby_prefill_valid: false,
-        }
-    }
-
     pub fn edit(config: &NarraverseConfig) -> Self {
         Self {
             writtenby_prefill_textarea: TextArea::new(vec![config.default_written_by.clone()]),
             writtenby_prefill_valid: true,
+        }
+    }
+}
+
+impl Default for ConfigEditModal {
+    fn default() -> Self {
+        Self {
+            writtenby_prefill_textarea: TextArea::default(),
+            writtenby_prefill_valid: false,
         }
     }
 }
@@ -48,24 +50,24 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
         KeyCode::Esc => {
             nv.state = NarraverseState::VersePick;
-            reset_textareas(&mut nv.config_edit_modal);
+            reset_textareas(&mut nv.modals.config_edit_modal);
         }
         KeyCode::Enter => confirm_edit(nv),
         _ => {
-            let textarea = &mut nv.config_edit_modal.writtenby_prefill_textarea;
+            let textarea = &mut nv.modals.config_edit_modal.writtenby_prefill_textarea;
             if textarea.input(*key) {
-                nv.config_edit_modal.writtenby_prefill_valid = validate_length(textarea, 1, 100);
+                nv.modals.config_edit_modal.writtenby_prefill_valid = validate_length(textarea, 1, 100);
             }
         }
     }
 }
 
 fn confirm_edit(nv: &mut Narraverse) {
-    if !nv.config_edit_modal.writtenby_prefill_valid {
+    if !nv.modals.config_edit_modal.writtenby_prefill_valid {
         return;
     }
     nv.config.default_written_by =
-        nv.config_edit_modal.writtenby_prefill_textarea.lines()[0].clone();
+        nv.modals.config_edit_modal.writtenby_prefill_textarea.lines()[0].clone();
     if let Err(err) = save_config(&nv.config) {
         nv.send_error(
             format!("Config edited, but won't save:\n{}", err),
@@ -75,7 +77,7 @@ fn confirm_edit(nv: &mut Narraverse) {
         nv.send_footer_notification(String::from("Config edited"));
         nv.state = NarraverseState::VersePick;
     }
-    reset_textareas(&mut nv.config_edit_modal);
+    reset_textareas(&mut nv.modals.config_edit_modal);
 }
 
 fn reset_textareas(modal: &mut ConfigEditModal) {

@@ -75,7 +75,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             nv.state = NarraverseState::Editor;
         }
         KeyCode::Char('n') => {
-            nv.narrative_edit_modal = NarrativeEditModal::default().prefill_writtenby_field(nv);
+            nv.modals.narrative_edit_modal = NarrativeEditModal::default().prefill_writtenby_field(nv);
             nv.state = NarraverseState::NarrativeModal;
         }
         KeyCode::Char('e') => {
@@ -85,7 +85,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             let Some(modal) = NarrativeEditModal::edit(&nv.verses, uuid) else {
                 return;
             };
-            nv.narrative_edit_modal = modal;
+            nv.modals.narrative_edit_modal = modal;
             nv.state = NarraverseState::NarrativeModal;
         }
         KeyCode::Char('d') => {

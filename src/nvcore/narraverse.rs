@@ -38,12 +38,8 @@ pub struct Narraverse {
     pub verses: NarraverseVerses,
     pub cached_verse_name: String,
     pub list_states: NarraverseListStates,
+    pub modals: NarraverseModals,
     pub editor: NarraverseEditor,
-    pub verse_edit_modal: VerseEdit,
-    pub narrative_edit_modal: NarrativeEditModal,
-    pub entity_edit_modal: EntityEditModal,
-    pub artifact_edit_modal: ArtifactEditModal,
-    pub config_edit_modal: ConfigEditModal,
     pub deletion_target: DeletionTarget,
     pub errors: (String, NarraverseState),
     pub footer_notification: Option<String>,
@@ -104,23 +100,25 @@ impl Narraverse {
         match self.state {
             NarraverseState::VersePick => render_worldpick(self, frame, main_layout[1]),
             NarraverseState::VerseEdit => {
-                render_verse_edit(&self.verse_edit_modal, frame, main_layout[1])
+                render_verse_edit(&self.modals.verse_edit_modal, frame, main_layout[1])
             }
             NarraverseState::VerseAreaPick => render_area_pick(self, frame, main_layout[1]),
             NarraverseState::NarrativePick => render_narrative_pick(self, frame, main_layout[1]),
-            NarraverseState::NarrativeModal => {
-                render_narrative_edit_modal(&self.narrative_edit_modal, frame, main_layout[1])
-            }
+            NarraverseState::NarrativeModal => render_narrative_edit_modal(
+                &self.modals.narrative_edit_modal,
+                frame,
+                main_layout[1],
+            ),
             NarraverseState::EntityPick => render_entity_pick(self, frame, main_layout[1]),
             NarraverseState::EntityModal => {
-                render_entity_edit(&self.entity_edit_modal, frame, main_layout[1])
+                render_entity_edit(&self.modals.entity_edit_modal, frame, main_layout[1])
             }
             NarraverseState::ArtifactPick => render_artifact_pick(self, frame, main_layout[1]),
             NarraverseState::ArtifactModal => {
-                render_artifact_edit(&self.artifact_edit_modal, frame, main_layout[1])
+                render_artifact_edit(&self.modals.artifact_edit_modal, frame, main_layout[1])
             }
             NarraverseState::ConfigModal => {
-                render_config_edit_modal(&self.config_edit_modal, frame, main_layout[1])
+                render_config_edit_modal(&self.modals.config_edit_modal, frame, main_layout[1])
             }
             NarraverseState::Editor => render_editor(self, frame, main_layout[1]),
             NarraverseState::VerseDelete => render_delete_screen(self, frame, main_layout[1]),
@@ -179,12 +177,8 @@ impl Default for Narraverse {
             verses: NarraverseVerses::default(),
             cached_verse_name: String::from("enmkdev.codeberg.page"),
             list_states: NarraverseListStates::default(),
+            modals: NarraverseModals::default(),
             editor: NarraverseEditor::default(),
-            verse_edit_modal: VerseEdit::default(),
-            narrative_edit_modal: NarrativeEditModal::default(),
-            entity_edit_modal: EntityEditModal::default(),
-            artifact_edit_modal: ArtifactEditModal::default(),
-            config_edit_modal: ConfigEditModal::default(),
             deletion_target: DeletionTarget::Verse,
             errors: (String::new(), NarraverseState::VersePick),
             footer_notification: None,
@@ -192,6 +186,15 @@ impl Default for Narraverse {
             cache: NarraverseCaches::default(),
         }
     }
+}
+
+#[derive(Default)]
+pub struct NarraverseModals {
+    pub verse_edit_modal: VerseEdit,
+    pub narrative_edit_modal: NarrativeEditModal,
+    pub entity_edit_modal: EntityEditModal,
+    pub artifact_edit_modal: ArtifactEditModal,
+    pub config_edit_modal: ConfigEditModal,
 }
 
 pub struct NarraverseListStates {

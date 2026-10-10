@@ -8,11 +8,18 @@ use ratatui::{
 use ratatui_textarea::TextArea;
 use uuid::Uuid;
 
-use crate::{nvcore::{
-    narraverse::{Narraverse, NarraverseState},
-    save::save_verse,
-    verses::{Entity, EntityType, NarraverseVerses},
-}, utils::{cacheutils::rebuild_ent_list_cache, decosutils::{center_area, field_layout, fields_responsive, focus_highlight}, textareautils::validate_length}};
+use crate::{
+    nvcore::{
+        narraverse::{Narraverse, NarraverseState},
+        save::save_verse,
+        verses::{Entity, EntityType, NarraverseVerses},
+    },
+    utils::{
+        cacheutils::rebuild_ent_list_cache,
+        decosutils::{center_area, field_layout, fields_responsive, focus_highlight},
+        textareautils::validate_length,
+    },
+};
 
 pub struct EntityEditModal {
     mode: EntityEditMode,
@@ -23,16 +30,6 @@ pub struct EntityEditModal {
 }
 
 impl EntityEditModal {
-    pub fn default() -> Self {
-        Self {
-            mode: EntityEditMode::New,
-            current_focus: CurrentFocus::Name,
-            entity_name_textarea: TextArea::default(),
-            entity_name_valid: false,
-            entity_type: EntityType::Character,
-        }
-    }
-
     pub fn edit(verses: &NarraverseVerses, uuid: Uuid) -> Option<Self> {
         let verse = verses.verses.get(&verses.verse_uuid)?;
         let entity = verse.entities.get(&uuid)?;
@@ -43,6 +40,18 @@ impl EntityEditModal {
             entity_name_valid: true,
             entity_type: entity.entity_type.clone(),
         })
+    }
+}
+
+impl Default for EntityEditModal {
+    fn default() -> Self {
+        Self {
+            mode: EntityEditMode::New,
+            current_focus: CurrentFocus::Name,
+            entity_name_textarea: TextArea::default(),
+            entity_name_valid: false,
+            entity_type: EntityType::Character,
+        }
     }
 }
 
@@ -68,19 +77,13 @@ pub fn render_entity_edit(modal: &EntityEditModal, frame: &mut Frame, area: Rect
         Paragraph::new("Entity name").style(focus_highlight(matches!(focus, CurrentFocus::Name))),
         name_field_layout[0],
     );
-    frame.render_widget(
-        &modal.entity_name_textarea,
-        name_field_layout[1],
-    );
+    frame.render_widget(&modal.entity_name_textarea, name_field_layout[1]);
     frame.render_widget(
         Paragraph::new("Entity type").style(focus_highlight(matches!(focus, CurrentFocus::Type))),
         type_field_layout[0],
     );
     frame.render_widget(
-        Paragraph::new(format!(
-            "< {} >",
-            modal.entity_type.full_name()
-        )),
+        Paragraph::new(format!("< {} >", modal.entity_type.full_name())),
         type_field_layout[1],
     );
 }
@@ -89,16 +92,17 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
         KeyCode::Esc => {
             nv.state = NarraverseState::EntityPick;
-            reset_textareas(&mut nv.entity_edit_modal);
+            reset_textareas(&mut nv.modals.entity_edit_modal);
             return;
         }
         KeyCode::Tab => {
-            nv.entity_edit_modal.current_focus = next_cycle(&nv.entity_edit_modal.current_focus);
+            nv.modals.entity_edit_modal.current_focus =
+                next_cycle(&nv.modals.entity_edit_modal.current_focus);
             return;
         }
         KeyCode::BackTab => {
-            nv.entity_edit_modal.current_focus =
-                previous_cycle(&nv.entity_edit_modal.current_focus);
+            nv.modals.entity_edit_modal.current_focus =
+                previous_cycle(&nv.modals.entity_edit_modal.current_focus);
             return;
         }
         KeyCode::Enter => {
@@ -107,28 +111,29 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
         }
         _ => {}
     }
-    match nv.entity_edit_modal.current_focus {
+    match nv.modals.entity_edit_modal.current_focus {
         CurrentFocus::Type => match key.code {
             KeyCode::Left | KeyCode::Char('h') => {
-                nv.entity_edit_modal.entity_type =
-                    previous_cycle(&nv.entity_edit_modal.entity_type);
+                nv.modals.entity_edit_modal.entity_type =
+                    previous_cycle(&nv.modals.entity_edit_modal.entity_type);
             }
             KeyCode::Right | KeyCode::Char('l') => {
-                nv.entity_edit_modal.entity_type = next_cycle(&nv.entity_edit_modal.entity_type);
+                nv.modals.entity_edit_modal.entity_type =
+                    next_cycle(&nv.modals.entity_edit_modal.entity_type);
             }
             _ => {}
         },
         CurrentFocus::Name => {
-            let textarea = &mut nv.entity_edit_modal.entity_name_textarea;
+            let textarea = &mut nv.modals.entity_edit_modal.entity_name_textarea;
             if textarea.input(*key) {
-                nv.entity_edit_modal.entity_name_valid = validate_length(textarea, 1, 100);
+                nv.modals.entity_edit_modal.entity_name_valid = validate_length(textarea, 1, 100);
             }
         }
     }
 }
 
 fn confirm_edit(nv: &mut Narraverse) {
-    if !nv.entity_edit_modal.entity_name_valid {
+    if !nv.modals.entity_edit_modal.entity_name_valid {
         return;
     }
     let Some(verse) = nv.verses.verses.get_key_value_mut(&nv.verses.verse_uuid) else {
@@ -138,13 +143,13 @@ fn confirm_edit(nv: &mut Narraverse) {
         );
         return;
     };
-    match nv.entity_edit_modal.mode {
+    match nv.modals.entity_edit_modal.mode {
         EntityEditMode::New => {
             verse.1.entities.insert(
                 Uuid::now_v7(),
                 Entity {
-                    name: nv.entity_edit_modal.entity_name_textarea.lines()[0].clone(),
-                    entity_type: nv.entity_edit_modal.entity_type.clone(),
+                    name: nv.modals.entity_edit_modal.entity_name_textarea.lines()[0].clone(),
+                    entity_type: nv.modals.entity_edit_modal.entity_type.clone(),
                     details: String::new(),
                 },
             );
@@ -158,8 +163,8 @@ fn confirm_edit(nv: &mut Narraverse) {
                 );
                 return;
             };
-            entity.name = nv.entity_edit_modal.entity_name_textarea.lines()[0].clone();
-            entity.entity_type = nv.entity_edit_modal.entity_type.clone();
+            entity.name = nv.modals.entity_edit_modal.entity_name_textarea.lines()[0].clone();
+            entity.entity_type = nv.modals.entity_edit_modal.entity_type.clone();
             nv.state = NarraverseState::EntityPick;
         }
     }
@@ -171,7 +176,7 @@ fn confirm_edit(nv: &mut Narraverse) {
     } else {
         nv.send_footer_notification(String::from("Entity edited"));
     }
-    reset_textareas(&mut nv.entity_edit_modal);
+    reset_textareas(&mut nv.modals.entity_edit_modal);
     rebuild_ent_list_cache(&mut nv.cache, &nv.verses);
 }
 

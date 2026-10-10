@@ -62,11 +62,11 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             let Some(verse_edit) = VerseEdit::edit(&nv.verses, uuid) else {
                 return;
             };
-            nv.verse_edit_modal = verse_edit;
+            nv.modals.verse_edit_modal = verse_edit;
             nv.state = NarraverseState::VerseEdit;
         }
         KeyCode::Char('n') => {
-            nv.verse_edit_modal = VerseEdit::default();
+            nv.modals.verse_edit_modal = VerseEdit::default();
             nv.state = NarraverseState::VerseEdit;
         }
         KeyCode::Char('d') => {
@@ -81,7 +81,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             nv.state = NarraverseState::VerseDelete;
         }
         KeyCode::Char('c') => {
-            nv.config_edit_modal = ConfigEditModal::edit(&nv.config);
+            nv.modals.config_edit_modal = ConfigEditModal::edit(&nv.config);
             nv.state = NarraverseState::ConfigModal;
         }
         _ => {}

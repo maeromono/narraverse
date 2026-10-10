@@ -20,14 +20,6 @@ pub struct VerseEdit {
 }
 
 impl VerseEdit {
-    pub fn default() -> Self {
-        Self {
-            mode: VerseEditMode::New,
-            verse_name_textarea: TextArea::default(),
-            verse_name_valid: false,
-        }
-    }
-
     pub fn edit(verses: &NarraverseVerses, uuid: Uuid) -> Option<Self> {
         let verse = verses.verses.get(&uuid)?;
         Some(Self {
@@ -35,6 +27,16 @@ impl VerseEdit {
             verse_name_textarea: TextArea::new(vec![verse.name.clone()]),
             verse_name_valid: true,
         })
+    }
+}
+
+impl Default for VerseEdit {
+    fn default() -> Self {
+        Self {
+            mode: VerseEditMode::New,
+            verse_name_textarea: TextArea::default(),
+            verse_name_valid: false,
+        }
     }
 }
 
@@ -60,28 +62,28 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
         KeyCode::Esc => {
             nv.state = NarraverseState::VersePick;
-            reset_textareas(&mut nv.verse_edit_modal);
+            reset_textareas(&mut nv.modals.verse_edit_modal);
         }
         KeyCode::Enter => confirm_edit(nv),
         _ => {
-            let textarea = &mut nv.verse_edit_modal.verse_name_textarea;
+            let textarea = &mut nv.modals.verse_edit_modal.verse_name_textarea;
             if textarea.input(*key) {
-                nv.verse_edit_modal.verse_name_valid = validate_length(textarea, 1, 50);
+                nv.modals.verse_edit_modal.verse_name_valid = validate_length(textarea, 1, 50);
             }
         }
     }
 }
 
 fn confirm_edit(nv: &mut Narraverse) {
-    if !nv.verse_edit_modal.verse_name_valid {
+    if !nv.modals.verse_edit_modal.verse_name_valid {
         return;
     }
-    match nv.verse_edit_modal.mode {
+    match nv.modals.verse_edit_modal.mode {
         VerseEditMode::New => {
             nv.verses.verses.insert(
                 Uuid::now_v7(),
                 Verse {
-                    name: nv.verse_edit_modal.verse_name_textarea.lines()[0].clone(),
+                    name: nv.modals.verse_edit_modal.verse_name_textarea.lines()[0].clone(),
                     ..Default::default()
                 },
             );
@@ -95,7 +97,7 @@ fn confirm_edit(nv: &mut Narraverse) {
                 );
                 return;
             };
-            verse.name = nv.verse_edit_modal.verse_name_textarea.lines()[0].clone();
+            verse.name = nv.modals.verse_edit_modal.verse_name_textarea.lines()[0].clone();
             nv.state = NarraverseState::VersePick;
         }
     }
@@ -105,7 +107,7 @@ fn confirm_edit(nv: &mut Narraverse) {
             NarraverseState::VersePick,
         );
     }
-    reset_textareas(&mut nv.verse_edit_modal);
+    reset_textareas(&mut nv.modals.verse_edit_modal);
     rebuild_verse_list_cache(&mut nv.cache, &nv.verses);
 }
 
