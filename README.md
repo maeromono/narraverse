@@ -47,7 +47,6 @@ default_written_by = "Me"
 - [X] Entity creation & modification
 - [X] Artifacts creation & modification
 - [X] Editor improvements (multibuffers, search, etc)
-- [ ] Grouping of narratives by chapters
 - [ ] Referencing entities & artifacts from narrative
 - [ ] Entity relationships
 - [ ] Extra fields for entities

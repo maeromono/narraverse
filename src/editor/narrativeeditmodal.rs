@@ -18,7 +18,7 @@ use crate::{
     utils::{
         cacheutils::rebuild_narr_list_cache,
         decosutils::{center_area, field_layout, fields_responsive, focus_highlight},
-        textareautils::{validate_date, validate_int, validate_length},
+        textareautils::{validate_date, validate_length},
     },
 };
 
@@ -26,12 +26,10 @@ pub struct NarrativeEditModal {
     mode: NarrativeEditModalMode,
     current_focus: CurrentFocus,
     narrative_name_textarea: TextArea<'static>,
-    narrative_chapter_textarea: TextArea<'static>,
     narrative_writtenby_textarea: TextArea<'static>,
     narrative_date_textarea: TextArea<'static>,
     narrative_summary_textarea: TextArea<'static>,
     narrative_name_valid: bool,
-    narrative_chapter_valid: bool,
     narrative_writtenby_valid: bool,
     narrative_date_valid: bool,
 }
@@ -44,14 +42,12 @@ impl NarrativeEditModal {
             mode: NarrativeEditModalMode::Existing(uuid),
             current_focus: CurrentFocus::Title,
             narrative_name_textarea: TextArea::new(vec![narrative.title.clone()]),
-            narrative_chapter_textarea: TextArea::new(vec![narrative.chapter.to_string()]),
             narrative_writtenby_textarea: TextArea::new(vec![narrative.written_by.clone()]),
             narrative_date_textarea: TextArea::new(vec![narrative.date.to_string()]),
             narrative_summary_textarea: TextArea::new(vec![
                 narrative.summary.clone().unwrap_or_default(),
             ]),
             narrative_name_valid: true,
-            narrative_chapter_valid: true,
             narrative_writtenby_valid: true,
             narrative_date_valid: true,
         })
@@ -72,12 +68,10 @@ impl Default for NarrativeEditModal {
             mode: NarrativeEditModalMode::New,
             current_focus: CurrentFocus::Title,
             narrative_name_textarea: TextArea::default(),
-            narrative_chapter_textarea: TextArea::new(vec![String::from("1")]),
             narrative_writtenby_textarea: TextArea::default(),
             narrative_date_textarea: TextArea::default(),
             narrative_summary_textarea: TextArea::default(),
             narrative_name_valid: false,
-            narrative_chapter_valid: true,
             narrative_writtenby_valid: false,
             narrative_date_valid: false,
         }
@@ -92,7 +86,6 @@ enum NarrativeEditModalMode {
 #[derive(Sequence)]
 pub enum CurrentFocus {
     Title,
-    Chapter,
     WrittenBy,
     Date,
     Summary,
@@ -103,7 +96,6 @@ pub fn render_narrative_edit_modal(modal: &NarrativeEditModal, frame: &mut Frame
     let nem_layout = Layout::vertical([vert_constraint; 5]).split(center_area(area));
     let field_layout = field_layout(direction);
     let title_field_layout = field_layout.clone().split(nem_layout[0]);
-    let chapter_field_layout = field_layout.clone().split(nem_layout[1]);
     let writtenby_field_layout = field_layout.clone().split(nem_layout[2]);
     let date_field_layout = field_layout.clone().split(nem_layout[3]);
     let summary_field_layout = field_layout.split(nem_layout[4]);
@@ -114,12 +106,6 @@ pub fn render_narrative_edit_modal(modal: &NarrativeEditModal, frame: &mut Frame
         title_field_layout[0],
     );
     frame.render_widget(&modal.narrative_name_textarea, title_field_layout[1]);
-    frame.render_widget(
-        Paragraph::new("Chapter no.")
-            .style(focus_highlight(matches!(focus, CurrentFocus::Chapter))),
-        chapter_field_layout[0],
-    );
-    frame.render_widget(&modal.narrative_chapter_textarea, chapter_field_layout[1]);
     frame.render_widget(
         Paragraph::new("Written by")
             .style(focus_highlight(matches!(focus, CurrentFocus::WrittenBy))),
@@ -166,12 +152,6 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
                         validate_length(textarea, 1, 100);
                 }
             }
-            CurrentFocus::Chapter => {
-                let textarea = &mut nv.modals.narrative_edit_modal.narrative_chapter_textarea;
-                if textarea.input(*key) {
-                    nv.modals.narrative_edit_modal.narrative_chapter_valid = validate_int(textarea);
-                }
-            }
             CurrentFocus::WrittenBy => {
                 let textarea = &mut nv.modals.narrative_edit_modal.narrative_writtenby_textarea;
                 if textarea.input(*key) {
@@ -197,7 +177,6 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
 
 fn confirm_edit(nv: &mut Narraverse) {
     if !(nv.modals.narrative_edit_modal.narrative_name_valid
-        && nv.modals.narrative_edit_modal.narrative_chapter_valid
         && nv.modals.narrative_edit_modal.narrative_writtenby_valid
         && nv.modals.narrative_edit_modal.narrative_date_valid)
     {
@@ -228,13 +207,6 @@ fn confirm_edit(nv: &mut Narraverse) {
                         .narrative_name_textarea
                         .lines()[0]
                         .clone(),
-                    chapter: nv
-                        .modals
-                        .narrative_edit_modal
-                        .narrative_chapter_textarea
-                        .lines()[0]
-                        .parse::<u8>()
-                        .unwrap(),
                     written_by: nv
                         .modals
                         .narrative_edit_modal

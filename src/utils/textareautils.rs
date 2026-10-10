@@ -13,17 +13,6 @@ pub fn validate_length(textarea: &mut TextArea, min: usize, max: usize) -> bool 
     }
 }
 
-pub fn validate_int(textarea: &mut TextArea) -> bool {
-    let text = &textarea.lines()[0];
-    if let Err(_) = text.parse::<u8>() {
-        textarea.set_style(Style::default().red().reversed());
-        false
-    } else {
-        textarea.set_style(Style::default());
-        true
-    }
-}
-
 pub fn validate_date(textarea: &mut TextArea) -> bool {
     let text = &textarea.lines()[0];
     if let Err(_) = text.parse::<NaiveDate>() {
