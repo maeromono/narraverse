@@ -20,16 +20,7 @@ use crate::{
 };
 
 pub fn render_artifact_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
-    let Some(verse) = nv.verses.verses.get(&nv.verses.verse_uuid) else {
-        nv.send_error(
-            format!(
-                "Verse with this UUID ({}) doesn't exist.",
-                nv.verses.verse_uuid
-            ),
-            NarraverseState::VersePick,
-        );
-        return;
-    };
+    let verse = nv.verses.current_verse();
     if verse.artifacts.len() == 0 {
         render_list_empty_state("artifacts", frame, area);
         return;
@@ -112,9 +103,7 @@ fn selected_art_uuid(nv: &Narraverse) -> Option<Uuid> {
 }
 
 fn move_artifact(nv: &mut Narraverse, ind: usize, up: bool) {
-    let Some(verse) = nv.verses.verses.get_mut(&nv.verses.verse_uuid) else {
-        return;
-    };
+    let verse = nv.verses.current_verse_mut();
     let target_ind = if up {
         ind.checked_sub(1)
     } else {

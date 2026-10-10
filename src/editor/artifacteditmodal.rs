@@ -137,16 +137,7 @@ fn confirm_edit(nv: &mut Narraverse) {
     if !nv.modals.artifact_edit_modal.artifact_name_valid {
         return;
     }
-    let Some(verse) = nv.verses.verses.get_key_value_mut(&nv.verses.verse_uuid) else {
-        nv.send_error(
-            format!(
-                "Verse with this UUID ({}) doesn't exist.",
-                nv.verses.verse_uuid
-            ),
-            NarraverseState::VersePick,
-        );
-        return;
-    };
+    let verse = nv.verses.current_verse_kv_mut();
     match nv.modals.artifact_edit_modal.mode {
         ArtifactEditMode::New => {
             verse.1.artifacts.insert(

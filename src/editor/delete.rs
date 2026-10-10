@@ -21,13 +21,7 @@ pub enum DeletionTarget {
 }
 
 pub fn render_delete_screen(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
-    let Some(verse) = nv.verses.verses.get(&nv.verses.verse_uuid) else {
-        nv.send_error(
-            format!("No Verse with this UUID ({}) exists.", nv.verses.verse_uuid),
-            NarraverseState::VersePick,
-        );
-        return;
-    };
+    let verse = nv.verses.current_verse();
     let delete_confirmation_message: Paragraph = match nv.deletion_target {
         DeletionTarget::Verse => Paragraph::new(format!(
             "Delete Verse \"{}\"?\nIt'll be removed from the index, but will remain on disk.",
@@ -106,13 +100,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
 }
 
 fn confirm_delete(nv: &mut Narraverse) {
-    let Some(verse) = nv.verses.verses.get_mut(&nv.verses.verse_uuid) else {
-        nv.send_error(
-            format!("No Verse with this UUID ({}) exists.", nv.verses.verse_uuid),
-            NarraverseState::VersePick,
-        );
-        return;
-    };
+    let verse = nv.verses.current_verse_mut();
     match nv.deletion_target {
         DeletionTarget::Verse => {
             nv.editor.purge_all_buffers();

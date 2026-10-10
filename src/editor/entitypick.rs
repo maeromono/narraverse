@@ -12,13 +12,7 @@ use crate::{
 };
 
 pub fn render_entity_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
-    let Some(verse) = nv.verses.verses.get(&nv.verses.verse_uuid) else {
-        nv.send_error(
-            format!("No Verse with this UUID ({}) exists.", nv.verses.verse_uuid),
-            NarraverseState::VersePick,
-        );
-        return;
-    };
+    let verse = nv.verses.current_verse();
     if verse.entities.len() == 0 {
         render_list_empty_state("entities", frame, area);
         return;
@@ -98,9 +92,7 @@ fn selected_ent_uuid(nv: &Narraverse) -> Option<Uuid> {
 }
 
 fn move_entity(nv: &mut Narraverse, ind: usize, up: bool) {
-    let Some(verse) = nv.verses.verses.get_mut(&nv.verses.verse_uuid) else {
-        return;
-    };
+    let verse = nv.verses.current_verse_mut();
     let target_ind = if up { ind.checked_sub(1) } else { ind.checked_add(1) };
     let Some(target) = target_ind.filter(|&t| t < verse.entities.len()) else {
         return;

@@ -53,9 +53,7 @@ impl NarraverseEditor {
         if self.buffers.contains_key(&uuid) {
             return true;
         }
-        let Some(verse) = verses.verses.get(&verses.verse_uuid) else {
-            return false;
-        };
+        let verse = verses.current_verse();
         let (mut textarea, cached_name) = match target {
             EditorTarget::Narrative => {
                 let Some(narr) = verse.narratives.get(&uuid) else {

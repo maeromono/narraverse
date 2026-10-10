@@ -182,13 +182,7 @@ fn confirm_edit(nv: &mut Narraverse) {
     {
         return;
     }
-    let Some(verse) = nv.verses.verses.get_key_value_mut(&nv.verses.verse_uuid) else {
-        nv.send_error(
-            format!("No Verse with this UUID ({}) exists.", nv.verses.verse_uuid),
-            NarraverseState::VersePick,
-        );
-        return;
-    };
+    let verse = nv.verses.current_verse_kv_mut();
     let sum = nv
         .modals
         .narrative_edit_modal

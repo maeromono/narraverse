@@ -13,9 +13,7 @@ pub fn rebuild_verse_list_cache(cache: &mut NarraverseCaches, verses: &Narravers
 }
 
 pub fn rebuild_narr_list_cache(cache: &mut NarraverseCaches, verses: &NarraverseVerses) {
-    let Some(verse) = verses.verses.get(&verses.verse_uuid) else {
-        return;
-    };
+    let verse = verses.current_verse();
     cache.narrative_list_cache.clear();
     for narr in verse.narratives.values() {
         cache
@@ -25,9 +23,7 @@ pub fn rebuild_narr_list_cache(cache: &mut NarraverseCaches, verses: &Narraverse
 }
 
 pub fn rebuild_ent_list_cache(cache: &mut NarraverseCaches, verses: &NarraverseVerses) {
-    let Some(verse) = verses.verses.get(&verses.verse_uuid) else {
-        return;
-    };
+    let verse = verses.current_verse();
     cache.entity_list_cache.clear();
     for ent in verse.entities.values() {
         cache
@@ -37,9 +33,7 @@ pub fn rebuild_ent_list_cache(cache: &mut NarraverseCaches, verses: &NarraverseV
 }
 
 pub fn rebuild_art_list_cache(cache: &mut NarraverseCaches, verses: &NarraverseVerses) {
-    let Some(verse) = verses.verses.get(&verses.verse_uuid) else {
-        return;
-    };
+    let verse = verses.current_verse();
     cache.artifact_list_cache.clear();
     for art in verse.artifacts.values() {
         cache

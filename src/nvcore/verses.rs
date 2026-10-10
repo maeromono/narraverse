@@ -20,6 +20,24 @@ impl NarraverseVerses {
         }
         self.verse_files = files_list;
     }
+
+    pub fn current_verse(&self) -> &Verse {
+        self.verses
+            .get(&self.verse_uuid)
+            .expect("Invalid Verse UUID")
+    }
+
+    pub fn current_verse_mut(&mut self) -> &mut Verse {
+        self.verses
+            .get_mut(&self.verse_uuid)
+            .expect("Invalid Verse UUID")
+    }
+
+    pub fn current_verse_kv_mut(&mut self) -> (&Uuid, &mut Verse) {
+        self.verses
+            .get_key_value_mut(&self.verse_uuid)
+            .expect("Invalid Verse UUID")
+    }
 }
 
 impl Default for NarraverseVerses {

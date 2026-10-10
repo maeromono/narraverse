@@ -16,13 +16,7 @@ use crate::{
 };
 
 pub fn render_narrative_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
-    let Some(verse) = nv.verses.verses.get(&nv.verses.verse_uuid) else {
-        nv.send_error(
-            format!("No Verse with this UUID ({}) exists.", nv.verses.verse_uuid),
-            NarraverseState::VersePick,
-        );
-        return;
-    };
+    let verse = nv.verses.current_verse();
     if verse.narratives.len() == 0 {
         render_list_empty_state("narratives", frame, area);
         return;
