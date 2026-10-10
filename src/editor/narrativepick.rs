@@ -112,7 +112,8 @@ fn display_narr_info(nv: &Narraverse, verse: &Verse, frame: &mut Frame, area: Re
     };
     frame.render_widget(
         Paragraph::new(format!(
-            "{}\nWritten by: {}\n{}",
+            "Cha {} -- {}\nWritten by: {}\n{}",
+            narr.chapter,
             narr.title,
             narr.written_by,
             narr.summary
