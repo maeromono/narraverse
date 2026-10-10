@@ -32,7 +32,7 @@ cargo install --git https://codeberg.org/enmkdev/narraverse --locked
 ```
 
 ## Configuration.
-Press 'c' at the verse pick screen to enter config edit modal, or edit the config file located at "~/.config/narraverse/config.toml" (idk for Windows).
+Press 'c' at the verse pick screen to enter config edit modal, or edit the config file located at "~/.config/narraverse/config.toml" (Linux), "%LOCALAPPDATA%\\enmkdev\\narraverse\\config\\config.toml" (Windows).
 
 ### Config options:
 - 'Written by' name / default_written_by (string): the default name to use for prefilling the "Written by" field on narrative creation.
@@ -47,7 +47,7 @@ default_written_by = "Me"
 - [X] Entity creation & modification
 - [X] Artifacts creation & modification
 - [X] Editor improvements (multibuffers, search, etc)
-- [ ] Narrative ordering by chapters & acts instead of dates
+- [ ] Grouping of narratives by chapters
 - [ ] Referencing entities & artifacts from narrative
 - [ ] Entity relationships
 - [ ] Extra fields for entities

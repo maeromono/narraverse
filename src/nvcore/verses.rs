@@ -44,8 +44,8 @@ pub struct Verse {
 pub struct Narrative {
     pub title: String,
     pub written_by: String,
-    pub narrative: String,
     pub date: NaiveDate,
+    pub narrative: String,
     pub summary: Option<String>,
 }
 

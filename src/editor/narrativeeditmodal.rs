@@ -202,8 +202,8 @@ fn confirm_edit(nv: &mut Narraverse) {
                         .clone()
                         .parse::<NaiveDate>()
                         .unwrap(),
-                    summary,
                     narrative: String::new(),
+                    summary,
                 },
             );
             nv.state = NarraverseState::NarrativePick;
