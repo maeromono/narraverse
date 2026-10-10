@@ -3,7 +3,7 @@ use ratatui::{Frame, layout::Rect, widgets::List};
 
 use crate::{
     editor::{delete::DeletionTarget, verseedit::VerseEdit},
-    nvcore::narraverse::{Narraverse, NarraverseState}, utils::decosutils::{block_with_title, center_area, list_highlight},
+    nvcore::narraverse::{Narraverse, NarraverseState}, utils::{decosutils::{block_with_title, center_area, list_highlight}, pickerutils::handle_list_keys},
 };
 
 pub fn render_area_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
@@ -32,6 +32,9 @@ pub fn render_area_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
 }
 
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
+    if handle_list_keys(&mut nv.list_states.verse_area_pick_liststate, key) {
+        return;
+    }
     match key.code {
         KeyCode::Char('q') => nv.state = NarraverseState::Quit,
         KeyCode::Esc => {
@@ -45,12 +48,6 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             nv.list_states.verse_entity_pick_liststate.select(None);
             nv.list_states.verse_artifact_pick_liststate.select(None);
             nv.state = NarraverseState::VersePick;
-        }
-        KeyCode::Char('j') | KeyCode::Down => {
-            nv.list_states.verse_area_pick_liststate.select_next()
-        }
-        KeyCode::Char('k') | KeyCode::Up => {
-            nv.list_states.verse_area_pick_liststate.select_previous()
         }
         KeyCode::Enter => {
             let Some(selected_index) = nv.list_states.verse_area_pick_liststate.selected() else {

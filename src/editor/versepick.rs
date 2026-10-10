@@ -11,7 +11,7 @@ use crate::{
     nvcore::{
         narraverse::{Narraverse, NarraverseState},
         verses::NarraverseVerses,
-    }, utils::{cacheutils::{rebuild_art_list_cache, rebuild_ent_list_cache, rebuild_narr_list_cache}, decosutils::{block_with_title, center_area, list_highlight}},
+    }, utils::{cacheutils::{rebuild_art_list_cache, rebuild_ent_list_cache, rebuild_narr_list_cache}, decosutils::{block_with_title, center_area, list_highlight}, pickerutils::handle_list_keys},
 };
 
 pub fn render_worldpick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
@@ -35,10 +35,11 @@ pub fn render_worldpick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
 }
 
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
+    if handle_list_keys(&mut nv.list_states.verse_pick_liststate, key) {
+        return;
+    }
     match key.code {
         KeyCode::Char('q') => nv.state = NarraverseState::Quit,
-        KeyCode::Char('j') | KeyCode::Down => nv.list_states.verse_pick_liststate.select_next(),
-        KeyCode::Char('k') | KeyCode::Up => nv.list_states.verse_pick_liststate.select_previous(),
         KeyCode::Enter => {
             let Some(selected_index) = nv.list_states.verse_pick_liststate.selected() else {
                 return;

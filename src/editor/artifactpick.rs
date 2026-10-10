@@ -15,7 +15,7 @@ use crate::{
     utils::{
         cacheutils::rebuild_art_list_cache,
         decosutils::{block_with_title, center_area, list_highlight},
-        nvutils::enter_bindhelp,
+        nvutils::enter_bindhelp, pickerutils::handle_list_keys,
     },
 };
 
@@ -50,22 +50,12 @@ pub fn render_artifact_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) 
 }
 
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
+    if handle_list_keys(&mut nv.list_states.verse_artifact_pick_liststate, key) {
+        return;
+    }
     match key.code {
         KeyCode::Esc => nv.state = NarraverseState::VerseAreaPick,
         KeyCode::F(1) => enter_bindhelp(nv, BindhelpMode::Pickmenu),
-        KeyCode::Char('j') | KeyCode::Down => {
-            nv.list_states.verse_artifact_pick_liststate.select_next()
-        }
-        KeyCode::Char('k') | KeyCode::Up => nv
-            .list_states
-            .verse_artifact_pick_liststate
-            .select_previous(),
-        KeyCode::Char('g') | KeyCode::Home => {
-            nv.list_states.verse_artifact_pick_liststate.select_first()
-        }
-        KeyCode::Char('G') | KeyCode::End => {
-            nv.list_states.verse_artifact_pick_liststate.select_last()
-        }
         KeyCode::Enter => {
             let Some(uuid) = selected_art_uuid(nv) else {
                 return;
