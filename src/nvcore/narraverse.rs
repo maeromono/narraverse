@@ -175,7 +175,7 @@ impl Default for Narraverse {
             config: NarraverseConfig::default(),
             state: NarraverseState::VersePick,
             verses: NarraverseVerses::default(),
-            cached_verse_name: String::from("enmkdev.codeberg.page"),
+            cached_verse_name: String::from("maeromono.codeberg.page"),
             list_states: NarraverseListStates::default(),
             modals: NarraverseModals::default(),
             editor: NarraverseEditor::default(),

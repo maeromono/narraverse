@@ -10,7 +10,7 @@ use toml::{from_str, to_string};
 use crate::nvcore::verses::{NarraverseVerses, Verse};
 
 fn save_path(file: &str) -> Result<PathBuf> {
-    let dirs = ProjectDirs::from("page.codeberg", "enmkdev", "narraverse")
+    let dirs = ProjectDirs::from("page.codeberg", "maeromono", "narraverse")
         .ok_or_else(|| Error::new(ErrorKind::NotFound, "cannot locate data directory"))?;
     Ok(dirs.data_dir().join(format!("{}.toml", file)))
 }

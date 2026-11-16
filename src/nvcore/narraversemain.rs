@@ -11,7 +11,7 @@ pub fn render_header(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
         Layout::horizontal([Constraint::Length(20), Constraint::Fill(1)]).split(area);
     let name_ver = Paragraph::new("narraverse v0.4.1");
     let right_thing = Paragraph::new(match nv.state {
-        NarraverseState::VersePick | NarraverseState::ConfigModal => "enmkdev.codeberg.page",
+        NarraverseState::VersePick | NarraverseState::ConfigModal => "maeromono.codeberg.page",
         _ => &nv.cached_verse_name,
     })
     .right_aligned();

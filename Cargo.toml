@@ -1,12 +1,12 @@
 [package]
 name = "narraverse"
 version = "0.4.1"
-authors = ["EnmakaiDev"]
+authors = ["MaeroMono"]
 edition = "2024"
 license = "GPL-3.0"
 description = "A no-BS TUI for worldbuilding."
-repository = "https://codeberg.org/enmkdev/narraverse"
-homepage = "https://enmkdev.codeberg.page/projects/narraverse/"
+repository = "https://codeberg.org/maeromono/narraverse"
+homepage = "https://maeromono.codeberg.page/projects/narraverse/"
 readme = "README.md"
 keywords = ["tui", "worldbuilding", "creative"]
 categories = ["command-line-interface", "command-line-utilities"]
