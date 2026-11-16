@@ -12,9 +12,6 @@ narraverse is an experimental, plain text no-BS worldbuilding TUI.
 
 \* Only applies to entities & artifacts.
 
-## Warning.
-Typing the uppercase A (or maybe some other characters that I didn't test) in editor search box results in an "attempt to subtract with overflow" panic due to the bug in the library used by narraverse (ratatui-textarea). [I already contributed the fix upstream which got merged](https://github.com/ratatui/ratatui-textarea/pull/33) and it should be available in ratatui-textarea v0.9.4.
-
 ## Installation.
 Prerequisites:
 - Rust/Cargo installed on your system (preferrably latest possible version)
@@ -32,7 +29,9 @@ cargo install --git https://codeberg.org/maeromono/narraverse --locked
 ```
 
 ## Configuration.
-Press 'c' at the verse pick screen to enter config edit modal, or edit the config file located at "~/.config/narraverse/config.toml" (Linux), "%LOCALAPPDATA%\\maeromono\\narraverse\\config\\config.toml" (Windows).
+Press 'c' at the verse pick screen to enter config edit modal, or edit the config file located at:
+- "~/.config/narraverse/config.toml" on Linux,
+- "%LOCALAPPDATA%\\maeromono\\narraverse\\config\\config.toml" on Windows.
 
 ### Config options:
 - 'Written by' name / default_written_by (string): the default name to use for prefilling the "Written by" field on narrative creation.
