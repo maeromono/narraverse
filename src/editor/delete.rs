@@ -84,7 +84,7 @@ pub fn render_delete_screen(nv: &mut Narraverse, frame: &mut Frame, area: Rect) 
 
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
-        KeyCode::Char('n') => {
+        KeyCode::Esc | KeyCode::Char('n') => {
             nv.state = match nv.deletion_target {
                 DeletionTarget::Verse => NarraverseState::VersePick,
                 DeletionTarget::Narrative(_) => NarraverseState::NarrativePick,
