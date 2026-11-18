@@ -9,7 +9,7 @@ use uuid::Uuid;
 
 use crate::{nvcore::{
     narraverse::{Narraverse, NarraverseState},
-    save::save_verses,
+    save::{save_verse, save_verses},
     verses::{NarraverseVerses, Verse},
 }, utils::{cacheutils::rebuild_verse_list_cache, decosutils::{center_area, field_layout, fields_responsive}, textareautils::validate_length}};
 
@@ -80,13 +80,20 @@ fn confirm_edit(nv: &mut Narraverse) {
     }
     match nv.modals.verse_edit_modal.mode {
         VerseEditMode::New => {
+            let new_verse_uuid = Uuid::now_v7();
             nv.verses.verses.insert(
-                Uuid::now_v7(),
+                new_verse_uuid,
                 Verse {
                     name: nv.modals.verse_edit_modal.verse_name_textarea.lines()[0].clone(),
                     ..Default::default()
                 },
             );
+            if let Err(err) = save_verses(&mut nv.verses) {
+                nv.send_error(
+                    format!("Cannot confirm edit:\n{}", err),
+                    NarraverseState::VersePick,
+                );
+            }
             nv.state = NarraverseState::VersePick;
         }
         VerseEditMode::Existing(uuid) => {
@@ -99,13 +106,13 @@ fn confirm_edit(nv: &mut Narraverse) {
             };
             verse.name = nv.modals.verse_edit_modal.verse_name_textarea.lines()[0].clone();
             nv.state = NarraverseState::VersePick;
+            if let Err(err) = save_verse(verse, format!("verse-{}", uuid).as_str()) {
+                nv.send_error(
+                    format!("Cannot confirm edit:\n{}", err),
+                    NarraverseState::VersePick,
+                );
+            }
         }
-    }
-    if let Err(err) = save_verses(&mut nv.verses) {
-        nv.send_error(
-            format!("Cannot confirm edit:\n{}", err),
-            NarraverseState::VersePick,
-        );
     }
     reset_textareas(&mut nv.modals.verse_edit_modal);
     rebuild_verse_list_cache(&mut nv.cache, &nv.verses);
