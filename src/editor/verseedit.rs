@@ -90,7 +90,7 @@ fn confirm_edit(nv: &mut Narraverse) {
             );
             if let Err(err) = save_verses(&mut nv.verses) {
                 nv.send_error(
-                    format!("Cannot confirm edit:\n{}", err),
+                    format!("Cannot save the newly created Verse:\n{}", err),
                     NarraverseState::VersePick,
                 );
             }
@@ -108,7 +108,7 @@ fn confirm_edit(nv: &mut Narraverse) {
             nv.state = NarraverseState::VersePick;
             if let Err(err) = save_verse(verse, format!("verse-{}", uuid).as_str()) {
                 nv.send_error(
-                    format!("Cannot confirm edit:\n{}", err),
+                    format!("Cannot save the Verse:\n{}", err),
                     NarraverseState::VersePick,
                 );
             }
