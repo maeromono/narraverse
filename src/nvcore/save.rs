@@ -32,13 +32,14 @@ pub fn save_verses(nv: &mut NarraverseVerses) -> Result<()> {
             ),
         ));
     }
-    for (verse, file) in nv.verses.values().zip(nv.verse_files.values()) {
+    for (verse, file) in nv.verses.values_mut().zip(nv.verse_files.values()) {
         if !verse.changed {
             continue;
         }
         let path = save_path(file.as_str())?;
         let contents = to_string(verse).map_err(|err| Error::new(ErrorKind::InvalidData, err))?;
         write(&path, &contents)?;
+        verse.changed = false;
     }
     let contents = to_string(nv).map_err(|err| Error::new(ErrorKind::InvalidData, err))?;
     write(&path, &contents)?;
