@@ -137,7 +137,7 @@ fn confirm_edit(nv: &mut Narraverse) {
     if !nv.modals.artifact_edit_modal.artifact_name_valid {
         return;
     }
-    let verse = nv.verses.current_verse_kv_mut();
+    let mut verse = nv.verses.current_verse_kv_mut();
     match nv.modals.artifact_edit_modal.mode {
         ArtifactEditMode::New => {
             verse.1.artifacts.insert(
@@ -163,7 +163,8 @@ fn confirm_edit(nv: &mut Narraverse) {
             nv.state = NarraverseState::ArtifactPick;
         }
     }
-    if let Err(err) = save_verse(&verse.1, format!("verse-{}", verse.0).as_str()) {
+    verse.1.changed = true;
+    if let Err(err) = save_verse(&mut verse.1, format!("verse-{}", verse.0).as_str()) {
         nv.send_error(
             format!("Artifact edited, but won't save:\n{}", err),
             NarraverseState::ArtifactPick,

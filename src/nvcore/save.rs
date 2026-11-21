@@ -33,6 +33,9 @@ pub fn save_verses(nv: &mut NarraverseVerses) -> Result<()> {
         ));
     }
     for (verse, file) in nv.verses.values().zip(nv.verse_files.values()) {
+        if !verse.changed {
+            continue;
+        }
         let path = save_path(file.as_str())?;
         let contents = to_string(verse).map_err(|err| Error::new(ErrorKind::InvalidData, err))?;
         write(&path, &contents)?;
@@ -42,13 +45,14 @@ pub fn save_verses(nv: &mut NarraverseVerses) -> Result<()> {
     Ok(())
 }
 
-pub fn save_verse(verse: &Verse, file: &str) -> Result<()> {
+pub fn save_verse(verse: &mut Verse, file: &str) -> Result<()> {
     let path = save_path(file)?;
     if let Some(parent) = path.parent() {
         create_dir_all(parent)?;
     }
     let contents = to_string(verse).map_err(|err| Error::new(ErrorKind::InvalidData, err))?;
     write(&path, &contents)?;
+    verse.changed = false;
     Ok(())
 }
 

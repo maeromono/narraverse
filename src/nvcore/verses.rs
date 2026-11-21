@@ -56,6 +56,8 @@ pub struct Verse {
     pub narratives: IndexMap<Uuid, Narrative>,
     pub entities: IndexMap<Uuid, Entity>,
     pub artifacts: IndexMap<Uuid, Artifact>,
+    #[serde(skip)]
+    pub changed: bool
 }
 
 #[derive(Clone, Serialize, Deserialize)]

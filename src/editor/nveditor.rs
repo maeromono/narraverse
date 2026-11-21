@@ -347,7 +347,8 @@ fn save_buffer(nv: &mut Narraverse) {
         nv.send_error(message, return_state);
         return;
     }
-    if let Err(err) = save_verse(&verse.1, format!("verse-{}", verse.0).as_str()) {
+    verse.1.changed = true;
+    if let Err(err) = save_verse(&mut verse.1, format!("verse-{}", verse.0).as_str()) {
         nv.send_error(
             format!("Cannot perform the save:\n{}", err),
             NarraverseState::Editor,

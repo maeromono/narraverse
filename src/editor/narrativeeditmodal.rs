@@ -182,7 +182,7 @@ fn confirm_edit(nv: &mut Narraverse) {
     {
         return;
     }
-    let verse = nv.verses.current_verse_kv_mut();
+    let mut verse = nv.verses.current_verse_kv_mut();
     let sum = nv
         .modals
         .narrative_edit_modal
@@ -257,7 +257,8 @@ fn confirm_edit(nv: &mut Narraverse) {
         .1
         .narratives
         .sort_by(|_, narr1, _, narr2| narr1.date.cmp(&narr2.date));
-    if let Err(err) = save_verse(&verse.1, format!("verse-{}", verse.0).as_str()) {
+    verse.1.changed = true;
+    if let Err(err) = save_verse(&mut verse.1, format!("verse-{}", verse.0).as_str()) {
         nv.send_error(
             format!("Narrative edited, but won't save:\n{}", err),
             NarraverseState::NarrativePick,
