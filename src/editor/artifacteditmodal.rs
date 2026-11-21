@@ -11,13 +11,10 @@ use uuid::Uuid;
 use crate::{
     nvcore::{
         narraverse::{Narraverse, NarraverseState},
-        save::save_verse,
         verses::{Artifact, ArtifactType, NarraverseVerses},
     },
     utils::{
-        cacheutils::rebuild_art_list_cache,
-        decosutils::{center_area, field_layout, fields_responsive, focus_highlight},
-        textareautils::validate_length,
+        cacheutils::rebuild_art_list_cache, decosutils::{center_area, field_layout, fields_responsive, focus_highlight}, nvutils::save_whole_verse, textareautils::validate_length
     },
 };
 
@@ -137,7 +134,7 @@ fn confirm_edit(nv: &mut Narraverse) {
     if !nv.modals.artifact_edit_modal.artifact_name_valid {
         return;
     }
-    let mut verse = nv.verses.current_verse_kv_mut();
+    let verse = nv.verses.current_verse_kv_mut();
     match nv.modals.artifact_edit_modal.mode {
         ArtifactEditMode::New => {
             verse.1.artifacts.insert(
@@ -163,8 +160,7 @@ fn confirm_edit(nv: &mut Narraverse) {
             nv.state = NarraverseState::ArtifactPick;
         }
     }
-    verse.1.changed = true;
-    if let Err(err) = save_verse(&mut verse.1, format!("verse-{}", verse.0).as_str()) {
+    if let Err(err) = save_whole_verse(verse) {
         nv.send_error(
             format!("Artifact edited, but won't save:\n{}", err),
             NarraverseState::ArtifactPick,

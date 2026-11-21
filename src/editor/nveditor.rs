@@ -13,9 +13,8 @@ use uuid::Uuid;
 
 use crate::{editor::bindhelp::BindhelpMode, nvcore::{
     narraverse::{Narraverse, NarraverseState},
-    save::save_verse,
     verses::{NarraverseVerses, Verse},
-}, utils::{nvutils::enter_bindhelp, textareautils::searchbox_style}};
+}, utils::{nvutils::{enter_bindhelp, save_whole_verse}, textareautils::searchbox_style}};
 
 pub struct NarraverseEditor {
     mode: EditorMode,
@@ -347,8 +346,7 @@ fn save_buffer(nv: &mut Narraverse) {
         nv.send_error(message, return_state);
         return;
     }
-    verse.1.changed = true;
-    if let Err(err) = save_verse(&mut verse.1, format!("verse-{}", verse.0).as_str()) {
+    if let Err(err) = save_whole_verse(verse) {
         nv.send_error(
             format!("Cannot perform the save:\n{}", err),
             NarraverseState::Editor,
