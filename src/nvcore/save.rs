@@ -15,34 +15,30 @@ fn save_path(file: &str) -> Result<PathBuf> {
     Ok(dirs.data_dir().join(format!("{}.toml", file)))
 }
 
-pub fn save_verses(nv: &mut NarraverseVerses) -> Result<()> {
+pub fn save_manifest(nv: &mut NarraverseVerses) -> Result<()> {
     let path = save_path("narraverse")?;
     if let Some(parent) = path.parent() {
         create_dir_all(parent)?;
     }
-    nv.refresh_verse_files();
-    let verses_len = nv.verses.len();
-    let files_len = nv.verse_files.len();
-    if verses_len != files_len {
-        return Err(Error::new(
-            ErrorKind::InvalidData,
-            format!(
-                "Mismatched lengths of verses ({}) and verse files ({}) vecs. This is not supposed to happen.",
-                verses_len, files_len
-            ),
-        ));
-    }
-    for (verse, file) in nv.verses.values_mut().zip(nv.verse_files.values()) {
+    let contents = to_string(nv).map_err(|err| Error::new(ErrorKind::InvalidData, err))?;
+    write(&path, &contents)?;
+    Ok(())
+}
+
+pub fn save_verses(nv: &mut NarraverseVerses) -> Result<()> {
+    nv.verse_files.clear();
+    for (uuid, verse) in &mut nv.verses {
+        let filename = format!("verse-{}", uuid);
+        nv.verse_files.insert(*uuid, filename.clone());
         if !verse.changed {
             continue;
         }
-        let path = save_path(file.as_str())?;
-        let contents = to_string(verse).map_err(|err| Error::new(ErrorKind::InvalidData, err))?;
+        let path = save_path(filename.as_str())?;
+        let contents = to_string(&verse).map_err(|err| Error::new(ErrorKind::InvalidData, err))?;
         write(&path, &contents)?;
         verse.changed = false;
     }
-    let contents = to_string(nv).map_err(|err| Error::new(ErrorKind::InvalidData, err))?;
-    write(&path, &contents)?;
+    save_manifest(nv)?;
     Ok(())
 }
 

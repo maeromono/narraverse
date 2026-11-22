@@ -13,14 +13,6 @@ pub struct NarraverseVerses {
 }
 
 impl NarraverseVerses {
-    pub fn refresh_verse_files(&mut self) {
-        let mut files_list: IndexMap<Uuid, String> = IndexMap::default();
-        for verse in &self.verses {
-            files_list.insert(*verse.0, format!("verse-{}", verse.0));
-        }
-        self.verse_files = files_list;
-    }
-
     pub fn current_verse(&self) -> &Verse {
         self.verses
             .get(&self.verse_uuid)

@@ -107,6 +107,7 @@ fn confirm_delete(nv: &mut Narraverse) {
             nv.verses.verses.shift_remove(&nv.verses.verse_uuid);
             nv.list_states.verse_pick_liststate.select(None);
             rebuild_verse_list_cache(&mut nv.cache, &nv.verses);
+            nv.verses.verse_uuid = Uuid::default();
             nv.state = NarraverseState::VersePick;
             nv.send_footer_notification(String::from("Verse deleted"));
         }
