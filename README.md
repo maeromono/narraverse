@@ -1,7 +1,7 @@
-<strong>Another save file breaking change possible in the next update. Make regular backups!</strong>
+<strong>Another save file breaking change possible in v0.5.0. A migration guide will be written when it's released but it's still better to make regular backups!</strong>
 # narraverse
 
-narraverse is an experimental, plain text no-BS worldbuilding TUI.
+narraverse is a worldbuilding TUI, premise of which is no-bullshit, plain text, "convenient" world creation.
 
 ## Features.
 - Single binary, no extra runtime dependencies
@@ -23,8 +23,6 @@ cargo install --locked narraverse
 
 ### From source
 ```bash
-git clone https://codeberg.org/maeromono/narraverse && cd narraverse && cargo install --path .
-or
 cargo install --git https://codeberg.org/maeromono/narraverse --locked
 ```
 
@@ -46,6 +44,7 @@ default_written_by = "Me"
 - [X] Entity creation & modification
 - [X] Artifacts creation & modification
 - [X] Editor improvements (multibuffers, search, etc)
+- [ ] Chapters & acts for narratives
 - [ ] Referencing entities & artifacts from narrative
 - [ ] Entity relationships
 - [ ] Extra fields for entities
