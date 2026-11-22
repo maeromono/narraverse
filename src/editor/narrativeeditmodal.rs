@@ -15,7 +15,7 @@ use crate::{
         verses::{Narrative, NarraverseVerses},
     },
     utils::{
-        cacheutils::rebuild_narr_list_cache, decosutils::{center_area, field_layout, fields_responsive, focus_highlight}, nvutils::save_whole_verse, textareautils::{validate_date, validate_length}
+        cacheutils::rebuild_narr_list_cache, decosutils::{center_area, field_layout, fields_responsive, focus_highlight}, nvutils::save_current_verse, textareautils::{validate_date, validate_length}
     },
 };
 
@@ -254,7 +254,7 @@ fn confirm_edit(nv: &mut Narraverse) {
         .1
         .narratives
         .sort_by(|_, narr1, _, narr2| narr1.date.cmp(&narr2.date));
-    if let Err(err) = save_whole_verse(verse) {
+    if let Err(err) = save_current_verse(&mut nv.verses) {
         nv.send_error(
             format!("Narrative edited, but won't save:\n{}", err),
             NarraverseState::NarrativePick,
