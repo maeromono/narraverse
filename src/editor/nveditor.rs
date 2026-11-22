@@ -11,10 +11,17 @@ use ratatui::{
 use ratatui_textarea::{CursorMove, TextArea, WrapMode};
 use uuid::Uuid;
 
-use crate::{editor::bindhelp::BindhelpMode, nvcore::{
-    narraverse::{Narraverse, NarraverseState},
-    verses::{NarraverseVerses, Verse},
-}, utils::{nvutils::{enter_bindhelp, save_current_verse}, textareautils::searchbox_style}};
+use crate::{
+    editor::bindhelp::BindhelpMode,
+    nvcore::{
+        narraverse::{Narraverse, NarraverseState},
+        verses::{NarraverseVerses, Verse},
+    },
+    utils::{
+        nvutils::{enter_bindhelp, save_current_verse},
+        textareautils::searchbox_style,
+    },
+};
 
 pub struct NarraverseEditor {
     mode: EditorMode,
@@ -194,7 +201,8 @@ pub fn render_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     );
     frame.render_widget(&buffer.textarea, editor_layout[1]);
     if search_open {
-        let search_layout = Layout::horizontal([Constraint::Length(8), Constraint::Fill(1)]).split(editor_layout[3]);
+        let search_layout = Layout::horizontal([Constraint::Length(8), Constraint::Fill(1)])
+            .split(editor_layout[3]);
         frame.render_widget(Paragraph::new("Search:").bold(), search_layout[0]);
         frame.render_widget(&nv.editor.searching_textarea, search_layout[1]);
     }

@@ -49,7 +49,7 @@ pub struct Verse {
     pub entities: IndexMap<Uuid, Entity>,
     pub artifacts: IndexMap<Uuid, Artifact>,
     #[serde(skip)]
-    pub changed: bool
+    pub changed: bool,
 }
 
 #[derive(Clone, Serialize, Deserialize)]

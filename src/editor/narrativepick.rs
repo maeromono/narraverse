@@ -8,11 +8,18 @@ use uuid::Uuid;
 
 use crate::{
     editor::{
-        bindhelp::BindhelpMode, delete::DeletionTarget, narrativeeditmodal::NarrativeEditModal, nveditor::EditorTarget
+        bindhelp::BindhelpMode, delete::DeletionTarget, narrativeeditmodal::NarrativeEditModal,
+        nveditor::EditorTarget,
     },
     nvcore::{
-        narraverse::{Narraverse, NarraverseState}, verses::Verse
-    }, utils::{decosutils::{block_with_title, center_area, list_highlight}, nvutils::enter_bindhelp, pickerutils::{handle_list_keys, render_list_empty_state}},
+        narraverse::{Narraverse, NarraverseState},
+        verses::Verse,
+    },
+    utils::{
+        decosutils::{block_with_title, center_area, list_highlight},
+        nvutils::enter_bindhelp,
+        pickerutils::{handle_list_keys, render_list_empty_state},
+    },
 };
 
 pub fn render_narrative_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
@@ -55,7 +62,8 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             nv.state = NarraverseState::Editor;
         }
         KeyCode::Char('n') => {
-            nv.modals.narrative_edit_modal = NarrativeEditModal::default().prefill_writtenby_field(nv);
+            nv.modals.narrative_edit_modal =
+                NarrativeEditModal::default().prefill_writtenby_field(nv);
             nv.state = NarraverseState::NarrativeModal;
         }
         KeyCode::Char('e') => {

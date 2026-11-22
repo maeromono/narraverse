@@ -15,7 +15,10 @@ use crate::{
         verses::{Narrative, NarraverseVerses},
     },
     utils::{
-        cacheutils::rebuild_narr_list_cache, decosutils::{center_area, field_layout, fields_responsive, focus_highlight}, nvutils::save_current_verse, textareautils::{validate_date, validate_length}
+        cacheutils::rebuild_narr_list_cache,
+        decosutils::{center_area, field_layout, fields_responsive, focus_highlight},
+        nvutils::save_current_verse,
+        textareautils::{validate_date, validate_length},
     },
 };
 

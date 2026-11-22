@@ -1,9 +1,5 @@
 use crossterm::event::{KeyCode, KeyEvent};
-use ratatui::{
-    Frame,
-    layout::Rect,
-    widgets::List,
-};
+use ratatui::{Frame, layout::Rect, widgets::List};
 use uuid::Uuid;
 
 use crate::{
@@ -15,7 +11,8 @@ use crate::{
     utils::{
         cacheutils::rebuild_art_list_cache,
         decosutils::{block_with_title, center_area, list_highlight},
-        nvutils::enter_bindhelp, pickerutils::{handle_list_keys, render_list_empty_state},
+        nvutils::enter_bindhelp,
+        pickerutils::{handle_list_keys, render_list_empty_state},
     },
 };
 

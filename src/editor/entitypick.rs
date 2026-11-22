@@ -1,14 +1,19 @@
 use crossterm::event::{KeyCode, KeyEvent};
-use ratatui::{
-    Frame,
-    layout::Rect,
-    widgets::List,
-};
+use ratatui::{Frame, layout::Rect, widgets::List};
 use uuid::Uuid;
 
 use crate::{
-    editor::{bindhelp::BindhelpMode, delete::DeletionTarget, entityedit::EntityEditModal, nveditor::EditorTarget},
-    nvcore::narraverse::{Narraverse, NarraverseState}, utils::{cacheutils::rebuild_ent_list_cache, decosutils::{block_with_title, center_area, list_highlight}, nvutils::enter_bindhelp, pickerutils::{handle_list_keys, render_list_empty_state}},
+    editor::{
+        bindhelp::BindhelpMode, delete::DeletionTarget, entityedit::EntityEditModal,
+        nveditor::EditorTarget,
+    },
+    nvcore::narraverse::{Narraverse, NarraverseState},
+    utils::{
+        cacheutils::rebuild_ent_list_cache,
+        decosutils::{block_with_title, center_area, list_highlight},
+        nvutils::enter_bindhelp,
+        pickerutils::{handle_list_keys, render_list_empty_state},
+    },
 };
 
 pub fn render_entity_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
@@ -93,11 +98,17 @@ fn selected_ent_uuid(nv: &Narraverse) -> Option<Uuid> {
 
 fn move_entity(nv: &mut Narraverse, ind: usize, up: bool) {
     let verse = nv.verses.current_verse_mut();
-    let target_ind = if up { ind.checked_sub(1) } else { ind.checked_add(1) };
+    let target_ind = if up {
+        ind.checked_sub(1)
+    } else {
+        ind.checked_add(1)
+    };
     let Some(target) = target_ind.filter(|&t| t < verse.entities.len()) else {
         return;
     };
     verse.entities.swap_indices(ind, target);
     rebuild_ent_list_cache(&mut nv.cache, &nv.verses);
-    nv.list_states.verse_entity_pick_liststate.select(Some(target));
-}   
+    nv.list_states
+        .verse_entity_pick_liststate
+        .select(Some(target));
+}

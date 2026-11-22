@@ -6,10 +6,16 @@ use ratatui::{
 };
 use ratatui_textarea::TextArea;
 
-use crate::{nvcore::{
-    config::{NarraverseConfig, save_config},
-    narraverse::{Narraverse, NarraverseState},
-}, utils::{decosutils::{center_area, field_layout, fields_responsive}, textareautils::validate_length}};
+use crate::{
+    nvcore::{
+        config::{NarraverseConfig, save_config},
+        narraverse::{Narraverse, NarraverseState},
+    },
+    utils::{
+        decosutils::{center_area, field_layout, fields_responsive},
+        textareautils::validate_length,
+    },
+};
 
 pub struct ConfigEditModal {
     writtenby_prefill_textarea: TextArea<'static>,
@@ -40,10 +46,7 @@ pub fn render_config_edit_modal(modal: &ConfigEditModal, frame: &mut Frame, area
     let field_layout = field_layout(direction);
     let title_field_layout = field_layout.split(cem_layout[0]);
     frame.render_widget(Paragraph::new("'Written by' name"), title_field_layout[0]);
-    frame.render_widget(
-        &modal.writtenby_prefill_textarea,
-        title_field_layout[1],
-    );
+    frame.render_widget(&modal.writtenby_prefill_textarea, title_field_layout[1]);
 }
 
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
@@ -56,7 +59,8 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
         _ => {
             let textarea = &mut nv.modals.config_edit_modal.writtenby_prefill_textarea;
             if textarea.input(*key) {
-                nv.modals.config_edit_modal.writtenby_prefill_valid = validate_length(textarea, 1, 100);
+                nv.modals.config_edit_modal.writtenby_prefill_valid =
+                    validate_length(textarea, 1, 100);
             }
         }
     }
@@ -66,8 +70,12 @@ fn confirm_edit(nv: &mut Narraverse) {
     if !nv.modals.config_edit_modal.writtenby_prefill_valid {
         return;
     }
-    nv.config.default_written_by =
-        nv.modals.config_edit_modal.writtenby_prefill_textarea.lines()[0].clone();
+    nv.config.default_written_by = nv
+        .modals
+        .config_edit_modal
+        .writtenby_prefill_textarea
+        .lines()[0]
+        .clone();
     if let Err(err) = save_config(&nv.config) {
         nv.send_error(
             format!("Config edited, but won't save:\n{}", err),

@@ -7,11 +7,18 @@ use ratatui::{
 use ratatui_textarea::TextArea;
 use uuid::Uuid;
 
-use crate::{nvcore::{
-    narraverse::{Narraverse, NarraverseState},
-    save::{save_verse, save_verses},
-    verses::{NarraverseVerses, Verse},
-}, utils::{cacheutils::rebuild_verse_list_cache, decosutils::{center_area, field_layout, fields_responsive}, textareautils::validate_length}};
+use crate::{
+    nvcore::{
+        narraverse::{Narraverse, NarraverseState},
+        save::{save_verse, save_verses},
+        verses::{NarraverseVerses, Verse},
+    },
+    utils::{
+        cacheutils::rebuild_verse_list_cache,
+        decosutils::{center_area, field_layout, fields_responsive},
+        textareautils::validate_length,
+    },
+};
 
 pub struct VerseEdit {
     mode: VerseEditMode,
@@ -52,10 +59,7 @@ pub fn render_verse_edit(modal: &VerseEdit, frame: &mut Frame, area: Rect) {
     let field_layout = field_layout(direction);
     let name_field_layout = field_layout.split(ve_layout[0]);
     frame.render_widget(Paragraph::new("Verse name"), name_field_layout[0]);
-    frame.render_widget(
-        &modal.verse_name_textarea,
-        name_field_layout[1],
-    );
+    frame.render_widget(&modal.verse_name_textarea, name_field_layout[1]);
 }
 
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {

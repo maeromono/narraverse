@@ -1,9 +1,5 @@
 use crossterm::event::{KeyCode, KeyEvent};
-use ratatui::{
-    Frame,
-    layout::Rect,
-    widgets::List,
-};
+use ratatui::{Frame, layout::Rect, widgets::List};
 use uuid::Uuid;
 
 use crate::{
@@ -11,7 +7,12 @@ use crate::{
     nvcore::{
         narraverse::{Narraverse, NarraverseState},
         verses::NarraverseVerses,
-    }, utils::{cacheutils::{rebuild_art_list_cache, rebuild_ent_list_cache, rebuild_narr_list_cache}, decosutils::{block_with_title, center_area, list_highlight}, pickerutils::{render_list_empty_state, handle_list_keys}},
+    },
+    utils::{
+        cacheutils::{rebuild_art_list_cache, rebuild_ent_list_cache, rebuild_narr_list_cache},
+        decosutils::{block_with_title, center_area, list_highlight},
+        pickerutils::{handle_list_keys, render_list_empty_state},
+    },
 };
 
 pub fn render_worldpick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {

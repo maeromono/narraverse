@@ -6,9 +6,7 @@ use crate::{
 pub fn rebuild_verse_list_cache(cache: &mut NarraverseCaches, verses: &NarraverseVerses) {
     cache.verse_list_cache.clear();
     for verse in verses.verses.values() {
-        cache
-            .verse_list_cache
-            .push(verse.name.to_string());
+        cache.verse_list_cache.push(verse.name.to_string());
     }
 }
 

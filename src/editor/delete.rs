@@ -7,10 +7,19 @@ use ratatui::{
 };
 use uuid::Uuid;
 
-use crate::{nvcore::{
-    narraverse::{Narraverse, NarraverseState},
-    save::save_verses,
-}, utils::{cacheutils::{rebuild_art_list_cache, rebuild_ent_list_cache, rebuild_narr_list_cache, rebuild_verse_list_cache}, decosutils::center_area}};
+use crate::{
+    nvcore::{
+        narraverse::{Narraverse, NarraverseState},
+        save::save_verses,
+    },
+    utils::{
+        cacheutils::{
+            rebuild_art_list_cache, rebuild_ent_list_cache, rebuild_narr_list_cache,
+            rebuild_verse_list_cache,
+        },
+        decosutils::center_area,
+    },
+};
 
 #[derive(PartialEq, Eq)]
 pub enum DeletionTarget {

@@ -3,7 +3,11 @@ use ratatui::{Frame, layout::Rect, widgets::List};
 
 use crate::{
     editor::{delete::DeletionTarget, verseedit::VerseEdit},
-    nvcore::narraverse::{Narraverse, NarraverseState}, utils::{decosutils::{block_with_title, center_area, list_highlight}, pickerutils::handle_list_keys},
+    nvcore::narraverse::{Narraverse, NarraverseState},
+    utils::{
+        decosutils::{block_with_title, center_area, list_highlight},
+        pickerutils::handle_list_keys,
+    },
 };
 
 pub fn render_area_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
