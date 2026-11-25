@@ -23,13 +23,13 @@ cargo install --locked narraverse
 
 ### From source
 ```bash
-cargo install --git https://codeberg.org/maeromono/narraverse --locked
+cargo install --git https://codeberg.org/maero/narraverse --locked
 ```
 
 ## Configuration.
 Press 'c' at the verse pick screen to enter config edit modal, or edit the config file located at:
 - "~/.config/narraverse/config.toml" on Linux,
-- "%LOCALAPPDATA%\\maeromono\\narraverse\\config\\config.toml" on Windows.
+- "%LOCALAPPDATA%\\maero\\narraverse\\config\\config.toml" on Windows.
 
 ### Config options:
 - 'Written by' name / default_written_by (string): the default name to use for prefilling the "Written by" field on narrative creation.
@@ -51,4 +51,4 @@ default_written_by = "Me"
 - [ ] Verse export (MD or EPUB)
 
 ## License.
-GPL-3.0 only. Read more in [the license file](https://codeberg.org/maeromono/narraverse/src/branch/main/LICENSE.md).
+GPL-3.0 only. Read more in [the license file](https://codeberg.org/maero/narraverse/src/branch/main/LICENSE.md).

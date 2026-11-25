@@ -21,7 +21,7 @@ impl Default for NarraverseConfig {
 }
 
 fn save_path() -> Result<PathBuf> {
-    let dirs = ProjectDirs::from("sh.surge", "maeromono", "narraverse")
+    let dirs = ProjectDirs::from("sh.surge", "maero", "narraverse")
         .ok_or_else(|| Error::new(ErrorKind::NotFound, "cannot locate data directory"))?;
     Ok(dirs.config_local_dir().join("config.toml"))
 }
