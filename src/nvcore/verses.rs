@@ -25,6 +25,12 @@ impl NarraverseVerses {
             .expect("Invalid Verse UUID")
     }
 
+    pub fn current_verse_kv(&self) -> (&Uuid, &Verse) {
+        self.verses
+            .get_key_value(&self.verse_uuid)
+            .expect("Invalid Verse UUID")
+    }
+
     pub fn current_verse_kv_mut(&mut self) -> (&Uuid, &mut Verse) {
         self.verses
             .get_key_value_mut(&self.verse_uuid)

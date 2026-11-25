@@ -17,8 +17,8 @@ pub fn enter_bindhelp(nv: &mut Narraverse, mode: BindhelpMode) {
 }
 
 pub fn save_current_verse(verses: &mut NarraverseVerses) -> Result<()> {
-    let verse = verses.current_verse_kv_mut();
-    save_verse(verse.1, format!("verse-{}", verse.0).as_str())?;
+    let verse = verses.current_verse_kv();
+    save_verse(verse)?;
     save_manifest(verses)?;
     Ok(())
 }

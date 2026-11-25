@@ -41,12 +41,13 @@ pub fn save_verses(nv: &mut NarraverseVerses) -> Result<()> {
     Ok(())
 }
 
-pub fn save_verse(verse: &mut Verse, file: &str) -> Result<()> {
-    let path = save_path(file)?;
+pub fn save_verse(verse: (&Uuid, &Verse)) -> Result<()> {
+    let filename = format!("verse-{}", verse.0);
+    let path = save_path(filename.as_str())?;
     if let Some(parent) = path.parent() {
         create_dir_all(parent)?;
     }
-    let contents = to_string(verse).map_err(|err| Error::new(ErrorKind::InvalidData, err))?;
+    let contents = to_string(verse.1).map_err(|err| Error::new(ErrorKind::InvalidData, err))?;
     write(&path, &contents)?;
     Ok(())
 }

@@ -110,7 +110,7 @@ fn confirm_edit(nv: &mut Narraverse) {
             };
             verse.name = nv.modals.verse_edit_modal.verse_name_textarea.lines()[0].clone();
             nv.state = NarraverseState::VersePick;
-            if let Err(err) = save_verse(verse, format!("verse-{}", uuid).as_str()) {
+            if let Err(err) = save_verse((&uuid, verse)) {
                 nv.send_error(
                     format!("Cannot save the Verse:\n{}", err),
                     NarraverseState::VersePick,
