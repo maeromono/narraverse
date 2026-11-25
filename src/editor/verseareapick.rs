@@ -36,10 +36,6 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
         KeyCode::Char('q') => nv.state = NarraverseState::Quit,
         KeyCode::Esc => {
-            if nv.editor.unsaved_changes() {
-                nv.send_error(String::from("There're unsaved changes in one or more buffers.\nSave or discard them before you can exit."), NarraverseState::VerseAreaPick);
-                return;
-            }
             // cross verse buffers probably won't be possible because of how narraverse is built.
             nv.editor.purge_all_buffers();
             nv.list_states.verse_narrative_pick_liststate.select(None);

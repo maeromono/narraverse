@@ -273,12 +273,21 @@ pub fn handle_searching_keys(nv: &mut Narraverse, key: &KeyEvent) {
 }
 
 pub fn handle_editing_keys(nv: &mut Narraverse, key: &KeyEvent) {
-    if (key.code, key.modifiers) == (KeyCode::Char('x'), KeyModifiers::ALT) {
-        if nv.editor.remove_current_buffer() && nv.editor.buffers.is_empty() {
-            nv.state = NarraverseState::VerseAreaPick;
+    match (key.code, key.modifiers) {
+        (KeyCode::Char('x'), KeyModifiers::ALT) => {
+            if nv.editor.remove_current_buffer() && nv.editor.buffers.is_empty() {
+                nv.state = NarraverseState::VerseAreaPick;
+            }
+            return;
         }
-        return;
-    }
+        (KeyCode::Esc, KeyModifiers::NONE) => {
+            if nv.editor.unsaved_changes() {
+                nv.send_error(String::from("There're unsaved changes in one or more buffers.\nSave or discard them before you can exit."), NarraverseState::Editor);
+                return;
+            }
+        }
+        _ => {}
+    };
     let Some((_, buffer)) = nv.editor.buffers.get_index_mut(nv.editor.buffer_index) else {
         nv.send_error(
             String::from("Invalid buffer"),
