@@ -52,7 +52,7 @@ pub fn save_verse(verse: (&Uuid, &Verse)) -> Result<()> {
     Ok(())
 }
 
-fn write(path: &Path, contents: &str) -> Result<()> {
+pub fn write(path: &Path, contents: &str) -> Result<()> {
     if let Ok(existing) = read_to_string(path) {
         if existing == contents {
             return Ok(());

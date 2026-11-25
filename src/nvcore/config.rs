@@ -1,11 +1,13 @@
 use directories::ProjectDirs;
 use serde::{Deserialize, Serialize};
 use std::{
-    fs::{File, create_dir_all, read_to_string, rename},
-    io::{Error, ErrorKind, Result, Write},
+    fs::{create_dir_all, read_to_string, rename},
+    io::{Error, ErrorKind, Result},
     path::PathBuf,
 };
 use toml::{from_str, to_string};
+
+use crate::nvcore::save::write;
 
 #[derive(Serialize, Deserialize)]
 pub struct NarraverseConfig {
@@ -32,11 +34,7 @@ pub fn save_config(config: &NarraverseConfig) -> Result<()> {
         create_dir_all(parent)?;
     }
     let contents = to_string(config).map_err(|err| Error::new(ErrorKind::InvalidData, err))?;
-    let tmp_path = path.with_extension("tmp");
-    let mut tmp = File::create(&tmp_path)?;
-    tmp.write_all(contents.as_bytes())?;
-    tmp.sync_all()?;
-    rename(&tmp_path, &path)?;
+    write(&path, &contents)?;
     Ok(())
 }
 
