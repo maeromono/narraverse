@@ -30,13 +30,9 @@ pub fn save_verses(nv: &mut NarraverseVerses) -> Result<()> {
     for (uuid, verse) in &mut nv.verses {
         let filename = format!("verse-{}", uuid);
         nv.verse_files.insert(*uuid, filename.clone());
-        if !verse.changed {
-            continue;
-        }
         let path = save_path(filename.as_str())?;
         let contents = to_string(&verse).map_err(|err| Error::new(ErrorKind::InvalidData, err))?;
         write(&path, &contents)?;
-        verse.changed = false;
     }
     save_manifest(nv)?;
     Ok(())
@@ -49,7 +45,6 @@ pub fn save_verse(verse: &mut Verse, file: &str) -> Result<()> {
     }
     let contents = to_string(verse).map_err(|err| Error::new(ErrorKind::InvalidData, err))?;
     write(&path, &contents)?;
-    verse.changed = false;
     Ok(())
 }
 
