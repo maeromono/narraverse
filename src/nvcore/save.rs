@@ -84,10 +84,6 @@ pub fn load_verses() -> Result<(NarraverseVerses, Option<Vec<String>>)> {
     }?;
     // vvv temporary. i'll extract it to another function later
     let mut manifest_modified = false;
-    if !nv.verse_files.contains_key(&nv.verse_uuid) {
-        nv.verse_uuid = Uuid::default();
-        manifest_modified = true;
-    }
     let mut errors: Vec<String> = vec![];
     for file in nv.verse_files.clone() {
         let path = save_path(&file.1)?;
@@ -115,6 +111,10 @@ pub fn load_verses() -> Result<(NarraverseVerses, Option<Vec<String>>)> {
             }
         };
         nv.verses.insert(file.0, verse_itself);
+    }
+    if !nv.verse_files.contains_key(&nv.verse_uuid) {
+        nv.verse_uuid = Uuid::default();
+        manifest_modified = true;
     }
     if manifest_modified {
         save_manifest(&mut nv)?;
