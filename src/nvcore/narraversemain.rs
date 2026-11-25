@@ -9,7 +9,7 @@ use crate::nvcore::narraverse::{Narraverse, NarraverseState};
 pub fn render_header(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     let header_layout =
         Layout::horizontal([Constraint::Length(20), Constraint::Fill(1)]).split(area);
-    let name_ver = Paragraph::new("narraverse v0.4.5");
+    let name_ver = Paragraph::new(format!("narraverse v{}", env!("CARGO_PKG_VERSION")));
     let right_thing = Paragraph::new(match nv.state {
         NarraverseState::VersePick | NarraverseState::ConfigModal => "maero.surge.sh",
         _ => &nv.cached_verse_name,
@@ -33,6 +33,7 @@ pub fn render_footer(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
         NarraverseState::Editor => "Esc back, Alt+x close, Alt+w save, F1 binds",
         NarraverseState::VerseDelete => "Esc cancel, y confirm",
         NarraverseState::BindHelp => "Esc back",
+        NarraverseState::Error => "Esc go back",
         _ => "",
     };
     let bind_help = Paragraph::new(bind_help_string).centered();
