@@ -124,7 +124,7 @@ impl Narraverse {
             NarraverseState::VerseDelete => render_delete_screen(self, frame, main_layout[1]),
             NarraverseState::BindHelp => render_bindhelp(self, frame, main_layout[1]),
             NarraverseState::Error => render_error_screen(self, frame, main_layout[1]),
-            _ => todo!(),
+            _ => unreachable!(),
         }
         render_header(self, frame, main_layout[0]);
         if let Some(message) = self.footer_notification.clone() {

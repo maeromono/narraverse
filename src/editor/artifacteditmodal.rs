@@ -91,7 +91,7 @@ pub fn render_artifact_edit(modal: &ArtifactEditModal, frame: &mut Frame, area: 
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
         KeyCode::Esc => {
-            nv.state = NarraverseState::EntityPick;
+            nv.state = NarraverseState::ArtifactPick;
             reset_textareas(&mut nv.modals.artifact_edit_modal);
             return;
         }
