@@ -117,7 +117,12 @@ pub fn load_verses() -> Result<(NarraverseVerses, Option<Vec<String>>)> {
         manifest_modified = true;
     }
     if manifest_modified {
-        save_manifest(&mut nv)?;
+        if let Err(err) = save_manifest(&mut nv) {
+            errors.push(format!(
+                "Cleanup finished but could not save manifest. Details:\n{}",
+                err
+            ));
+        }
     }
     Ok((
         nv,
