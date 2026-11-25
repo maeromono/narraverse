@@ -93,7 +93,12 @@ pub fn load_verses() -> Result<(NarraverseVerses, Option<Vec<String>>)> {
         let path = save_path(&file.1)?;
         let contents = match read_to_string(&path) {
             Ok(contents) => contents,
-            Err(err) if err.kind() == ErrorKind::NotFound => continue,
+            Err(err) if err.kind() == ErrorKind::NotFound => {
+                nv.verse_files.shift_remove(&file.0);
+                errors.push(format!("Verse {} is missing from disk; skipped.", file.0));
+                manifest_modified = true;
+                continue;
+            }
             Err(err) => return Err(err),
         };
         let verse_itself: Verse = match from_str(&contents) {
