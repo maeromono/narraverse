@@ -103,7 +103,7 @@ fn confirm_edit(nv: &mut Narraverse) {
         VerseEditMode::Existing(uuid) => {
             let Some(verse) = nv.verses.verses.get_mut(&uuid) else {
                 nv.send_error(
-                    format!("No Verse with this UUID ({}) exists.", nv.verses.verse_uuid),
+                    format!("No Verse with this UUID ({}) exists.", uuid),
                     NarraverseState::VersePick,
                 );
                 return;
@@ -112,7 +112,7 @@ fn confirm_edit(nv: &mut Narraverse) {
             nv.state = NarraverseState::VersePick;
             if let Err(err) = save_verse((&uuid, verse)) {
                 nv.send_error(
-                    format!("Cannot save the Verse:\n{}", err),
+                    format!("Cannot save Verse UUID {}:\n{}", uuid, err),
                     NarraverseState::VersePick,
                 );
             }
