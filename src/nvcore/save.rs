@@ -5,7 +5,9 @@ use std::{
 };
 
 use directories::ProjectDirs;
+use indexmap::IndexMap;
 use toml::{from_str, to_string};
+use uuid::Uuid;
 
 use crate::nvcore::verses::{NarraverseVerses, Verse};
 
@@ -26,14 +28,15 @@ pub fn save_manifest(nv: &mut NarraverseVerses) -> Result<()> {
 }
 
 pub fn save_verses(nv: &mut NarraverseVerses) -> Result<()> {
-    nv.verse_files.clear();
+    let mut verse_files: IndexMap<Uuid, String> = IndexMap::default();
     for (uuid, verse) in &mut nv.verses {
         let filename = format!("verse-{}", uuid);
-        nv.verse_files.insert(*uuid, filename.clone());
+        verse_files.insert(*uuid, filename.clone());
         let path = save_path(filename.as_str())?;
         let contents = to_string(&verse).map_err(|err| Error::new(ErrorKind::InvalidData, err))?;
         write(&path, &contents)?;
     }
+    nv.verse_files = verse_files;
     save_manifest(nv)?;
     Ok(())
 }
