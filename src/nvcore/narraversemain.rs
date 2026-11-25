@@ -33,7 +33,7 @@ pub fn render_footer(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
         NarraverseState::Editor => "Esc back, Alt+x close, Alt+w save, F1 binds",
         NarraverseState::VerseDelete => "Esc cancel, y confirm",
         NarraverseState::BindHelp => "Esc back",
-        NarraverseState::Error => "Esc go back",
+        NarraverseState::Error => "Esc back, j/k scroll",
         _ => "",
     };
     let bind_help = Paragraph::new(bind_help_string).centered();

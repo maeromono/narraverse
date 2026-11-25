@@ -65,11 +65,13 @@ fn write(path: &Path, contents: &str) -> Result<()> {
     Ok(())
 }
 
-pub fn load_verses() -> Result<NarraverseVerses> {
+pub fn load_verses() -> Result<(NarraverseVerses, Option<Vec<String>>)> {
     let path = save_path("narraverse")?;
     let contents = match read_to_string(&path) {
         Ok(contents) => contents,
-        Err(err) if err.kind() == ErrorKind::NotFound => return Ok(NarraverseVerses::default()),
+        Err(err) if err.kind() == ErrorKind::NotFound => {
+            return Ok((NarraverseVerses::default(), None));
+        }
         Err(err) => return Err(err),
     };
     let mut nv: NarraverseVerses = match from_str(&contents) {
@@ -79,8 +81,15 @@ pub fn load_verses() -> Result<NarraverseVerses> {
             Err(Error::new(ErrorKind::InvalidData, err))
         }
     }?;
-    for file in &nv.verse_files {
-        let path = save_path(file.1)?;
+    // vvv temporary. i'll extract it to another function later
+    let mut manifest_modified = false;
+    if !nv.verse_files.contains_key(&nv.verse_uuid) {
+        nv.verse_uuid = Uuid::default();
+        manifest_modified = true;
+    }
+    let mut errors: Vec<String> = vec![];
+    for file in nv.verse_files.clone() {
+        let path = save_path(&file.1)?;
         let contents = match read_to_string(&path) {
             Ok(contents) => contents,
             Err(err) if err.kind() == ErrorKind::NotFound => continue,
@@ -88,16 +97,28 @@ pub fn load_verses() -> Result<NarraverseVerses> {
         };
         let verse_itself: Verse = match from_str(&contents) {
             Ok(verse) => verse,
-            Err(_) => {
+            Err(err) => {
                 let _ = rename(&path, &path.with_extension("corrupt"));
+                nv.verse_files.shift_remove(&file.0);
+                errors.push(format!(
+                    "Verse {} contains invalid data; skipped. Details:\n{}\n",
+                    file.0, err
+                ));
+                manifest_modified = true;
                 continue;
             }
         };
-        nv.verses.insert(*file.0, verse_itself);
+        nv.verses.insert(file.0, verse_itself);
     }
-    let verses_len = nv.verses.len();
-    if verses_len != nv.verse_files.len() {
-        nv.verse_files.truncate(verses_len);
+    if manifest_modified {
+        save_manifest(&mut nv)?;
     }
-    Ok(nv)
+    Ok((
+        nv,
+        if errors.is_empty() {
+            None
+        } else {
+            Some(errors)
+        },
+    ))
 }

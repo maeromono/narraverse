@@ -45,6 +45,7 @@ pub struct Narraverse {
     pub footer_notification: Option<String>,
     pub bindhelp_mode: BindhelpMode,
     pub cache: NarraverseCaches,
+    pub error_scroll: u16, // temporary
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -184,6 +185,7 @@ impl Default for Narraverse {
             footer_notification: None,
             bindhelp_mode: BindhelpMode::Editor,
             cache: NarraverseCaches::default(),
+            error_scroll: 0,
         }
     }
 }

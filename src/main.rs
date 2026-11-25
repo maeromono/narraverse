@@ -29,13 +29,17 @@ fn main() {
         );
         NarraverseConfig::default()
     });
-    nv.verses = load_verses().unwrap_or_else(|err| {
+    let errors: Option<Vec<String>>;
+    (nv.verses, errors) = load_verses().unwrap_or_else(|err| {
         nv.send_error(
             format!("Verse file contains invalid data:\n{}", err),
             NarraverseState::VersePick,
         );
-        NarraverseVerses::default()
+        (NarraverseVerses::default(), None)
     });
+    if let Some(load_errors) = errors {
+        nv.send_error(load_errors.join("\n"), NarraverseState::VersePick);
+    }
     rebuild_verse_list_cache(&mut nv.cache, &nv.verses);
     if nv.verses.verse_uuid != Uuid::default()
         && nv.verses.verses.contains_key(&nv.verses.verse_uuid)
