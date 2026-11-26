@@ -276,7 +276,7 @@ pub fn handle_editing_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match (key.code, key.modifiers) {
         (KeyCode::Char('x'), KeyModifiers::ALT) => {
             if nv.editor.remove_current_buffer() && nv.editor.buffers.is_empty() {
-                nv.state = NarraverseState::VerseAreaPick;
+                nv.set_state(NarraverseState::VerseAreaPick);
             }
             return;
         }
@@ -297,11 +297,12 @@ pub fn handle_editing_keys(nv: &mut Narraverse, key: &KeyEvent) {
     };
     match (key.code, key.modifiers) {
         (KeyCode::Esc, KeyModifiers::NONE) => {
-            nv.state = match buffer.target {
+            let next = match buffer.target {
                 EditorTarget::Narrative => NarraverseState::NarrativePick,
                 EditorTarget::Entity => NarraverseState::EntityPick,
                 EditorTarget::Artifact => NarraverseState::ArtifactPick,
-            }
+            };
+            nv.set_state(next);
         }
         (KeyCode::F(1), KeyModifiers::NONE) => enter_bindhelp(nv, BindhelpMode::Editor),
         (KeyCode::PageDown, KeyModifiers::CONTROL) => {

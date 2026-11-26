@@ -33,8 +33,7 @@ use crate::{
 };
 
 pub struct Narraverse {
-    pub config: NarraverseConfig,
-    pub state: NarraverseState,
+    core: NarraverseCore,
     pub verses: NarraverseVerses,
     pub cached_verse_name: String,
     pub list_states: NarraverseListStates,
@@ -46,6 +45,11 @@ pub struct Narraverse {
     pub bindhelp_mode: BindhelpMode,
     pub cache: NarraverseCaches,
     pub error_scroll: u16, // temporary
+}
+
+struct NarraverseCore {
+    config: NarraverseConfig,
+    state: NarraverseState,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -69,7 +73,7 @@ pub enum NarraverseState {
 
 impl Narraverse {
     pub fn run(&mut self, term: &mut DefaultTerminal) -> Result<()> {
-        while self.state != NarraverseState::Quit {
+        while *self.get_state() != NarraverseState::Quit {
             term.draw(|frame| self.render(frame))?;
             match event::read()? {
                 Event::Key(key) if key.kind == KeyEventKind::Press => self.handle_keys(&key),
@@ -98,7 +102,7 @@ impl Narraverse {
             Constraint::Length(1),
         ])
         .split(area.centered_horizontally(Constraint::Max(100)));
-        match self.state {
+        match self.get_state() {
             NarraverseState::VersePick => render_worldpick(self, frame, main_layout[1]),
             NarraverseState::VerseEdit => {
                 render_verse_edit(&self.modals.verse_edit_modal, frame, main_layout[1])
@@ -140,7 +144,7 @@ impl Narraverse {
     }
 
     fn handle_keys(&mut self, key: &KeyEvent) {
-        match self.state {
+        match self.get_state() {
             NarraverseState::VersePick => versepick::handle_keys(self, key),
             NarraverseState::VerseEdit => verseedit::handle_keys(self, key),
             NarraverseState::VerseAreaPick => verseareapick::handle_keys(self, key),
@@ -162,19 +166,38 @@ impl Narraverse {
     pub fn send_error(&mut self, message: String, return_state: NarraverseState) {
         self.errors.0 = message;
         self.errors.1 = return_state;
-        self.state = NarraverseState::Error;
+        self.set_state(NarraverseState::Error);
     }
 
     pub fn send_footer_notification(&mut self, message: String) {
         self.footer_notification = Some(message);
+    }
+
+    pub fn get_config(&self) -> &NarraverseConfig {
+        &self.core.config
+    }
+
+    pub fn config_mut(&mut self) -> &mut NarraverseConfig {
+        &mut self.core.config
+    }
+
+    pub fn replace_config(&mut self, config: NarraverseConfig) {
+        self.core.config = config;
+    }
+
+    pub fn get_state(&self) -> &NarraverseState {
+        &self.core.state
+    }
+
+    pub fn set_state(&mut self, next: NarraverseState) {
+        self.core.state = next;
     }
 }
 
 impl Default for Narraverse {
     fn default() -> Self {
         Self {
-            config: NarraverseConfig::default(),
-            state: NarraverseState::VersePick,
+            core: NarraverseCore::default(),
             verses: NarraverseVerses::default(),
             cached_verse_name: String::from("maero.surge.sh"),
             list_states: NarraverseListStates::default(),
@@ -186,6 +209,15 @@ impl Default for Narraverse {
             bindhelp_mode: BindhelpMode::Editor,
             cache: NarraverseCaches::default(),
             error_scroll: 0,
+        }
+    }
+}
+
+impl Default for NarraverseCore {
+    fn default() -> Self {
+        Self {
+            config: NarraverseConfig::default(),
+            state: NarraverseState::VersePick,
         }
     }
 }

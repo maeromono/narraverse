@@ -91,7 +91,7 @@ pub fn render_entity_edit(modal: &EntityEditModal, frame: &mut Frame, area: Rect
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
         KeyCode::Esc => {
-            nv.state = NarraverseState::EntityPick;
+            nv.set_state(NarraverseState::EntityPick);
             reset_textareas(&mut nv.modals.entity_edit_modal);
             return;
         }
@@ -147,7 +147,6 @@ fn confirm_edit(nv: &mut Narraverse) {
                     details: String::new(),
                 },
             );
-            nv.state = NarraverseState::EntityPick;
         }
         EntityEditMode::Existing(uuid) => {
             let Some(entity) = verse.1.entities.get_mut(&uuid) else {
@@ -159,7 +158,6 @@ fn confirm_edit(nv: &mut Narraverse) {
             };
             entity.name = nv.modals.entity_edit_modal.entity_name_textarea.lines()[0].clone();
             entity.entity_type = nv.modals.entity_edit_modal.entity_type.clone();
-            nv.state = NarraverseState::EntityPick;
         }
     }
     if let Err(err) = save_current_verse(&mut nv.verses) {
@@ -168,6 +166,7 @@ fn confirm_edit(nv: &mut Narraverse) {
             NarraverseState::EntityPick,
         );
     } else {
+        nv.set_state(NarraverseState::EntityPick);
         nv.send_footer_notification(String::from("Entity edited"));
     }
     reset_textareas(&mut nv.modals.entity_edit_modal);

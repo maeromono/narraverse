@@ -34,20 +34,20 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
         return;
     }
     match key.code {
-        KeyCode::Char('q') => nv.state = NarraverseState::Quit,
+        KeyCode::Char('q') => nv.set_state(NarraverseState::Quit),
         KeyCode::Esc => {
             // cross verse buffers probably won't be possible because of how narraverse is built.
             nv.editor.purge_all_buffers();
             nv.list_states.verse_narrative_pick_liststate.select(None);
             nv.list_states.verse_entity_pick_liststate.select(None);
             nv.list_states.verse_artifact_pick_liststate.select(None);
-            nv.state = NarraverseState::VersePick;
+            nv.set_state(NarraverseState::VersePick);
         }
         KeyCode::Enter => {
             let Some(selected_index) = nv.list_states.verse_area_pick_liststate.selected() else {
                 return;
             };
-            nv.state = match selected_index {
+            let next = match selected_index {
                 0 => NarraverseState::NarrativePick,
                 1 => NarraverseState::EntityPick,
                 2 => NarraverseState::ArtifactPick,
@@ -63,7 +63,8 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
                     NarraverseState::VerseDelete
                 }
                 _ => todo!(),
-            }
+            };
+            nv.set_state(next);
         }
         _ => {}
     }

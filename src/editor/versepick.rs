@@ -36,7 +36,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
         return;
     }
     match key.code {
-        KeyCode::Char('q') => nv.state = NarraverseState::Quit,
+        KeyCode::Char('q') => nv.set_state(NarraverseState::Quit),
         KeyCode::Enter => {
             let Some(selected_index) = nv.list_states.verse_pick_liststate.selected() else {
                 return;
@@ -45,7 +45,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
                 return;
             };
             nv.verses.verse_uuid = uuid;
-            nv.state = NarraverseState::VerseAreaPick;
+            nv.set_state(NarraverseState::VerseAreaPick);
             rebuild_narr_list_cache(&mut nv.cache, &nv.verses);
             rebuild_ent_list_cache(&mut nv.cache, &nv.verses);
             rebuild_art_list_cache(&mut nv.cache, &nv.verses);
@@ -61,11 +61,11 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
                 return;
             };
             nv.modals.verse_edit_modal = verse_edit;
-            nv.state = NarraverseState::VerseEdit;
+            nv.set_state(NarraverseState::VerseEdit);
         }
         KeyCode::Char('n') => {
             nv.modals.verse_edit_modal = VerseEdit::default();
-            nv.state = NarraverseState::VerseEdit;
+            nv.set_state(NarraverseState::VerseEdit);
         }
         KeyCode::Char('d') => {
             let Some(selected_index) = nv.list_states.verse_pick_liststate.selected() else {
@@ -76,11 +76,11 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             };
             nv.verses.verse_uuid = uuid;
             nv.deletion_target = DeletionTarget::Verse;
-            nv.state = NarraverseState::VerseDelete;
+            nv.set_state(NarraverseState::VerseDelete);
         }
         KeyCode::Char('c') => {
-            nv.modals.config_edit_modal = ConfigEditModal::edit(&nv.config);
-            nv.state = NarraverseState::ConfigModal;
+            nv.modals.config_edit_modal = ConfigEditModal::edit(nv.get_config());
+            nv.set_state(NarraverseState::ConfigModal);
         }
         _ => {}
     }

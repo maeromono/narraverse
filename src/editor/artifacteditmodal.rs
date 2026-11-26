@@ -91,7 +91,7 @@ pub fn render_artifact_edit(modal: &ArtifactEditModal, frame: &mut Frame, area: 
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
         KeyCode::Esc => {
-            nv.state = NarraverseState::ArtifactPick;
+            nv.set_state(NarraverseState::ArtifactPick);
             reset_textareas(&mut nv.modals.artifact_edit_modal);
             return;
         }
@@ -148,7 +148,6 @@ fn confirm_edit(nv: &mut Narraverse) {
                     details: String::new(),
                 },
             );
-            nv.state = NarraverseState::ArtifactPick;
         }
         ArtifactEditMode::Existing(uuid) => {
             let Some(entity) = verse.1.artifacts.get_mut(&uuid) else {
@@ -160,7 +159,6 @@ fn confirm_edit(nv: &mut Narraverse) {
             };
             entity.name = nv.modals.artifact_edit_modal.artifact_name_textarea.lines()[0].clone();
             entity.artifact_type = nv.modals.artifact_edit_modal.artifact_type.clone();
-            nv.state = NarraverseState::ArtifactPick;
         }
     }
     if let Err(err) = save_current_verse(&mut nv.verses) {
@@ -169,6 +167,7 @@ fn confirm_edit(nv: &mut Narraverse) {
             NarraverseState::ArtifactPick,
         );
     } else {
+        nv.set_state(NarraverseState::ArtifactPick);
         nv.send_footer_notification(String::from("Artifact edited"));
     }
     reset_textareas(&mut nv.modals.artifact_edit_modal);

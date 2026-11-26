@@ -52,7 +52,7 @@ pub fn render_config_edit_modal(modal: &ConfigEditModal, frame: &mut Frame, area
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
         KeyCode::Esc => {
-            nv.state = NarraverseState::VersePick;
+            nv.set_state(NarraverseState::VersePick);
             reset_textareas(&mut nv.modals.config_edit_modal);
         }
         KeyCode::Enter => confirm_edit(nv),
@@ -70,20 +70,20 @@ fn confirm_edit(nv: &mut Narraverse) {
     if !nv.modals.config_edit_modal.writtenby_prefill_valid {
         return;
     }
-    nv.config.default_written_by = nv
+    nv.config_mut().default_written_by = nv
         .modals
         .config_edit_modal
         .writtenby_prefill_textarea
         .lines()[0]
         .clone();
-    if let Err(err) = save_config(&nv.config) {
+    if let Err(err) = save_config(nv.get_config()) {
         nv.send_error(
             format!("Config edited, but won't save:\n{}", err),
             NarraverseState::VersePick,
         );
     } else {
         nv.send_footer_notification(String::from("Config edited"));
-        nv.state = NarraverseState::VersePick;
+        nv.set_state(NarraverseState::VersePick);
     }
     reset_textareas(&mut nv.modals.config_edit_modal);
 }

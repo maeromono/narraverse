@@ -25,7 +25,7 @@ pub fn render_error_screen(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
         KeyCode::Esc => {
-            nv.state = nv.errors.1.clone();
+            nv.set_state(nv.errors.1.clone());
             nv.errors.0 = String::new();
         }
         KeyCode::Char('j') | KeyCode::Down => nv.error_scroll = nv.error_scroll.saturating_add(1),

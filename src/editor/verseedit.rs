@@ -65,7 +65,7 @@ pub fn render_verse_edit(modal: &VerseEdit, frame: &mut Frame, area: Rect) {
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
         KeyCode::Esc => {
-            nv.state = NarraverseState::VersePick;
+            nv.set_state(NarraverseState::VersePick);
             reset_textareas(&mut nv.modals.verse_edit_modal);
         }
         KeyCode::Enter => confirm_edit(nv),
@@ -98,7 +98,6 @@ fn confirm_edit(nv: &mut Narraverse) {
                     NarraverseState::VersePick,
                 );
             }
-            nv.state = NarraverseState::VersePick;
         }
         VerseEditMode::Existing(uuid) => {
             let Some(verse) = nv.verses.verses.get_mut(&uuid) else {
@@ -109,7 +108,6 @@ fn confirm_edit(nv: &mut Narraverse) {
                 return;
             };
             verse.name = nv.modals.verse_edit_modal.verse_name_textarea.lines()[0].clone();
-            nv.state = NarraverseState::VersePick;
             if let Err(err) = save_verse((&uuid, verse)) {
                 nv.send_error(
                     format!("Cannot save Verse UUID {}:\n{}", uuid, err),
@@ -118,6 +116,7 @@ fn confirm_edit(nv: &mut Narraverse) {
             }
         }
     }
+    nv.set_state(NarraverseState::VersePick);
     reset_textareas(&mut nv.modals.verse_edit_modal);
     rebuild_verse_list_cache(&mut nv.cache, &nv.verses);
 }

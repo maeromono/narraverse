@@ -55,7 +55,7 @@ impl NarrativeEditModal {
 
     pub fn prefill_writtenby_field(mut self, nv: &Narraverse) -> Self {
         self.narrative_writtenby_textarea =
-            TextArea::new(vec![nv.config.default_written_by.clone()]);
+            TextArea::new(vec![nv.get_config().default_written_by.clone()]);
         self.narrative_writtenby_valid =
             validate_length(&mut self.narrative_writtenby_textarea, 1, 100);
         self
@@ -132,7 +132,7 @@ pub fn render_narrative_edit_modal(modal: &NarrativeEditModal, frame: &mut Frame
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
         KeyCode::Esc => {
-            nv.state = NarraverseState::NarrativePick;
+            nv.set_state(NarraverseState::NarrativePick);
             reset_textareas(&mut nv.modals.narrative_edit_modal);
         }
         KeyCode::Tab => {
@@ -219,7 +219,6 @@ fn confirm_edit(nv: &mut Narraverse) {
                     summary,
                 },
             );
-            nv.state = NarraverseState::NarrativePick;
         }
         NarrativeEditModalMode::Existing(uuid) => {
             let Some(narrative) = verse.1.narratives.get_mut(&uuid) else {
@@ -250,7 +249,6 @@ fn confirm_edit(nv: &mut Narraverse) {
                 .parse::<NaiveDate>()
                 .unwrap_or(NaiveDate::default());
             narrative.summary = summary;
-            nv.state = NarraverseState::NarrativePick;
         }
     }
     verse
@@ -263,6 +261,7 @@ fn confirm_edit(nv: &mut Narraverse) {
             NarraverseState::NarrativePick,
         );
     } else {
+        nv.set_state(NarraverseState::NarrativePick);
         nv.send_footer_notification(String::from("Narrative edited"));
     }
     reset_textareas(&mut nv.modals.narrative_edit_modal);

@@ -61,10 +61,11 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
         KeyCode::F(1) | KeyCode::Esc => {
             nv.list_states.bind_help_liststate.select(Some(0));
-            nv.state = match nv.bindhelp_mode {
+            let next = match nv.bindhelp_mode {
                 BindhelpMode::Pickmenu => NarraverseState::VerseAreaPick,
                 BindhelpMode::Editor => NarraverseState::Editor,
-            }
+            };
+            nv.set_state(next);
         }
         _ => {}
     }

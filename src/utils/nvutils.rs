@@ -13,7 +13,7 @@ use crate::{
 pub fn enter_bindhelp(nv: &mut Narraverse, mode: BindhelpMode) {
     nv.bindhelp_mode = mode;
     rebuild_bindhelp_cache(&mut nv.cache, mode);
-    nv.state = NarraverseState::BindHelp;
+    nv.set_state(NarraverseState::BindHelp);
 }
 
 pub fn save_current_verse(verses: &mut NarraverseVerses) -> Result<()> {

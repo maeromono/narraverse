@@ -94,12 +94,13 @@ pub fn render_delete_screen(nv: &mut Narraverse, frame: &mut Frame, area: Rect) 
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
         KeyCode::Esc => {
-            nv.state = match nv.deletion_target {
+            let next = match nv.deletion_target {
                 DeletionTarget::Verse => NarraverseState::VersePick,
                 DeletionTarget::Narrative(_) => NarraverseState::NarrativePick,
                 DeletionTarget::Entity(_) => NarraverseState::EntityPick,
                 DeletionTarget::Artifact(_) => NarraverseState::ArtifactPick,
             };
+            nv.set_state(next);
         }
         KeyCode::Char('y') => {
             confirm_delete(nv);
@@ -117,7 +118,7 @@ fn confirm_delete(nv: &mut Narraverse) {
             nv.list_states.verse_pick_liststate.select(None);
             rebuild_verse_list_cache(&mut nv.cache, &nv.verses);
             nv.verses.verse_uuid = Uuid::default();
-            nv.state = NarraverseState::VersePick;
+            nv.set_state(NarraverseState::VersePick);
             nv.send_footer_notification(String::from("Verse deleted"));
         }
         DeletionTarget::Narrative(uuid) => {
@@ -135,7 +136,7 @@ fn confirm_delete(nv: &mut Narraverse) {
             nv.list_states.verse_narrative_pick_liststate.select(None);
             rebuild_narr_list_cache(&mut nv.cache, &nv.verses);
             nv.editor.remove_buffer_uuid(&uuid);
-            nv.state = NarraverseState::NarrativePick;
+            nv.set_state(NarraverseState::NarrativePick);
             nv.send_footer_notification(String::from("Narrative deleted"));
         }
         DeletionTarget::Entity(uuid) => {
@@ -153,7 +154,7 @@ fn confirm_delete(nv: &mut Narraverse) {
             nv.list_states.verse_entity_pick_liststate.select(None);
             rebuild_ent_list_cache(&mut nv.cache, &nv.verses);
             nv.editor.remove_buffer_uuid(&uuid);
-            nv.state = NarraverseState::EntityPick;
+            nv.set_state(NarraverseState::EntityPick);
             nv.send_footer_notification(String::from("Entity deleted"));
         }
         DeletionTarget::Artifact(uuid) => {
@@ -171,7 +172,7 @@ fn confirm_delete(nv: &mut Narraverse) {
             nv.list_states.verse_artifact_pick_liststate.select(None);
             rebuild_art_list_cache(&mut nv.cache, &nv.verses);
             nv.editor.remove_buffer_uuid(&uuid);
-            nv.state = NarraverseState::ArtifactPick;
+            nv.set_state(NarraverseState::ArtifactPick);
             nv.send_footer_notification(String::from("Artifact deleted"));
         }
     }

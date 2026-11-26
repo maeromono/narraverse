@@ -22,13 +22,14 @@ use crate::{
 
 fn main() {
     let mut nv = Narraverse::default();
-    nv.config = load_config().unwrap_or_else(|err| {
+    let config = load_config().unwrap_or_else(|err| {
         nv.send_error(
             format!("Unable to parse config file:\n{}", err),
             NarraverseState::VersePick,
         );
         NarraverseConfig::default()
     });
+    nv.replace_config(config);
     let errors: Option<Vec<String>>;
     (nv.verses, errors) = load_verses().unwrap_or_else(|err| {
         nv.send_error(
@@ -44,7 +45,7 @@ fn main() {
     if nv.verses.verse_uuid != Uuid::default()
         && nv.verses.verses.contains_key(&nv.verses.verse_uuid)
     {
-        nv.state = NarraverseState::VerseAreaPick;
+        nv.set_state(NarraverseState::VerseAreaPick);
         rebuild_narr_list_cache(&mut nv.cache, &nv.verses);
         rebuild_ent_list_cache(&mut nv.cache, &nv.verses);
         rebuild_art_list_cache(&mut nv.cache, &nv.verses);

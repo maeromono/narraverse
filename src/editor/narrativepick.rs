@@ -47,7 +47,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
         return;
     }
     match key.code {
-        KeyCode::Esc => nv.state = NarraverseState::VerseAreaPick,
+        KeyCode::Esc => nv.set_state(NarraverseState::VerseAreaPick),
         KeyCode::F(1) => enter_bindhelp(nv, BindhelpMode::Pickmenu),
         KeyCode::Enter => {
             let Some(uuid) = selected_narr_uuid(nv) else {
@@ -59,12 +59,12 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             {
                 return;
             };
-            nv.state = NarraverseState::Editor;
+            nv.set_state(NarraverseState::Editor);
         }
         KeyCode::Char('n') => {
             nv.modals.narrative_edit_modal =
                 NarrativeEditModal::default().prefill_writtenby_field(nv);
-            nv.state = NarraverseState::NarrativeModal;
+            nv.set_state(NarraverseState::NarrativeModal);
         }
         KeyCode::Char('e') => {
             let Some(uuid) = selected_narr_uuid(nv) else {
@@ -74,14 +74,14 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
                 return;
             };
             nv.modals.narrative_edit_modal = modal;
-            nv.state = NarraverseState::NarrativeModal;
+            nv.set_state(NarraverseState::NarrativeModal);
         }
         KeyCode::Char('d') => {
             let Some(uuid) = selected_narr_uuid(nv) else {
                 return;
             };
             nv.deletion_target = DeletionTarget::Narrative(uuid);
-            nv.state = NarraverseState::VerseDelete;
+            nv.set_state(NarraverseState::VerseDelete);
         }
         _ => {}
     }

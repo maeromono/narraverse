@@ -10,7 +10,7 @@ pub fn render_header(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     let header_layout =
         Layout::horizontal([Constraint::Length(20), Constraint::Fill(1)]).split(area);
     let name_ver = Paragraph::new(format!("narraverse v{}", env!("CARGO_PKG_VERSION")));
-    let right_thing = Paragraph::new(match nv.state {
+    let right_thing = Paragraph::new(match nv.get_state() {
         NarraverseState::VersePick | NarraverseState::ConfigModal => "maero.surge.sh",
         _ => &nv.cached_verse_name,
     })
@@ -20,7 +20,7 @@ pub fn render_header(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
 }
 
 pub fn render_footer(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
-    let bind_help_string = match nv.state {
+    let bind_help_string = match nv.get_state() {
         NarraverseState::VersePick => "e edit, n new, j/k navigate, Enter select",
         NarraverseState::NarrativeModal
         | NarraverseState::EntityModal
