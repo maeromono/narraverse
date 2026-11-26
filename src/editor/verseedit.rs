@@ -82,6 +82,7 @@ fn confirm_edit(nv: &mut Narraverse) {
     if !nv.modals.verse_edit_modal.verse_name_valid {
         return;
     }
+    let mut saved: bool = false;
     match nv.modals.verse_edit_modal.mode {
         VerseEditMode::New => {
             let new_verse_uuid = Uuid::now_v7();
@@ -97,6 +98,8 @@ fn confirm_edit(nv: &mut Narraverse) {
                     format!("Cannot save the newly created Verse:\n{}", err),
                     NarraverseState::VersePick,
                 );
+            } else {
+                saved = true;
             }
         }
         VerseEditMode::Existing(uuid) => {
@@ -113,10 +116,14 @@ fn confirm_edit(nv: &mut Narraverse) {
                     format!("Cannot save Verse UUID {}:\n{}", uuid, err),
                     NarraverseState::VersePick,
                 );
+            } else {
+                saved = true;
             }
         }
     }
-    nv.set_state(NarraverseState::VersePick);
+    if saved {
+        nv.set_state(NarraverseState::VersePick);
+    }
     reset_textareas(&mut nv.modals.verse_edit_modal);
     rebuild_verse_list_cache(&mut nv.cache, &nv.verses);
 }
