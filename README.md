@@ -1,5 +1,5 @@
 <strong>Another save file breaking change possible in v0.5.0. A migration guide will be written when it's released but it's still better to make regular backups!</strong>
-<strong>ANOTHER BIG WARNING: I accidentally pushed a commit that broke creating new Verses, causing them to vanish when narraverse restarted. There're also multiple architectural flaws which I'm fixing right now. This warning will disappear when I deem narraverse safe enough to use. Meanwhile you can use older versions (e.g v0.4.0) or wait until fixes are done.</strong>
+
 # narraverse
 
 narraverse is a worldbuilding TUI, premise of which is no-bullshit, plain text, "convenient" world creation.
