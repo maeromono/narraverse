@@ -164,6 +164,7 @@ impl Narraverse {
     }
 
     pub fn send_error(&mut self, message: String, return_state: NarraverseState) {
+        self.error_scroll = 0;
         self.errors.0 = message;
         self.errors.1 = return_state;
         self.set_state(NarraverseState::Error);
