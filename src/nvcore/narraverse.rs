@@ -7,6 +7,7 @@ use ratatui::{
     style::Stylize,
     widgets::{ListState, Paragraph},
 };
+use uuid::Uuid;
 
 use crate::{
     editor::{
@@ -19,7 +20,7 @@ use crate::{
         entitypick::{self, render_entity_pick},
         narrativeeditmodal::{self, NarrativeEditModal, render_narrative_edit_modal},
         narrativepick::{self, render_narrative_pick},
-        nveditor::{self, NarraverseEditor, render_editor},
+        nveditor::{self, EditorTarget, NarraverseEditor, render_editor},
         verseareapick::{self, render_area_pick},
         verseedit::{self, VerseEdit, render_verse_edit},
         versepick::{self, render_worldpick},
@@ -28,14 +29,13 @@ use crate::{
         config::NarraverseConfig,
         error::{self, render_error_screen},
         narraversemain::{render_footer, render_header},
-        verses::NarraverseVerses,
+        versemanifest::VerseManifest,
     },
 };
 
 pub struct Narraverse {
     core: NarraverseCore,
-    pub verses: NarraverseVerses,
-    pub cached_verse_name: String,
+    verses: NarraverseVerses,
     pub list_states: NarraverseListStates,
     pub modals: NarraverseModals,
     pub editor: NarraverseEditor,
@@ -43,13 +43,16 @@ pub struct Narraverse {
     pub errors: (String, NarraverseState),
     pub footer_notification: Option<String>,
     pub bindhelp_mode: BindhelpMode,
-    pub cache: NarraverseCaches,
     pub error_scroll: u16, // temporary
 }
 
 struct NarraverseCore {
     config: NarraverseConfig,
     state: NarraverseState,
+}
+
+struct NarraverseVerses {
+    manifest: VerseManifest,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -193,6 +196,23 @@ impl Narraverse {
     pub fn set_state(&mut self, next: NarraverseState) {
         self.core.state = next;
     }
+
+    pub fn get_verse_manifest(&self) -> &VerseManifest {
+        &self.verses.manifest
+    }
+
+    pub fn verse_manifest_mut(&mut self) -> &mut VerseManifest {
+        &mut self.verses.manifest
+    }
+
+    pub fn replace_verse_manifest(&mut self, manifest: VerseManifest) {
+        self.verses.manifest = manifest;
+    }
+
+    pub fn add_editor_buffer(&mut self, target: EditorTarget, uuid: Uuid) -> bool {
+        let Self { editor, verses, .. } = self;
+        editor.add_buffer(&verses.manifest, target, uuid)
+    }
 }
 
 impl Default for Narraverse {
@@ -200,7 +220,6 @@ impl Default for Narraverse {
         Self {
             core: NarraverseCore::default(),
             verses: NarraverseVerses::default(),
-            cached_verse_name: String::from("maero.surge.sh"),
             list_states: NarraverseListStates::default(),
             modals: NarraverseModals::default(),
             editor: NarraverseEditor::default(),
@@ -208,7 +227,6 @@ impl Default for Narraverse {
             errors: (String::new(), NarraverseState::VersePick),
             footer_notification: None,
             bindhelp_mode: BindhelpMode::Editor,
-            cache: NarraverseCaches::default(),
             error_scroll: 0,
         }
     }
@@ -219,6 +237,14 @@ impl Default for NarraverseCore {
         Self {
             config: NarraverseConfig::default(),
             state: NarraverseState::VersePick,
+        }
+    }
+}
+
+impl Default for NarraverseVerses {
+    fn default() -> Self {
+        Self {
+            manifest: VerseManifest::default(),
         }
     }
 }
@@ -252,13 +278,4 @@ impl Default for NarraverseListStates {
             bind_help_liststate: ListState::default().with_selected(Some(0)),
         }
     }
-}
-
-#[derive(Default)]
-pub struct NarraverseCaches {
-    pub verse_list_cache: Vec<String>,
-    pub narrative_list_cache: Vec<String>,
-    pub entity_list_cache: Vec<String>,
-    pub artifact_list_cache: Vec<String>,
-    pub bindhelp_bindings_cache: Vec<String>,
 }

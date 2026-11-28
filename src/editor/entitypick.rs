@@ -12,20 +12,18 @@ use crate::{
         cacheutils::rebuild_ent_list_cache,
         decosutils::{block_with_title, center_area, list_highlight},
         nvutils::enter_bindhelp,
-        pickerutils::{handle_list_keys, render_list_empty_state},
+        pickerutils::{entity_pick_items, handle_list_keys, render_list_empty_state},
     },
 };
 
 pub fn render_entity_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
-    let verse = nv.verses.current_verse();
-    if verse.entities.len() == 0 {
+    let manifest = nv.get_verse_manifest();
+    if manifest.no_verses() {
         render_list_empty_state("entities", frame, area);
         return;
     }
-    let list = list_highlight(List::new(
-        nv.cache.entity_list_cache.iter().map(String::as_str),
-    ))
-    .block(block_with_title("Pick an entity:"));
+    let list = list_highlight(List::new(entity_pick_items(manifest)))
+        .block(block_with_title("Pick an entity:"));
     frame.render_stateful_widget(
         list,
         center_area(area),
@@ -44,7 +42,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             let Some(uuid) = selected_ent_uuid(nv) else {
                 return;
             };
-            if !nv.editor.add_buffer(&nv.verses, EditorTarget::Entity, uuid) {
+            if !nv.add_editor_buffer(EditorTarget::Entity, uuid) {
                 return;
             };
             nv.set_state(NarraverseState::Editor);
@@ -57,7 +55,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             let Some(uuid) = selected_ent_uuid(nv) else {
                 return;
             };
-            let Some(modal) = EntityEditModal::edit(&nv.verses, uuid) else {
+            let Some(modal) = EntityEditModal::edit(nv.get_verse_manifest(), uuid) else {
                 return;
             };
             nv.modals.entity_edit_modal = modal;
@@ -87,17 +85,16 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
 }
 
 fn selected_ent_uuid(nv: &Narraverse) -> Option<Uuid> {
-    let verse = nv.verses.verses.get(&nv.verses.verse_uuid)?;
     let index = nv.list_states.verse_entity_pick_liststate.selected()?;
-    verse
+    nv.get_verse_manifest()
+        .current_verse()
         .entities
         .get_index(index)
-        .map(|(uuid, _)| uuid)
-        .copied()
+        .map(|(uuid, _)| *uuid)
 }
 
 fn move_entity(nv: &mut Narraverse, ind: usize, up: bool) {
-    let verse = nv.verses.current_verse_mut();
+    let verse = nv.verse_manifest_mut().current_verse_mut();
     let target_ind = if up {
         ind.checked_sub(1)
     } else {
@@ -107,7 +104,6 @@ fn move_entity(nv: &mut Narraverse, ind: usize, up: bool) {
         return;
     };
     verse.entities.swap_indices(ind, target);
-    rebuild_ent_list_cache(&mut nv.cache, &nv.verses);
     nv.list_states
         .verse_entity_pick_liststate
         .select(Some(target));

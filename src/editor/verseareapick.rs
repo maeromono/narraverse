@@ -11,10 +11,6 @@ use crate::{
 };
 
 pub fn render_area_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
-    let verse = nv.verses.current_verse();
-    if nv.cached_verse_name != verse.name {
-        nv.cached_verse_name = verse.name.clone();
-    }
     let list = list_highlight(List::new(vec![
         "Narrative",
         "Entities",
@@ -47,12 +43,13 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
             let Some(selected_index) = nv.list_states.verse_area_pick_liststate.selected() else {
                 return;
             };
+            let uuid = nv.get_verse_manifest().verse_uuid;
             let next = match selected_index {
                 0 => NarraverseState::NarrativePick,
                 1 => NarraverseState::EntityPick,
                 2 => NarraverseState::ArtifactPick,
                 3 => {
-                    let Some(verse_edit) = VerseEdit::edit(&nv.verses, nv.verses.verse_uuid) else {
+                    let Some(verse_edit) = VerseEdit::edit(nv.get_verse_manifest(), uuid) else {
                         return;
                     };
                     nv.modals.verse_edit_modal = verse_edit;

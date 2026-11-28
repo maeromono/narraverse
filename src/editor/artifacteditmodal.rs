@@ -11,7 +11,7 @@ use uuid::Uuid;
 use crate::{
     nvcore::{
         narraverse::{Narraverse, NarraverseState},
-        verses::{Artifact, ArtifactType, NarraverseVerses},
+        versemanifest::{Artifact, ArtifactType, VerseManifest},
     },
     utils::{
         cacheutils::rebuild_art_list_cache,
@@ -30,7 +30,7 @@ pub struct ArtifactEditModal {
 }
 
 impl ArtifactEditModal {
-    pub fn edit(verses: &NarraverseVerses, uuid: Uuid) -> Option<Self> {
+    pub fn edit(verses: &VerseManifest, uuid: Uuid) -> Option<Self> {
         let verse = verses.verses.get(&verses.verse_uuid)?;
         let entity = verse.artifacts.get(&uuid)?;
         Some(Self {
@@ -55,6 +55,7 @@ impl Default for ArtifactEditModal {
     }
 }
 
+#[derive(Clone, Copy)]
 enum ArtifactEditMode {
     New,
     Existing(Uuid),
@@ -134,34 +135,38 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
 }
 
 fn confirm_edit(nv: &mut Narraverse) {
-    if !nv.modals.artifact_edit_modal.artifact_name_valid {
+    let modal = &nv.modals.artifact_edit_modal;
+    if !modal.artifact_name_valid {
         return;
     }
-    let verse = nv.verses.current_verse_kv_mut();
-    match nv.modals.artifact_edit_modal.mode {
+    let name = modal.artifact_name_textarea.lines()[0].clone();
+    let artifact_type = modal.artifact_type.clone();
+    let mode = modal.mode;
+    let verse = nv.verse_manifest_mut().current_verse_kv_mut();
+    match mode {
         ArtifactEditMode::New => {
             verse.1.artifacts.insert(
                 Uuid::now_v7(),
                 Artifact {
-                    name: nv.modals.artifact_edit_modal.artifact_name_textarea.lines()[0].clone(),
-                    artifact_type: nv.modals.artifact_edit_modal.artifact_type.clone(),
+                    name,
+                    artifact_type,
                     details: String::new(),
                 },
             );
         }
         ArtifactEditMode::Existing(uuid) => {
-            let Some(entity) = verse.1.artifacts.get_mut(&uuid) else {
+            let Some(artifact) = verse.1.artifacts.get_mut(&uuid) else {
                 nv.send_error(
                     format!("Artifact with this UUID ({}) doesn't exist.", uuid),
                     NarraverseState::VersePick,
                 );
                 return;
             };
-            entity.name = nv.modals.artifact_edit_modal.artifact_name_textarea.lines()[0].clone();
-            entity.artifact_type = nv.modals.artifact_edit_modal.artifact_type.clone();
+            artifact.name = name;
+            artifact.artifact_type = artifact_type;
         }
     }
-    if let Err(err) = save_current_verse(&mut nv.verses) {
+    if let Err(err) = save_current_verse(nv.verse_manifest_mut()) {
         nv.send_error(
             format!("Artifact edited, but won't save:\n{}", err),
             NarraverseState::ArtifactPick,
@@ -171,7 +176,6 @@ fn confirm_edit(nv: &mut Narraverse) {
         nv.send_footer_notification(String::from("Artifact edited"));
     }
     reset_textareas(&mut nv.modals.artifact_edit_modal);
-    rebuild_art_list_cache(&mut nv.cache, &nv.verses);
 }
 
 fn reset_textareas(modal: &mut ArtifactEditModal) {

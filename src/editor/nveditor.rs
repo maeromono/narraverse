@@ -15,7 +15,7 @@ use crate::{
     editor::bindhelp::BindhelpMode,
     nvcore::{
         narraverse::{Narraverse, NarraverseState},
-        verses::{NarraverseVerses, Verse},
+        versemanifest::{Verse, VerseManifest},
     },
     utils::{
         nvutils::{enter_bindhelp, save_current_verse},
@@ -50,12 +50,7 @@ struct EditorBuffer {
 }
 
 impl NarraverseEditor {
-    pub fn add_buffer(
-        &mut self,
-        verses: &NarraverseVerses,
-        target: EditorTarget,
-        uuid: Uuid,
-    ) -> bool {
+    pub fn add_buffer(&mut self, verses: &VerseManifest, target: EditorTarget, uuid: Uuid) -> bool {
         if self.buffers.contains_key(&uuid) {
             return true;
         }
@@ -151,6 +146,7 @@ enum EditorMode {
     Searching,
 }
 
+#[derive(Clone, Copy)]
 pub enum EditorTarget {
     Narrative,
     Entity,
@@ -342,35 +338,33 @@ pub fn handle_editing_keys(nv: &mut Narraverse, key: &KeyEvent) {
 }
 
 fn save_buffer(nv: &mut Narraverse) {
-    let Some(mut verse) = nv.verses.verses.get_key_value_mut(&nv.verses.verse_uuid) else {
-        nv.send_error(
-            format!("No Verse with this UUID ({}) exists.", nv.verses.verse_uuid),
-            NarraverseState::VersePick,
-        );
+    if !nv.get_verse_manifest().current_verse_exists() {
+        nv.send_error(format!("Verse doesn't exist."), NarraverseState::VersePick);
         return;
     };
-    let Some(buffer) = nv.editor.buffers.get_index_mut(nv.editor.buffer_index) else {
-        return;
+    let (uuid, target, text) = {
+        let Some((uuid, buffer)) = nv.editor.buffers.get_index_mut(nv.editor.buffer_index) else {
+            return;
+        };
+        if !buffer.modified {
+            return;
+        }
+        (*uuid, buffer.target, buffer.textarea.lines().join("\n"))
     };
-    if !buffer.1.modified {
-        return;
-    }
-    if let Err((message, return_state)) = write_unit(
-        &mut verse.1,
-        &buffer.1.target,
-        buffer.0,
-        buffer.1.textarea.lines().join("\n"),
-    ) {
+    let mut verse = nv.verse_manifest_mut().current_verse_kv_mut();
+    if let Err((message, return_state)) = write_unit(&mut verse.1, &target, &uuid, text) {
         nv.send_error(message, return_state);
         return;
     }
-    if let Err(err) = save_current_verse(&mut nv.verses) {
+    if let Err(err) = save_current_verse(nv.verse_manifest_mut()) {
         nv.send_error(
             format!("Cannot perform the save:\n{}", err),
             NarraverseState::Editor,
         );
     } else {
-        buffer.1.modified = false;
+        if let Some((_, buffer)) = nv.editor.buffers.get_index_mut(nv.editor.buffer_index) {
+            buffer.modified = false;
+        }
         nv.send_footer_notification(String::from("Saved successfully"));
     }
 }

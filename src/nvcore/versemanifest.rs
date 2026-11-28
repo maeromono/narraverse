@@ -5,18 +5,30 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 #[derive(Serialize, Deserialize)]
-pub struct NarraverseVerses {
+pub struct VerseManifest {
     #[serde(skip)]
     pub verses: IndexMap<Uuid, Verse>,
     pub verse_files: IndexMap<Uuid, String>,
     pub verse_uuid: Uuid,
 }
 
-impl NarraverseVerses {
+impl VerseManifest {
+    pub fn no_verses(&self) -> bool {
+        self.verses.is_empty()
+    }
+
+    pub fn current_verse_exists(&self) -> bool {
+        self.verses.contains_key(&self.verse_uuid)
+    }
+
     pub fn current_verse(&self) -> &Verse {
         self.verses
             .get(&self.verse_uuid)
             .expect("Invalid Verse UUID")
+    }
+
+    pub fn current_verse_uuid_byindex(&self, index: usize) -> Option<Uuid> {
+        self.verses.get_index(index).map(|(uuid, _)| *uuid)
     }
 
     pub fn current_verse_mut(&mut self) -> &mut Verse {
@@ -36,9 +48,13 @@ impl NarraverseVerses {
             .get_key_value_mut(&self.verse_uuid)
             .expect("Invalid Verse UUID")
     }
+
+    pub fn change_current_verse_uuid(&mut self, uuid: Uuid) {
+        self.verse_uuid = uuid;
+    }
 }
 
-impl Default for NarraverseVerses {
+impl Default for VerseManifest {
     fn default() -> Self {
         Self {
             verses: IndexMap::default(),

@@ -5,7 +5,10 @@ use ratatui::{
     widgets::{ListState, Paragraph},
 };
 
-use crate::utils::decosutils::{block_with_title, center_area};
+use crate::{
+    nvcore::versemanifest::VerseManifest,
+    utils::decosutils::{block_with_title, center_area},
+};
 
 pub fn render_list_empty_state(section: &str, frame: &mut Frame, area: Rect) {
     let title = format!("You have no {}.", section);
@@ -35,4 +38,30 @@ pub fn handle_list_keys(list_state: &mut ListState, key: &KeyEvent) -> bool {
         }
         _ => false,
     }
+}
+
+pub fn verse_pick_items(manifest: &VerseManifest) -> Vec<String> {
+    manifest
+        .verses
+        .values()
+        .map(|verse| verse.name.clone())
+        .collect()
+}
+
+pub fn narrative_pick_items(manifest: &VerseManifest) -> Vec<String> {
+    manifest
+        .current_verse()
+        .narratives
+        .values()
+        .map(|narr| format!("[{}] {}", narr.date, narr.title))
+        .collect()
+}
+
+pub fn entity_pick_items(manifest: &VerseManifest) -> Vec<String> {
+    manifest
+        .current_verse()
+        .entities
+        .values()
+        .map(|ent| format!("[{}] {}", ent.entity_type.short_name(), ent.name))
+        .collect()
 }

@@ -11,7 +11,7 @@ use crate::{
     nvcore::{
         narraverse::{Narraverse, NarraverseState},
         save::{save_verse, save_verses},
-        verses::{NarraverseVerses, Verse},
+        versemanifest::{Verse, VerseManifest},
     },
     utils::{
         cacheutils::rebuild_verse_list_cache,
@@ -27,7 +27,7 @@ pub struct VerseEdit {
 }
 
 impl VerseEdit {
-    pub fn edit(verses: &NarraverseVerses, uuid: Uuid) -> Option<Self> {
+    pub fn edit(verses: &VerseManifest, uuid: Uuid) -> Option<Self> {
         let verse = verses.verses.get(&uuid)?;
         Some(Self {
             mode: VerseEditMode::Existing(uuid),
@@ -79,21 +79,23 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
 }
 
 fn confirm_edit(nv: &mut Narraverse) {
-    if !nv.modals.verse_edit_modal.verse_name_valid {
+    let modal = &nv.modals.verse_edit_modal;
+    if !modal.verse_name_valid {
         return;
     }
+    let name = modal.verse_name_textarea.lines()[0].clone();
     let mut saved: bool = false;
     match nv.modals.verse_edit_modal.mode {
         VerseEditMode::New => {
             let new_verse_uuid = Uuid::now_v7();
-            nv.verses.verses.insert(
+            nv.verse_manifest_mut().verses.insert(
                 new_verse_uuid,
                 Verse {
-                    name: nv.modals.verse_edit_modal.verse_name_textarea.lines()[0].clone(),
+                    name,
                     ..Default::default()
                 },
             );
-            if let Err(err) = save_verses(&mut nv.verses) {
+            if let Err(err) = save_verses(nv.verse_manifest_mut()) {
                 nv.send_error(
                     format!("Cannot save the newly created Verse:\n{}", err),
                     NarraverseState::VersePick,
@@ -103,14 +105,14 @@ fn confirm_edit(nv: &mut Narraverse) {
             }
         }
         VerseEditMode::Existing(uuid) => {
-            let Some(verse) = nv.verses.verses.get_mut(&uuid) else {
+            let Some(verse) = nv.verse_manifest_mut().verses.get_mut(&uuid) else {
                 nv.send_error(
                     format!("No Verse with this UUID ({}) exists.", uuid),
                     NarraverseState::VersePick,
                 );
                 return;
             };
-            verse.name = nv.modals.verse_edit_modal.verse_name_textarea.lines()[0].clone();
+            verse.name = name;
             if let Err(err) = save_verse((&uuid, verse)) {
                 nv.send_error(
                     format!("Cannot save Verse UUID {}:\n{}", uuid, err),
@@ -125,7 +127,6 @@ fn confirm_edit(nv: &mut Narraverse) {
         nv.set_state(NarraverseState::VersePick);
     }
     reset_textareas(&mut nv.modals.verse_edit_modal);
-    rebuild_verse_list_cache(&mut nv.cache, &nv.verses);
 }
 
 fn reset_textareas(modal: &mut VerseEdit) {

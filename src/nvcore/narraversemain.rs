@@ -12,7 +12,7 @@ pub fn render_header(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     let name_ver = Paragraph::new(format!("narraverse v{}", env!("CARGO_PKG_VERSION")));
     let right_thing = Paragraph::new(match nv.get_state() {
         NarraverseState::VersePick | NarraverseState::ConfigModal => "maero.surge.sh",
-        _ => &nv.cached_verse_name,
+        _ => &nv.get_verse_manifest().current_verse().name,
     })
     .right_aligned();
     frame.render_widget(name_ver, header_layout[0]);

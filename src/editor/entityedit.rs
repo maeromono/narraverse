@@ -11,7 +11,7 @@ use uuid::Uuid;
 use crate::{
     nvcore::{
         narraverse::{Narraverse, NarraverseState},
-        verses::{Entity, EntityType, NarraverseVerses},
+        versemanifest::{Entity, EntityType, VerseManifest},
     },
     utils::{
         cacheutils::rebuild_ent_list_cache,
@@ -30,7 +30,7 @@ pub struct EntityEditModal {
 }
 
 impl EntityEditModal {
-    pub fn edit(verses: &NarraverseVerses, uuid: Uuid) -> Option<Self> {
+    pub fn edit(verses: &VerseManifest, uuid: Uuid) -> Option<Self> {
         let verse = verses.verses.get(&verses.verse_uuid)?;
         let entity = verse.entities.get(&uuid)?;
         Some(Self {
@@ -55,6 +55,7 @@ impl Default for EntityEditModal {
     }
 }
 
+#[derive(Clone, Copy)]
 enum EntityEditMode {
     New,
     Existing(Uuid),
@@ -133,17 +134,21 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
 }
 
 fn confirm_edit(nv: &mut Narraverse) {
-    if !nv.modals.entity_edit_modal.entity_name_valid {
+    let modal = &nv.modals.entity_edit_modal;
+    if !modal.entity_name_valid {
         return;
     }
-    let verse = nv.verses.current_verse_kv_mut();
-    match nv.modals.entity_edit_modal.mode {
+    let name = modal.entity_name_textarea.lines()[0].clone();
+    let entity_type = modal.entity_type.clone();
+    let mode = modal.mode;
+    let verse = nv.verse_manifest_mut().current_verse_kv_mut();
+    match mode {
         EntityEditMode::New => {
             verse.1.entities.insert(
                 Uuid::now_v7(),
                 Entity {
-                    name: nv.modals.entity_edit_modal.entity_name_textarea.lines()[0].clone(),
-                    entity_type: nv.modals.entity_edit_modal.entity_type.clone(),
+                    name,
+                    entity_type,
                     details: String::new(),
                 },
             );
@@ -156,11 +161,11 @@ fn confirm_edit(nv: &mut Narraverse) {
                 );
                 return;
             };
-            entity.name = nv.modals.entity_edit_modal.entity_name_textarea.lines()[0].clone();
-            entity.entity_type = nv.modals.entity_edit_modal.entity_type.clone();
+            entity.name = name;
+            entity.entity_type = entity_type;
         }
     }
-    if let Err(err) = save_current_verse(&mut nv.verses) {
+    if let Err(err) = save_current_verse(nv.verse_manifest_mut()) {
         nv.send_error(
             format!("Entity edited, but won't save:\n{}", err),
             NarraverseState::EntityPick,
@@ -170,7 +175,6 @@ fn confirm_edit(nv: &mut Narraverse) {
         nv.send_footer_notification(String::from("Entity edited"));
     }
     reset_textareas(&mut nv.modals.entity_edit_modal);
-    rebuild_ent_list_cache(&mut nv.cache, &nv.verses);
 }
 
 fn reset_textareas(modal: &mut EntityEditModal) {

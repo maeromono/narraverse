@@ -12,7 +12,7 @@ use uuid::Uuid;
 use crate::{
     nvcore::{
         narraverse::{Narraverse, NarraverseState},
-        verses::{Narrative, NarraverseVerses},
+        versemanifest::{Narrative, VerseManifest},
     },
     utils::{
         cacheutils::rebuild_narr_list_cache,
@@ -35,7 +35,7 @@ pub struct NarrativeEditModal {
 }
 
 impl NarrativeEditModal {
-    pub fn edit(verses: &NarraverseVerses, uuid: Uuid) -> Option<Self> {
+    pub fn edit(verses: &VerseManifest, uuid: Uuid) -> Option<Self> {
         let verse = verses.verses.get(&verses.verse_uuid)?;
         let narrative = verse.narratives.get(&uuid)?;
         Some(Self {
@@ -78,6 +78,7 @@ impl Default for NarrativeEditModal {
     }
 }
 
+#[derive(Clone, Copy)]
 enum NarrativeEditModalMode {
     New,
     Existing(Uuid),
@@ -176,45 +177,31 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
 }
 
 fn confirm_edit(nv: &mut Narraverse) {
-    if !(nv.modals.narrative_edit_modal.narrative_name_valid
-        && nv.modals.narrative_edit_modal.narrative_writtenby_valid
-        && nv.modals.narrative_edit_modal.narrative_date_valid)
+    let modal = &nv.modals.narrative_edit_modal;
+    if !(modal.narrative_name_valid
+        && modal.narrative_writtenby_valid
+        && modal.narrative_date_valid)
     {
         return;
     }
-    let verse = nv.verses.current_verse_kv_mut();
-    let sum = nv
-        .modals
-        .narrative_edit_modal
-        .narrative_summary_textarea
-        .lines()[0]
-        .clone();
+    let sum = modal.narrative_summary_textarea.lines()[0].clone();
+    let title = modal.narrative_name_textarea.lines()[0].clone();
+    let written_by = modal.narrative_writtenby_textarea.lines()[0].clone();
+    let date = modal.narrative_date_textarea.lines()[0]
+        .clone()
+        .parse::<NaiveDate>()
+        .unwrap_or(NaiveDate::default());
     let summary = if sum.is_empty() { None } else { Some(sum) };
-    match nv.modals.narrative_edit_modal.mode {
+    let mode = modal.mode;
+    let verse = nv.verse_manifest_mut().current_verse_kv_mut();
+    match mode {
         NarrativeEditModalMode::New => {
             verse.1.narratives.insert(
                 Uuid::now_v7(),
                 Narrative {
-                    title: nv
-                        .modals
-                        .narrative_edit_modal
-                        .narrative_name_textarea
-                        .lines()[0]
-                        .clone(),
-                    written_by: nv
-                        .modals
-                        .narrative_edit_modal
-                        .narrative_writtenby_textarea
-                        .lines()[0]
-                        .clone(),
-                    date: nv
-                        .modals
-                        .narrative_edit_modal
-                        .narrative_date_textarea
-                        .lines()[0]
-                        .clone()
-                        .parse::<NaiveDate>()
-                        .unwrap(),
+                    title,
+                    written_by,
+                    date,
                     narrative: String::new(),
                     summary,
                 },
@@ -228,26 +215,9 @@ fn confirm_edit(nv: &mut Narraverse) {
                 );
                 return;
             };
-            narrative.title = nv
-                .modals
-                .narrative_edit_modal
-                .narrative_name_textarea
-                .lines()[0]
-                .clone();
-            narrative.written_by = nv
-                .modals
-                .narrative_edit_modal
-                .narrative_writtenby_textarea
-                .lines()[0]
-                .clone();
-            narrative.date = nv
-                .modals
-                .narrative_edit_modal
-                .narrative_date_textarea
-                .lines()[0]
-                .clone()
-                .parse::<NaiveDate>()
-                .unwrap_or(NaiveDate::default());
+            narrative.title = title;
+            narrative.written_by = written_by;
+            narrative.date = date;
             narrative.summary = summary;
         }
     }
@@ -255,7 +225,7 @@ fn confirm_edit(nv: &mut Narraverse) {
         .1
         .narratives
         .sort_by(|_, narr1, _, narr2| narr1.date.cmp(&narr2.date));
-    if let Err(err) = save_current_verse(&mut nv.verses) {
+    if let Err(err) = save_current_verse(nv.verse_manifest_mut()) {
         nv.send_error(
             format!("Narrative edited, but won't save:\n{}", err),
             NarraverseState::NarrativePick,
@@ -265,7 +235,6 @@ fn confirm_edit(nv: &mut Narraverse) {
         nv.send_footer_notification(String::from("Narrative edited"));
     }
     reset_textareas(&mut nv.modals.narrative_edit_modal);
-    rebuild_narr_list_cache(&mut nv.cache, &nv.verses);
 }
 
 fn reset_textareas(modal: &mut NarrativeEditModal) {

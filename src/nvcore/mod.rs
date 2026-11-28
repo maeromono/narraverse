@@ -3,4 +3,4 @@ pub mod error;
 pub mod narraverse;
 pub mod narraversemain;
 pub mod save;
-pub mod verses;
+pub mod versemanifest;

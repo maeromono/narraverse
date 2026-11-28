@@ -12,7 +12,7 @@ use crate::{
         config::{NarraverseConfig, load_config},
         narraverse::{Narraverse, NarraverseState},
         save::load_verses,
-        verses::NarraverseVerses,
+        versemanifest::VerseManifest,
     },
     utils::cacheutils::{
         rebuild_art_list_cache, rebuild_ent_list_cache, rebuild_narr_list_cache,
@@ -30,25 +30,21 @@ fn main() {
         NarraverseConfig::default()
     });
     nv.replace_config(config);
-    let errors: Option<Vec<String>>;
-    (nv.verses, errors) = load_verses().unwrap_or_else(|err| {
-        nv.send_error(
-            format!("Verse file contains invalid data:\n{}", err),
-            NarraverseState::VersePick,
-        );
-        (NarraverseVerses::default(), None)
-    });
+    let (manifest, errors): (VerseManifest, Option<Vec<String>>) =
+        load_verses().unwrap_or_else(|err| {
+            nv.send_error(
+                format!("Verse file contains invalid data:\n{}", err),
+                NarraverseState::VersePick,
+            );
+            (VerseManifest::default(), None)
+        });
     if let Some(load_errors) = errors {
         nv.send_error(load_errors.join("\n"), NarraverseState::VersePick);
     }
-    rebuild_verse_list_cache(&mut nv.cache, &nv.verses);
-    if nv.verses.verse_uuid != Uuid::default()
-        && nv.verses.verses.contains_key(&nv.verses.verse_uuid)
-    {
+    nv.replace_verse_manifest(manifest);
+    let verse_uuid = nv.get_verse_manifest().verse_uuid;
+    if verse_uuid != Uuid::default() && nv.get_verse_manifest().verses.contains_key(&verse_uuid) {
         nv.set_state(NarraverseState::VerseAreaPick);
-        rebuild_narr_list_cache(&mut nv.cache, &nv.verses);
-        rebuild_ent_list_cache(&mut nv.cache, &nv.verses);
-        rebuild_art_list_cache(&mut nv.cache, &nv.verses);
     }
     if let Err(err) = run(|term| nv.run(term)) {
         eprintln!("!! Terminal error: {}", err);

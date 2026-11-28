@@ -9,7 +9,7 @@ use indexmap::IndexMap;
 use toml::{from_str, to_string};
 use uuid::Uuid;
 
-use crate::nvcore::verses::{NarraverseVerses, Verse};
+use crate::nvcore::versemanifest::{Verse, VerseManifest};
 
 fn save_path(file: &str) -> Result<PathBuf> {
     let dirs = ProjectDirs::from("sh.surge", "maero", "narraverse")
@@ -17,7 +17,7 @@ fn save_path(file: &str) -> Result<PathBuf> {
     Ok(dirs.data_dir().join(format!("{}.toml", file)))
 }
 
-pub fn save_manifest(nv: &mut NarraverseVerses) -> Result<()> {
+pub fn save_manifest(nv: &mut VerseManifest) -> Result<()> {
     let path = save_path("narraverse")?;
     if let Some(parent) = path.parent() {
         create_dir_all(parent)?;
@@ -27,7 +27,7 @@ pub fn save_manifest(nv: &mut NarraverseVerses) -> Result<()> {
     Ok(())
 }
 
-pub fn save_verses(nv: &mut NarraverseVerses) -> Result<()> {
+pub fn save_verses(nv: &mut VerseManifest) -> Result<()> {
     let mut verse_files: IndexMap<Uuid, String> = IndexMap::default();
     for (uuid, verse) in &mut nv.verses {
         let filename = format!("verse-{}", uuid);
@@ -66,16 +66,16 @@ pub fn write(path: &Path, contents: &str) -> Result<()> {
     Ok(())
 }
 
-pub fn load_verses() -> Result<(NarraverseVerses, Option<Vec<String>>)> {
+pub fn load_verses() -> Result<(VerseManifest, Option<Vec<String>>)> {
     let path = save_path("narraverse")?;
     let contents = match read_to_string(&path) {
         Ok(contents) => contents,
         Err(err) if err.kind() == ErrorKind::NotFound => {
-            return Ok((NarraverseVerses::default(), None));
+            return Ok((VerseManifest::default(), None));
         }
         Err(err) => return Err(err),
     };
-    let mut nv: NarraverseVerses = match from_str(&contents) {
+    let mut nv: VerseManifest = match from_str(&contents) {
         Ok(nv) => Ok(nv),
         Err(err) => {
             let _ = rename(&path, &path.with_extension("corrupt"));
