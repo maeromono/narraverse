@@ -23,7 +23,10 @@ fn main() {
     nv.replace_config(config);
     let (manifest, errors): (VerseManifest, Option<Vec<String>>) =
         load_verses().unwrap_or_else(|err| {
-            nv.send_error(format!("Verse file contains invalid data:\n{}", err));
+            nv.send_error(format!(
+                "Verse manifest or files contain invalid data:\n{}",
+                err
+            ));
             (VerseManifest::default(), None)
         });
     if let Some(load_errors) = errors {
