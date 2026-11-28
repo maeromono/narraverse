@@ -77,10 +77,7 @@ fn confirm_edit(nv: &mut Narraverse) {
         .lines()[0]
         .clone();
     if let Err(err) = save_config(nv.get_config()) {
-        nv.send_error(
-            format!("Config edited, but won't save:\n{}", err),
-            NarraverseState::VersePick,
-        );
+        nv.send_error(format!("Config edited, but won't save:\n{}", err));
     } else {
         nv.send_footer_notification(String::from("Config edited"));
         nv.set_state(NarraverseState::VersePick);

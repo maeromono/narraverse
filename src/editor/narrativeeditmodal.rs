@@ -208,10 +208,7 @@ fn confirm_edit(nv: &mut Narraverse) {
         }
         NarrativeEditModalMode::Existing(uuid) => {
             let Some(narrative) = verse.1.narratives.get_mut(&uuid) else {
-                nv.send_error(
-                    format!("No narrative with this UUID ({}) exists.", uuid),
-                    NarraverseState::VersePick,
-                );
+                nv.send_error(format!("No narrative with this UUID ({}) exists.", uuid));
                 return;
             };
             narrative.title = title;
@@ -225,10 +222,7 @@ fn confirm_edit(nv: &mut Narraverse) {
         .narratives
         .sort_by(|_, narr1, _, narr2| narr1.date.cmp(&narr2.date));
     if let Err(err) = save_current_verse(nv.verse_manifest_mut()) {
-        nv.send_error(
-            format!("Narrative edited, but won't save:\n{}", err),
-            NarraverseState::NarrativePick,
-        );
+        nv.send_error(format!("Narrative edited, but won't save:\n{}", err));
     } else {
         nv.set_state(NarraverseState::NarrativePick);
         nv.send_footer_notification(String::from("Narrative edited"));

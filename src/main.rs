@@ -17,23 +17,17 @@ use crate::nvcore::{
 fn main() {
     let mut nv = Narraverse::default();
     let config = load_config().unwrap_or_else(|err| {
-        nv.send_error(
-            format!("Unable to parse config file:\n{}", err),
-            NarraverseState::VersePick,
-        );
+        nv.send_error(format!("Unable to parse config file:\n{}", err));
         NarraverseConfig::default()
     });
     nv.replace_config(config);
     let (manifest, errors): (VerseManifest, Option<Vec<String>>) =
         load_verses().unwrap_or_else(|err| {
-            nv.send_error(
-                format!("Verse file contains invalid data:\n{}", err),
-                NarraverseState::VersePick,
-            );
+            nv.send_error(format!("Verse file contains invalid data:\n{}", err));
             (VerseManifest::default(), None)
         });
     if let Some(load_errors) = errors {
-        nv.send_error(load_errors.join("\n"), NarraverseState::VersePick);
+        nv.send_error(load_errors.join("\n"));
     }
     nv.replace_verse_manifest(manifest);
     let verse_uuid = nv.get_verse_manifest().verse_uuid;

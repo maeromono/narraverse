@@ -23,16 +23,12 @@ pub enum DeletionTarget {
     Artifact(Uuid),
 }
 
-fn confirmation_message(nv: &Narraverse) -> Result<Paragraph<'static>, (String, NarraverseState)> {
+fn confirmation_message(nv: &Narraverse) -> Result<Paragraph<'static>, String> {
     let manifest = nv.get_verse_manifest();
     if !manifest.current_verse_exists() {
-        return Err((
-            String::from("No verse selected."),
-            NarraverseState::VersePick,
-        ));
+        return Err(String::from("No verse selected."));
     }
     let verse = manifest.current_verse();
-
     match nv.deletion_target {
         DeletionTarget::Verse => Ok(Paragraph::new(format!(
             "Delete Verse \"{}\"?\nIt'll be removed from the index, but will remain on disk.",
@@ -49,12 +45,11 @@ fn confirmation_message(nv: &Narraverse) -> Result<Paragraph<'static>, (String, 
             .wrap(Wrap { trim: false })
             .yellow()
             .bold()),
-            None => Err((
-                format!("Narrative with this UUID ({}) doesn't exist.", uuid),
-                NarraverseState::NarrativePick,
+            None => Err(format!(
+                "Narrative with this UUID ({}) doesn't exist.",
+                uuid
             )),
         },
-        // Entity and Artifact: same shape
         DeletionTarget::Entity(uuid) => match verse.entities.get(&uuid) {
             Some(e) => Ok(Paragraph::new(format!(
                 "Delete entity \"{}\"?\nYou cannot revert this.",
@@ -63,10 +58,7 @@ fn confirmation_message(nv: &Narraverse) -> Result<Paragraph<'static>, (String, 
             .wrap(Wrap { trim: false })
             .yellow()
             .bold()),
-            None => Err((
-                format!("Entity with this UUID ({}) doesn't exist.", uuid),
-                NarraverseState::EntityPick,
-            )),
+            None => Err(format!("Entity with this UUID ({}) doesn't exist.", uuid)),
         },
         DeletionTarget::Artifact(uuid) => match verse.artifacts.get(&uuid) {
             Some(a) => Ok(Paragraph::new(format!(
@@ -76,10 +68,7 @@ fn confirmation_message(nv: &Narraverse) -> Result<Paragraph<'static>, (String, 
             .wrap(Wrap { trim: false })
             .yellow()
             .bold()),
-            None => Err((
-                format!("Artifact with this UUID ({}) doesn't exist.", uuid),
-                NarraverseState::ArtifactPick,
-            )),
+            None => Err(format!("Artifact with this UUID ({}) doesn't exist.", uuid)),
         },
     }
 }
@@ -87,7 +76,7 @@ fn confirmation_message(nv: &Narraverse) -> Result<Paragraph<'static>, (String, 
 pub fn render_delete_screen(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     match confirmation_message(nv) {
         Ok(message) => frame.render_widget(message, center_area(area)),
-        Err((message, return_state)) => nv.send_error(message, return_state),
+        Err(message) => nv.send_error(message),
     }
 }
 
@@ -111,7 +100,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
 
 fn confirm_delete(nv: &mut Narraverse) {
     let target = nv.deletion_target;
-    let validation: std::result::Result<(), (String, NarraverseState)> = {
+    let validation: std::result::Result<(), String> = {
         let manifest = nv.get_verse_manifest();
         match target {
             DeletionTarget::Verse => Ok(()),
@@ -121,12 +110,9 @@ fn confirm_delete(nv: &mut Narraverse) {
                 {
                     Ok(())
                 } else {
-                    Err((
-                        format!(
-                            "Couldn't delete narrative with UUID {}.\nPerhaps it was already deleted.",
-                            uuid
-                        ),
-                        NarraverseState::NarrativePick,
+                    Err(format!(
+                        "Couldn't delete narrative with UUID {}.\nPerhaps it was already deleted.",
+                        uuid
                     ))
                 }
             }
@@ -136,12 +122,9 @@ fn confirm_delete(nv: &mut Narraverse) {
                 {
                     Ok(())
                 } else {
-                    Err((
-                        format!(
-                            "Couldn't delete entity with UUID {}.\nPerhaps it was already deleted.",
-                            uuid
-                        ),
-                        NarraverseState::EntityPick,
+                    Err(format!(
+                        "Couldn't delete entity with UUID {}.\nPerhaps it was already deleted.",
+                        uuid
                     ))
                 }
             }
@@ -151,19 +134,16 @@ fn confirm_delete(nv: &mut Narraverse) {
                 {
                     Ok(())
                 } else {
-                    Err((
-                        format!(
-                            "Couldn't delete artifact with UUID {}.\nPerhaps it was already deleted.",
-                            uuid
-                        ),
-                        NarraverseState::ArtifactPick,
+                    Err(format!(
+                        "Couldn't delete artifact with UUID {}.\nPerhaps it was already deleted.",
+                        uuid
                     ))
                 }
             }
         }
     };
-    if let Err((message, return_state)) = validation {
-        nv.send_error(message, return_state);
+    if let Err(message) = validation {
+        nv.send_error(message);
         return;
     }
     {
@@ -212,9 +192,6 @@ fn confirm_delete(nv: &mut Narraverse) {
         }
     }
     if let Err(err) = save_verses(nv.verse_manifest_mut()) {
-        nv.send_error(
-            format!("Cannot finalize deletion:\n{}", err),
-            NarraverseState::VersePick,
-        );
+        nv.send_error(format!("Cannot finalize deletion:\n{}", err));
     }
 }

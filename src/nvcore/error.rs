@@ -15,7 +15,7 @@ pub fn render_error_screen(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
         .red()
         .bold()
         .wrap(Wrap { trim: false });
-    let error_message_paragraph = Paragraph::new(nv.errors.0.clone())
+    let error_message_paragraph = Paragraph::new(nv.error_message.clone())
         .wrap(Wrap { trim: false })
         .scroll((nv.error_scroll, 0));
     frame.render_widget(error_paragraph, error_layout[0]);
@@ -25,8 +25,8 @@ pub fn render_error_screen(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
     match key.code {
         KeyCode::Esc => {
-            nv.set_state(nv.errors.1.clone());
-            nv.errors.0 = String::new();
+            nv.set_state_to_previous();
+            nv.error_message = String::new();
         }
         KeyCode::Char('j') | KeyCode::Down => nv.error_scroll = nv.error_scroll.saturating_add(1),
         KeyCode::Char('k') | KeyCode::Up => nv.error_scroll = nv.error_scroll.saturating_sub(1),

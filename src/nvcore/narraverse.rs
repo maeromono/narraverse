@@ -40,7 +40,7 @@ pub struct Narraverse {
     pub modals: NarraverseModals,
     pub editor: NarraverseEditor,
     pub deletion_target: DeletionTarget,
-    pub errors: (String, NarraverseState),
+    pub error_message: String,
     pub footer_notification: Option<String>,
     pub bindhelp_mode: BindhelpMode,
     pub error_scroll: u16, // temporary
@@ -49,13 +49,14 @@ pub struct Narraverse {
 struct NarraverseCore {
     config: NarraverseConfig,
     state: NarraverseState,
+    previous_state: NarraverseState,
 }
 
 struct NarraverseVerses {
     manifest: VerseManifest,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum NarraverseState {
     VersePick,
     VerseEdit,
@@ -166,10 +167,9 @@ impl Narraverse {
         }
     }
 
-    pub fn send_error(&mut self, message: String, return_state: NarraverseState) {
+    pub fn send_error(&mut self, message: String) {
         self.error_scroll = 0;
-        self.errors.0 = message;
-        self.errors.1 = return_state;
+        self.error_message = message;
         self.set_state(NarraverseState::Error);
     }
 
@@ -194,7 +194,14 @@ impl Narraverse {
     }
 
     pub fn set_state(&mut self, next: NarraverseState) {
+        self.core.previous_state = self.core.state;
         self.core.state = next;
+    }
+
+    pub fn set_state_to_previous(&mut self) {
+        let current_state = self.core.state;
+        self.core.state = self.core.previous_state;
+        self.core.previous_state = current_state;
     }
 
     pub fn get_verse_manifest(&self) -> &VerseManifest {
@@ -224,7 +231,7 @@ impl Default for Narraverse {
             modals: NarraverseModals::default(),
             editor: NarraverseEditor::default(),
             deletion_target: DeletionTarget::Verse,
-            errors: (String::new(), NarraverseState::VersePick),
+            error_message: String::from("No error!"),
             footer_notification: None,
             bindhelp_mode: BindhelpMode::Editor,
             error_scroll: 0,
@@ -237,6 +244,7 @@ impl Default for NarraverseCore {
         Self {
             config: NarraverseConfig::default(),
             state: NarraverseState::VersePick,
+            previous_state: NarraverseState::VersePick,
         }
     }
 }

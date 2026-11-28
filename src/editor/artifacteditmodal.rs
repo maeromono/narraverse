@@ -155,10 +155,7 @@ fn confirm_edit(nv: &mut Narraverse) {
         }
         ArtifactEditMode::Existing(uuid) => {
             let Some(artifact) = verse.1.artifacts.get_mut(&uuid) else {
-                nv.send_error(
-                    format!("Artifact with this UUID ({}) doesn't exist.", uuid),
-                    NarraverseState::VersePick,
-                );
+                nv.send_error(format!("Artifact with this UUID ({}) doesn't exist.", uuid));
                 return;
             };
             artifact.name = name;
@@ -166,10 +163,7 @@ fn confirm_edit(nv: &mut Narraverse) {
         }
     }
     if let Err(err) = save_current_verse(nv.verse_manifest_mut()) {
-        nv.send_error(
-            format!("Artifact edited, but won't save:\n{}", err),
-            NarraverseState::ArtifactPick,
-        );
+        nv.send_error(format!("Artifact edited, but won't save:\n{}", err));
     } else {
         nv.set_state(NarraverseState::ArtifactPick);
         nv.send_footer_notification(String::from("Artifact edited"));

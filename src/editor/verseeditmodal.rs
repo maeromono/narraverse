@@ -95,28 +95,19 @@ fn confirm_edit(nv: &mut Narraverse) {
                 },
             );
             if let Err(err) = save_verses(nv.verse_manifest_mut()) {
-                nv.send_error(
-                    format!("Cannot save the newly created Verse:\n{}", err),
-                    NarraverseState::VersePick,
-                );
+                nv.send_error(format!("Cannot save the newly created Verse:\n{}", err));
             } else {
                 saved = true;
             }
         }
         VerseEditMode::Existing(uuid) => {
             let Some(verse) = nv.verse_manifest_mut().verses.get_mut(&uuid) else {
-                nv.send_error(
-                    format!("No Verse with this UUID ({}) exists.", uuid),
-                    NarraverseState::VersePick,
-                );
+                nv.send_error(format!("No Verse with this UUID ({}) exists.", uuid));
                 return;
             };
             verse.name = name;
             if let Err(err) = save_verse((&uuid, verse)) {
-                nv.send_error(
-                    format!("Cannot save Verse UUID {}:\n{}", uuid, err),
-                    NarraverseState::VersePick,
-                );
+                nv.send_error(format!("Cannot save Verse UUID {}:\n{}", uuid, err));
             } else {
                 saved = true;
             }

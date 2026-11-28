@@ -169,10 +169,7 @@ impl Display for EditorTarget {
 
 pub fn render_editor(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     let Some((_, buffer)) = nv.editor.buffers.get_index(nv.editor.buffer_index) else {
-        nv.send_error(
-            String::from("Invalid buffer"),
-            NarraverseState::VerseAreaPick,
-        );
+        nv.send_error(String::from("Invalid buffer"));
         return;
     };
     let (search_height, search_open) = nv.editor.search_height_open();
@@ -223,10 +220,7 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
 
 pub fn handle_searching_keys(nv: &mut Narraverse, key: &KeyEvent) {
     let Some((_, buffer)) = nv.editor.buffers.get_index_mut(nv.editor.buffer_index) else {
-        nv.send_error(
-            String::from("Invalid buffer"),
-            NarraverseState::VerseAreaPick,
-        );
+        nv.send_error(String::from("Invalid buffer"));
         return;
     };
     match key.code {
@@ -278,17 +272,14 @@ pub fn handle_editing_keys(nv: &mut Narraverse, key: &KeyEvent) {
         }
         (KeyCode::Esc, KeyModifiers::NONE) => {
             if nv.editor.unsaved_changes() {
-                nv.send_error(String::from("There're unsaved changes in one or more buffers.\nSave or discard them before you can exit."), NarraverseState::Editor);
+                nv.send_error(String::from("There're unsaved changes in one or more buffers.\nSave or discard them before you can exit."));
                 return;
             }
         }
         _ => {}
     };
     let Some((_, buffer)) = nv.editor.buffers.get_index_mut(nv.editor.buffer_index) else {
-        nv.send_error(
-            String::from("Invalid buffer"),
-            NarraverseState::VerseAreaPick,
-        );
+        nv.send_error(String::from("Invalid buffer"));
         return;
     };
     match (key.code, key.modifiers) {
@@ -339,7 +330,7 @@ pub fn handle_editing_keys(nv: &mut Narraverse, key: &KeyEvent) {
 
 fn save_buffer(nv: &mut Narraverse) {
     if !nv.get_verse_manifest().current_verse_exists() {
-        nv.send_error(format!("Verse doesn't exist."), NarraverseState::VersePick);
+        nv.send_error(format!("Verse doesn't exist."));
         return;
     };
     let (uuid, target, text) = {
@@ -352,15 +343,12 @@ fn save_buffer(nv: &mut Narraverse) {
         (*uuid, buffer.target, buffer.textarea.lines().join("\n"))
     };
     let mut verse = nv.verse_manifest_mut().current_verse_kv_mut();
-    if let Err((message, return_state)) = write_unit(&mut verse.1, &target, &uuid, text) {
-        nv.send_error(message, return_state);
+    if let Err(message) = write_unit(&mut verse.1, &target, &uuid, text) {
+        nv.send_error(message);
         return;
     }
     if let Err(err) = save_current_verse(nv.verse_manifest_mut()) {
-        nv.send_error(
-            format!("Cannot perform the save:\n{}", err),
-            NarraverseState::Editor,
-        );
+        nv.send_error(format!("Cannot perform the save:\n{}", err));
     } else {
         if let Some((_, buffer)) = nv.editor.buffers.get_index_mut(nv.editor.buffer_index) {
             buffer.modified = false;
@@ -374,37 +362,22 @@ fn write_unit(
     target: &EditorTarget,
     uuid: &Uuid,
     text: String,
-) -> Result<(), (String, NarraverseState)> {
+) -> Result<(), String> {
     match target {
         EditorTarget::Narrative => verse
             .narratives
             .get_mut(uuid)
             .map(|narr| narr.narrative = text)
-            .ok_or_else(|| {
-                (
-                    format!("No narrative with this UUID ({}) exists.", uuid),
-                    NarraverseState::NarrativePick,
-                )
-            }),
+            .ok_or_else(|| format!("No narrative with this UUID ({}) exists.", uuid)),
         EditorTarget::Entity => verse
             .entities
             .get_mut(uuid)
             .map(|ent| ent.details = text)
-            .ok_or_else(|| {
-                (
-                    format!("No entity with this UUID ({}) exists.", uuid),
-                    NarraverseState::EntityPick,
-                )
-            }),
+            .ok_or_else(|| format!("No entity with this UUID ({}) exists.", uuid)),
         EditorTarget::Artifact => verse
             .artifacts
             .get_mut(uuid)
             .map(|art| art.details = text)
-            .ok_or_else(|| {
-                (
-                    format!("No artifact with this UUID ({}) exists.", uuid),
-                    NarraverseState::ArtifactPick,
-                )
-            }),
+            .ok_or_else(|| format!("No artifact with this UUID ({}) exists.", uuid)),
     }
 }

@@ -154,10 +154,7 @@ fn confirm_edit(nv: &mut Narraverse) {
         }
         EntityEditMode::Existing(uuid) => {
             let Some(entity) = verse.1.entities.get_mut(&uuid) else {
-                nv.send_error(
-                    format!("No entity with this UUID ({}) exists.", uuid),
-                    NarraverseState::EntityPick,
-                );
+                nv.send_error(format!("No entity with this UUID ({}) exists.", uuid));
                 return;
             };
             entity.name = name;
@@ -165,10 +162,7 @@ fn confirm_edit(nv: &mut Narraverse) {
         }
     }
     if let Err(err) = save_current_verse(nv.verse_manifest_mut()) {
-        nv.send_error(
-            format!("Entity edited, but won't save:\n{}", err),
-            NarraverseState::EntityPick,
-        );
+        nv.send_error(format!("Entity edited, but won't save:\n{}", err));
     } else {
         nv.set_state(NarraverseState::EntityPick);
         nv.send_footer_notification(String::from("Entity edited"));
