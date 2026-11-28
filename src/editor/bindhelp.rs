@@ -5,7 +5,7 @@ use crate::{
     nvcore::narraverse::{Narraverse, NarraverseState},
     utils::{
         decosutils::{block_with_title, center_area},
-        pickerutils::handle_list_keys,
+        pickerutils::{bindhelp_items, handle_list_keys},
     },
 };
 
@@ -44,7 +44,7 @@ pub enum BindhelpMode {
 }
 
 pub fn render_bindhelp(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
-    let list = List::new(nv.cache.bindhelp_bindings_cache.iter().map(String::as_str))
+    let list = List::new(bindhelp_items(nv.bindhelp_mode))
         .highlight_style(Modifier::REVERSED)
         .block(block_with_title("Key bindings:"));
     frame.render_stateful_widget(

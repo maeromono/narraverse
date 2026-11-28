@@ -14,7 +14,6 @@ use crate::{
         versemanifest::{Verse, VerseManifest},
     },
     utils::{
-        cacheutils::rebuild_verse_list_cache,
         decosutils::{center_area, field_layout, fields_responsive},
         textareautils::validate_length,
     },

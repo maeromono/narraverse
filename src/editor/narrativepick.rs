@@ -24,7 +24,7 @@ use crate::{
 
 pub fn render_narrative_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     let manifest = nv.get_verse_manifest();
-    if manifest.no_verses() || !manifest.current_verse_exists() {
+    if manifest.current_verse().narratives.is_empty() {
         render_list_empty_state("narratives", frame, area);
         return;
     }

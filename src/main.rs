@@ -7,17 +7,11 @@ use std::process::exit;
 use ratatui::run;
 use uuid::Uuid;
 
-use crate::{
-    nvcore::{
-        config::{NarraverseConfig, load_config},
-        narraverse::{Narraverse, NarraverseState},
-        save::load_verses,
-        versemanifest::VerseManifest,
-    },
-    utils::cacheutils::{
-        rebuild_art_list_cache, rebuild_ent_list_cache, rebuild_narr_list_cache,
-        rebuild_verse_list_cache,
-    },
+use crate::nvcore::{
+    config::{NarraverseConfig, load_config},
+    narraverse::{Narraverse, NarraverseState},
+    save::load_verses,
+    versemanifest::VerseManifest,
 };
 
 fn main() {

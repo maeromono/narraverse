@@ -4,12 +4,11 @@ use uuid::Uuid;
 
 use crate::{
     editor::{
-        bindhelp::BindhelpMode, delete::DeletionTarget, entityedit::EntityEditModal,
+        bindhelp::BindhelpMode, delete::DeletionTarget, entityeditmodal::EntityEditModal,
         nveditor::EditorTarget,
     },
     nvcore::narraverse::{Narraverse, NarraverseState},
     utils::{
-        cacheutils::rebuild_ent_list_cache,
         decosutils::{block_with_title, center_area, list_highlight},
         nvutils::enter_bindhelp,
         pickerutils::{entity_pick_items, handle_list_keys, render_list_empty_state},
@@ -18,7 +17,7 @@ use crate::{
 
 pub fn render_entity_pick(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
     let manifest = nv.get_verse_manifest();
-    if manifest.no_verses() {
+    if manifest.current_verse().entities.is_empty() {
         render_list_empty_state("entities", frame, area);
         return;
     }

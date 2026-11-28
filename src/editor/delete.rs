@@ -12,16 +12,10 @@ use crate::{
         narraverse::{Narraverse, NarraverseState},
         save::save_verses,
     },
-    utils::{
-        cacheutils::{
-            rebuild_art_list_cache, rebuild_ent_list_cache, rebuild_narr_list_cache,
-            rebuild_verse_list_cache,
-        },
-        decosutils::center_area,
-    },
+    utils::decosutils::center_area,
 };
 
-#[derive(PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum DeletionTarget {
     Verse,
     Narrative(Uuid),
@@ -29,66 +23,72 @@ pub enum DeletionTarget {
     Artifact(Uuid),
 }
 
-pub fn render_delete_screen(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
-    let verse = nv.verses.current_verse();
-    let delete_confirmation_message: Paragraph = match nv.deletion_target {
-        DeletionTarget::Verse => Paragraph::new(format!(
+fn confirmation_message(nv: &Narraverse) -> Result<Paragraph<'static>, (String, NarraverseState)> {
+    let manifest = nv.get_verse_manifest();
+    if !manifest.current_verse_exists() {
+        return Err((
+            String::from("No verse selected."),
+            NarraverseState::VersePick,
+        ));
+    }
+    let verse = manifest.current_verse();
+
+    match nv.deletion_target {
+        DeletionTarget::Verse => Ok(Paragraph::new(format!(
             "Delete Verse \"{}\"?\nIt'll be removed from the index, but will remain on disk.",
             verse.name
         ))
         .wrap(Wrap { trim: false })
         .yellow()
-        .bold(),
-        DeletionTarget::Narrative(uuid) => {
-            let Some(narrative) = verse.narratives.get(&uuid) else {
-                nv.send_error(
-                    format!("Narrative with this UUID ({}) doesn't exist.", uuid),
-                    NarraverseState::NarrativePick,
-                );
-                return;
-            };
-            Paragraph::new(format!(
+        .bold()),
+        DeletionTarget::Narrative(uuid) => match verse.narratives.get(&uuid) {
+            Some(n) => Ok(Paragraph::new(format!(
                 "Delete narrative \"{}\"?\nYou cannot revert this.",
-                narrative.title
+                n.title
             ))
             .wrap(Wrap { trim: false })
             .yellow()
-            .bold()
-        }
-        DeletionTarget::Entity(uuid) => {
-            let Some(entity) = verse.entities.get(&uuid) else {
-                nv.send_error(
-                    format!("Entity with this UUID ({}) doesn't exist.", uuid),
-                    NarraverseState::EntityPick,
-                );
-                return;
-            };
-            Paragraph::new(format!(
+            .bold()),
+            None => Err((
+                format!("Narrative with this UUID ({}) doesn't exist.", uuid),
+                NarraverseState::NarrativePick,
+            )),
+        },
+        // Entity and Artifact: same shape
+        DeletionTarget::Entity(uuid) => match verse.entities.get(&uuid) {
+            Some(e) => Ok(Paragraph::new(format!(
                 "Delete entity \"{}\"?\nYou cannot revert this.",
-                entity.name
+                e.name
             ))
             .wrap(Wrap { trim: false })
             .yellow()
-            .bold()
-        }
-        DeletionTarget::Artifact(uuid) => {
-            let Some(artifact) = verse.artifacts.get(&uuid) else {
-                nv.send_error(
-                    format!("Artifact with this UUID ({}) doesn't exist.", uuid),
-                    NarraverseState::ArtifactPick,
-                );
-                return;
-            };
-            Paragraph::new(format!(
+            .bold()),
+            None => Err((
+                format!("Entity with this UUID ({}) doesn't exist.", uuid),
+                NarraverseState::EntityPick,
+            )),
+        },
+        DeletionTarget::Artifact(uuid) => match verse.artifacts.get(&uuid) {
+            Some(a) => Ok(Paragraph::new(format!(
                 "Delete artifact \"{}\"?\nYou cannot revert this.",
-                artifact.name
+                a.name
             ))
             .wrap(Wrap { trim: false })
             .yellow()
-            .bold()
-        }
-    };
-    frame.render_widget(delete_confirmation_message, center_area(area));
+            .bold()),
+            None => Err((
+                format!("Artifact with this UUID ({}) doesn't exist.", uuid),
+                NarraverseState::ArtifactPick,
+            )),
+        },
+    }
+}
+
+pub fn render_delete_screen(nv: &mut Narraverse, frame: &mut Frame, area: Rect) {
+    match confirmation_message(nv) {
+        Ok(message) => frame.render_widget(message, center_area(area)),
+        Err((message, return_state)) => nv.send_error(message, return_state),
+    }
 }
 
 pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
@@ -110,73 +110,108 @@ pub fn handle_keys(nv: &mut Narraverse, key: &KeyEvent) {
 }
 
 fn confirm_delete(nv: &mut Narraverse) {
-    let verse = nv.verses.current_verse_mut();
-    match nv.deletion_target {
+    let target = nv.deletion_target;
+    let validation: std::result::Result<(), (String, NarraverseState)> = {
+        let manifest = nv.get_verse_manifest();
+        match target {
+            DeletionTarget::Verse => Ok(()),
+            DeletionTarget::Narrative(uuid) => {
+                if manifest.current_verse_exists()
+                    && manifest.current_verse().narratives.contains_key(&uuid)
+                {
+                    Ok(())
+                } else {
+                    Err((
+                        format!(
+                            "Couldn't delete narrative with UUID {}.\nPerhaps it was already deleted.",
+                            uuid
+                        ),
+                        NarraverseState::NarrativePick,
+                    ))
+                }
+            }
+            DeletionTarget::Entity(uuid) => {
+                if manifest.current_verse_exists()
+                    && manifest.current_verse().entities.contains_key(&uuid)
+                {
+                    Ok(())
+                } else {
+                    Err((
+                        format!(
+                            "Couldn't delete entity with UUID {}.\nPerhaps it was already deleted.",
+                            uuid
+                        ),
+                        NarraverseState::EntityPick,
+                    ))
+                }
+            }
+            DeletionTarget::Artifact(uuid) => {
+                if manifest.current_verse_exists()
+                    && manifest.current_verse().artifacts.contains_key(&uuid)
+                {
+                    Ok(())
+                } else {
+                    Err((
+                        format!(
+                            "Couldn't delete artifact with UUID {}.\nPerhaps it was already deleted.",
+                            uuid
+                        ),
+                        NarraverseState::ArtifactPick,
+                    ))
+                }
+            }
+        }
+    };
+    if let Err((message, return_state)) = validation {
+        nv.send_error(message, return_state);
+        return;
+    }
+    {
+        let manifest = nv.verse_manifest_mut();
+        match target {
+            DeletionTarget::Verse => {
+                let uuid = manifest.verse_uuid;
+                manifest.verses.shift_remove(&uuid);
+                manifest.verse_uuid = Uuid::default();
+            }
+            DeletionTarget::Narrative(uuid) => {
+                manifest.current_verse_mut().narratives.shift_remove(&uuid);
+            }
+            DeletionTarget::Entity(uuid) => {
+                manifest.current_verse_mut().entities.shift_remove(&uuid);
+            }
+            DeletionTarget::Artifact(uuid) => {
+                manifest.current_verse_mut().artifacts.shift_remove(&uuid);
+            }
+        }
+    }
+    match target {
         DeletionTarget::Verse => {
             nv.editor.purge_all_buffers();
-            nv.verses.verses.shift_remove(&nv.verses.verse_uuid);
             nv.list_states.verse_pick_liststate.select(None);
-            rebuild_verse_list_cache(&mut nv.cache, &nv.verses);
-            nv.verses.verse_uuid = Uuid::default();
             nv.set_state(NarraverseState::VersePick);
             nv.send_footer_notification(String::from("Verse deleted"));
         }
         DeletionTarget::Narrative(uuid) => {
-            if !verse.narratives.contains_key(&uuid) {
-                nv.send_error(
-                    format!(
-                        "Couldn't delete narrative with UUID {}.\nPerhaps it was already deleted.",
-                        uuid
-                    ),
-                    NarraverseState::NarrativePick,
-                );
-                return;
-            }
-            verse.narratives.shift_remove(&uuid);
             nv.list_states.verse_narrative_pick_liststate.select(None);
-            rebuild_narr_list_cache(&mut nv.cache, &nv.verses);
             nv.editor.remove_buffer_uuid(&uuid);
             nv.set_state(NarraverseState::NarrativePick);
             nv.send_footer_notification(String::from("Narrative deleted"));
         }
         DeletionTarget::Entity(uuid) => {
-            if !verse.entities.contains_key(&uuid) {
-                nv.send_error(
-                    format!(
-                        "Couldn't delete entity with UUID {}.\nPerhaps it was already deleted.",
-                        uuid
-                    ),
-                    NarraverseState::EntityPick,
-                );
-                return;
-            }
-            verse.entities.shift_remove(&uuid);
             nv.list_states.verse_entity_pick_liststate.select(None);
-            rebuild_ent_list_cache(&mut nv.cache, &nv.verses);
             nv.editor.remove_buffer_uuid(&uuid);
             nv.set_state(NarraverseState::EntityPick);
             nv.send_footer_notification(String::from("Entity deleted"));
         }
         DeletionTarget::Artifact(uuid) => {
-            if !verse.artifacts.contains_key(&uuid) {
-                nv.send_error(
-                    format!(
-                        "Couldn't delete artifact with UUID {}.\nPerhaps it was already deleted.",
-                        uuid
-                    ),
-                    NarraverseState::ArtifactPick,
-                );
-                return;
-            }
-            verse.artifacts.shift_remove(&uuid);
             nv.list_states.verse_artifact_pick_liststate.select(None);
-            rebuild_art_list_cache(&mut nv.cache, &nv.verses);
             nv.editor.remove_buffer_uuid(&uuid);
             nv.set_state(NarraverseState::ArtifactPick);
             nv.send_footer_notification(String::from("Artifact deleted"));
         }
     }
-    if let Err(err) = save_verses(&mut nv.verses) {
+    if let Err(err) = save_verses(nv.verse_manifest_mut()) {
         nv.send_error(
             format!("Cannot finalize deletion:\n{}", err),
             NarraverseState::VersePick,

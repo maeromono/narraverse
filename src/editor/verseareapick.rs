@@ -2,7 +2,7 @@ use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{Frame, layout::Rect, widgets::List};
 
 use crate::{
-    editor::{delete::DeletionTarget, verseedit::VerseEdit},
+    editor::{delete::DeletionTarget, verseeditmodal::VerseEdit},
     nvcore::narraverse::{Narraverse, NarraverseState},
     utils::{
         decosutils::{block_with_title, center_area, list_highlight},

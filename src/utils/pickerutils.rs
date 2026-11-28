@@ -6,6 +6,7 @@ use ratatui::{
 };
 
 use crate::{
+    editor::bindhelp::{BindhelpMode, EDITOR_BINDINGS, PICKMENU_BINDINGS},
     nvcore::versemanifest::VerseManifest,
     utils::decosutils::{block_with_title, center_area},
 };
@@ -63,5 +64,24 @@ pub fn entity_pick_items(manifest: &VerseManifest) -> Vec<String> {
         .entities
         .values()
         .map(|ent| format!("[{}] {}", ent.entity_type.short_name(), ent.name))
+        .collect()
+}
+
+pub fn artifact_pick_items(manifest: &VerseManifest) -> Vec<String> {
+    manifest
+        .current_verse()
+        .artifacts
+        .values()
+        .map(|art| format!("[{}] {}", art.artifact_type.name(), art.name))
+        .collect()
+}
+
+pub fn bindhelp_items(mode: BindhelpMode) -> Vec<String> {
+    let help = match mode {
+        BindhelpMode::Pickmenu => PICKMENU_BINDINGS,
+        BindhelpMode::Editor => EDITOR_BINDINGS,
+    };
+    help.iter()
+        .map(|(bind, desc)| format!("{} -- {}", bind, desc))
         .collect()
 }

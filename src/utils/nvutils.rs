@@ -7,7 +7,6 @@ use crate::{
         save::{save_manifest, save_verse},
         versemanifest::VerseManifest,
     },
-    utils::cacheutils::rebuild_bindhelp_cache,
 };
 
 pub fn enter_bindhelp(nv: &mut Narraverse, mode: BindhelpMode) {

@@ -14,7 +14,6 @@ use crate::{
         versemanifest::{Entity, EntityType, VerseManifest},
     },
     utils::{
-        cacheutils::rebuild_ent_list_cache,
         decosutils::{center_area, field_layout, fields_responsive, focus_highlight},
         nvutils::save_current_verse,
         textareautils::validate_length,
